@@ -1,0 +1,1 @@
+-- Starter decks are created per user by the Flutter repository after sign-in.

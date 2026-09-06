@@ -1,0 +1,249 @@
+{
+  "auditedAt": "2026-09-02T14:50:44.282Z",
+  "base": "http://127.0.0.1:3000",
+  "score": 100,
+  "passed": 40,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "/ returns 200",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 2
+    },
+    {
+      "name": "/ unique title",
+      "pass": true,
+      "detail": "45 chars: Flashcard Maker for Lasting Recall | LoopCard",
+      "weight": 1
+    },
+    {
+      "name": "/ meta description",
+      "pass": true,
+      "detail": "160 chars",
+      "weight": 1
+    },
+    {
+      "name": "/ one H1",
+      "pass": true,
+      "detail": "1 H1 elements",
+      "weight": 1
+    },
+    {
+      "name": "/ canonical",
+      "pass": true,
+      "detail": "self-referencing canonical",
+      "weight": 1
+    },
+    {
+      "name": "/ social metadata",
+      "pass": true,
+      "detail": "Open Graph image and Twitter card",
+      "weight": 1
+    },
+    {
+      "name": "/ substantial content",
+      "pass": true,
+      "detail": "404 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/market returns 200",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 2
+    },
+    {
+      "name": "/market unique title",
+      "pass": true,
+      "detail": "49 chars: Free Flashcard Decks for Every Subject | LoopCard",
+      "weight": 1
+    },
+    {
+      "name": "/market meta description",
+      "pass": true,
+      "detail": "148 chars",
+      "weight": 1
+    },
+    {
+      "name": "/market one H1",
+      "pass": true,
+      "detail": "1 H1 elements",
+      "weight": 1
+    },
+    {
+      "name": "/market canonical",
+      "pass": true,
+      "detail": "self-referencing canonical",
+      "weight": 1
+    },
+    {
+      "name": "/market social metadata",
+      "pass": true,
+      "detail": "Open Graph image and Twitter card",
+      "weight": 1
+    },
+    {
+      "name": "/market substantial content",
+      "pass": true,
+      "detail": "242 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/tools returns 200",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 2
+    },
+    {
+      "name": "/tools unique title",
+      "pass": true,
+      "detail": "42 chars: Free Flashcard Maker from Notes | LoopCard",
+      "weight": 1
+    },
+    {
+      "name": "/tools meta description",
+      "pass": true,
+      "detail": "158 chars",
+      "weight": 1
+    },
+    {
+      "name": "/tools one H1",
+      "pass": true,
+      "detail": "1 H1 elements",
+      "weight": 1
+    },
+    {
+      "name": "/tools canonical",
+      "pass": true,
+      "detail": "self-referencing canonical",
+      "weight": 1
+    },
+    {
+      "name": "/tools social metadata",
+      "pass": true,
+      "detail": "Open Graph image and Twitter card",
+      "weight": 1
+    },
+    {
+      "name": "/tools substantial content",
+      "pass": true,
+      "detail": "237 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/blog returns 200",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 2
+    },
+    {
+      "name": "/blog unique title",
+      "pass": true,
+      "detail": "45 chars: Active Recall and Flashcard Guides | LoopCard",
+      "weight": 1
+    },
+    {
+      "name": "/blog meta description",
+      "pass": true,
+      "detail": "149 chars",
+      "weight": 1
+    },
+    {
+      "name": "/blog one H1",
+      "pass": true,
+      "detail": "1 H1 elements",
+      "weight": 1
+    },
+    {
+      "name": "/blog canonical",
+      "pass": true,
+      "detail": "self-referencing canonical",
+      "weight": 1
+    },
+    {
+      "name": "/blog social metadata",
+      "pass": true,
+      "detail": "Open Graph image and Twitter card",
+      "weight": 1
+    },
+    {
+      "name": "/blog substantial content",
+      "pass": true,
+      "detail": "263 visible words",
+      "weight": 1
+    },
+    {
+      "name": "Home SoftwareApplication schema",
+      "pass": true,
+      "detail": "SoftwareApplication JSON-LD",
+      "weight": 2
+    },
+    {
+      "name": "Home FAQ schema",
+      "pass": true,
+      "detail": "FAQ content and JSON-LD",
+      "weight": 1
+    },
+    {
+      "name": "Organization schema",
+      "pass": true,
+      "detail": "Organization identity",
+      "weight": 1
+    },
+    {
+      "name": "WebSite schema",
+      "pass": true,
+      "detail": "WebSite identity",
+      "weight": 1
+    },
+    {
+      "name": "Semantic navigation",
+      "pass": true,
+      "detail": "labelled navigation",
+      "weight": 1
+    },
+    {
+      "name": "Descriptive internal links",
+      "pass": true,
+      "detail": "no generic anchors",
+      "weight": 1
+    },
+    {
+      "name": "robots.txt available",
+      "pass": true,
+      "detail": "sitemap declared",
+      "weight": 2
+    },
+    {
+      "name": "AI crawler policy declared",
+      "pass": true,
+      "detail": "explicit AI crawler rules",
+      "weight": 1
+    },
+    {
+      "name": "XML sitemap available",
+      "pass": true,
+      "detail": "valid URL set",
+      "weight": 2
+    },
+    {
+      "name": "Sitemap includes content",
+      "pass": true,
+      "detail": "blog and market detail URLs",
+      "weight": 1
+    },
+    {
+      "name": "Web app manifest",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 1
+    },
+    {
+      "name": "No broken internal links",
+      "pass": true,
+      "detail": "19 links checked",
+      "weight": 2
+    }
+  ]
+}

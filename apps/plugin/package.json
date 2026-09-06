@@ -1,0 +1,19 @@
+{
+  "name": "@loopcard/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "loopcard": "./bin/loopcard.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "mcp": "node src/mcp.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@supabase/supabase-js": "^2.113.0",
+    "commander": "^15.0.0",
+    "zod": "^4.1.12"
+  }
+}

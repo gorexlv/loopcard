@@ -1,0 +1,12 @@
+{
+  "name": "loopcard-monorepo",
+  "private": true,
+  "workspaces": ["apps/web", "apps/plugin", "packages/shared"],
+  "scripts": {
+    "dev:web": "npm run dev --workspace @loopcard/web",
+    "build:web": "npm run build --workspace @loopcard/web",
+    "test:web": "npm run test --workspace @loopcard/web",
+    "test:plugin": "npm run test --workspace @loopcard/cli",
+    "test": "npm run test:web && npm run test:plugin"
+  }
+}

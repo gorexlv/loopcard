@@ -1,0 +1,513 @@
+{
+  "auditedAt": "2026-09-02T15:10:39.621Z",
+  "base": "https://loopcard.dev",
+  "score": 100,
+  "passed": 84,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "/ returns 200",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 2
+    },
+    {
+      "name": "/ unique title",
+      "pass": true,
+      "detail": "45 chars: Flashcard Maker for Lasting Recall | LoopCard",
+      "weight": 1
+    },
+    {
+      "name": "/ meta description",
+      "pass": true,
+      "detail": "160 chars",
+      "weight": 1
+    },
+    {
+      "name": "/ one H1",
+      "pass": true,
+      "detail": "1 H1 elements",
+      "weight": 1
+    },
+    {
+      "name": "/ canonical",
+      "pass": true,
+      "detail": "self-referencing canonical",
+      "weight": 1
+    },
+    {
+      "name": "/ social metadata",
+      "pass": true,
+      "detail": "Open Graph image and Twitter card",
+      "weight": 1
+    },
+    {
+      "name": "/ substantial content",
+      "pass": true,
+      "detail": "404 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/market returns 200",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 2
+    },
+    {
+      "name": "/market unique title",
+      "pass": true,
+      "detail": "49 chars: Free Flashcard Decks for Every Subject | LoopCard",
+      "weight": 1
+    },
+    {
+      "name": "/market meta description",
+      "pass": true,
+      "detail": "148 chars",
+      "weight": 1
+    },
+    {
+      "name": "/market one H1",
+      "pass": true,
+      "detail": "1 H1 elements",
+      "weight": 1
+    },
+    {
+      "name": "/market canonical",
+      "pass": true,
+      "detail": "self-referencing canonical",
+      "weight": 1
+    },
+    {
+      "name": "/market social metadata",
+      "pass": true,
+      "detail": "Open Graph image and Twitter card",
+      "weight": 1
+    },
+    {
+      "name": "/market substantial content",
+      "pass": true,
+      "detail": "242 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/tools returns 200",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 2
+    },
+    {
+      "name": "/tools unique title",
+      "pass": true,
+      "detail": "42 chars: Free Flashcard Maker from Notes | LoopCard",
+      "weight": 1
+    },
+    {
+      "name": "/tools meta description",
+      "pass": true,
+      "detail": "158 chars",
+      "weight": 1
+    },
+    {
+      "name": "/tools one H1",
+      "pass": true,
+      "detail": "1 H1 elements",
+      "weight": 1
+    },
+    {
+      "name": "/tools canonical",
+      "pass": true,
+      "detail": "self-referencing canonical",
+      "weight": 1
+    },
+    {
+      "name": "/tools social metadata",
+      "pass": true,
+      "detail": "Open Graph image and Twitter card",
+      "weight": 1
+    },
+    {
+      "name": "/tools substantial content",
+      "pass": true,
+      "detail": "237 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/blog returns 200",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 2
+    },
+    {
+      "name": "/blog unique title",
+      "pass": true,
+      "detail": "45 chars: Active Recall and Flashcard Guides | LoopCard",
+      "weight": 1
+    },
+    {
+      "name": "/blog meta description",
+      "pass": true,
+      "detail": "149 chars",
+      "weight": 1
+    },
+    {
+      "name": "/blog one H1",
+      "pass": true,
+      "detail": "1 H1 elements",
+      "weight": 1
+    },
+    {
+      "name": "/blog canonical",
+      "pass": true,
+      "detail": "self-referencing canonical",
+      "weight": 1
+    },
+    {
+      "name": "/blog social metadata",
+      "pass": true,
+      "detail": "Open Graph image and Twitter card",
+      "weight": 1
+    },
+    {
+      "name": "/blog substantial content",
+      "pass": true,
+      "detail": "263 visible words",
+      "weight": 1
+    },
+    {
+      "name": "Home SoftwareApplication schema",
+      "pass": true,
+      "detail": "SoftwareApplication JSON-LD",
+      "weight": 2
+    },
+    {
+      "name": "Home FAQ schema",
+      "pass": true,
+      "detail": "FAQ content and JSON-LD",
+      "weight": 1
+    },
+    {
+      "name": "Organization schema",
+      "pass": true,
+      "detail": "Organization identity",
+      "weight": 1
+    },
+    {
+      "name": "WebSite schema",
+      "pass": true,
+      "detail": "WebSite identity",
+      "weight": 1
+    },
+    {
+      "name": "Semantic navigation",
+      "pass": true,
+      "detail": "labelled navigation",
+      "weight": 1
+    },
+    {
+      "name": "Descriptive internal links",
+      "pass": true,
+      "detail": "no generic anchors",
+      "weight": 1
+    },
+    {
+      "name": "robots.txt available",
+      "pass": true,
+      "detail": "sitemap declared",
+      "weight": 2
+    },
+    {
+      "name": "AI crawler policy declared",
+      "pass": true,
+      "detail": "explicit AI crawler rules",
+      "weight": 1
+    },
+    {
+      "name": "XML sitemap available",
+      "pass": true,
+      "detail": "valid URL set",
+      "weight": 2
+    },
+    {
+      "name": "Sitemap includes content",
+      "pass": true,
+      "detail": "blog and market detail URLs",
+      "weight": 1
+    },
+    {
+      "name": "Web app manifest",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 1
+    },
+    {
+      "name": "No broken internal links",
+      "pass": true,
+      "detail": "19 links checked",
+      "weight": 2
+    },
+    {
+      "name": "/blog/why-recall-beats-rereading indexable response",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 1
+    },
+    {
+      "name": "/blog/why-recall-beats-rereading complete metadata",
+      "pass": true,
+      "detail": "56-char title, 213-char description",
+      "weight": 1
+    },
+    {
+      "name": "/blog/why-recall-beats-rereading one H1",
+      "pass": true,
+      "detail": "single page topic",
+      "weight": 1
+    },
+    {
+      "name": "/blog/why-recall-beats-rereading Article schema",
+      "pass": true,
+      "detail": "BlogPosting with dates and author",
+      "weight": 1
+    },
+    {
+      "name": "/blog/why-recall-beats-rereading useful article depth",
+      "pass": true,
+      "detail": "312 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/blog/why-recall-beats-rereading contextual next step",
+      "pass": true,
+      "detail": "contextual internal link",
+      "weight": 1
+    },
+    {
+      "name": "/blog/make-a-card-worth-reviewing indexable response",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 1
+    },
+    {
+      "name": "/blog/make-a-card-worth-reviewing complete metadata",
+      "pass": true,
+      "detail": "57-char title, 167-char description",
+      "weight": 1
+    },
+    {
+      "name": "/blog/make-a-card-worth-reviewing one H1",
+      "pass": true,
+      "detail": "single page topic",
+      "weight": 1
+    },
+    {
+      "name": "/blog/make-a-card-worth-reviewing Article schema",
+      "pass": true,
+      "detail": "BlogPosting with dates and author",
+      "weight": 1
+    },
+    {
+      "name": "/blog/make-a-card-worth-reviewing useful article depth",
+      "pass": true,
+      "detail": "304 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/blog/make-a-card-worth-reviewing contextual next step",
+      "pass": true,
+      "detail": "contextual internal link",
+      "weight": 1
+    },
+    {
+      "name": "/blog/small-loops-long-memory indexable response",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 1
+    },
+    {
+      "name": "/blog/small-loops-long-memory complete metadata",
+      "pass": true,
+      "detail": "54-char title, 177-char description",
+      "weight": 1
+    },
+    {
+      "name": "/blog/small-loops-long-memory one H1",
+      "pass": true,
+      "detail": "single page topic",
+      "weight": 1
+    },
+    {
+      "name": "/blog/small-loops-long-memory Article schema",
+      "pass": true,
+      "detail": "BlogPosting with dates and author",
+      "weight": 1
+    },
+    {
+      "name": "/blog/small-loops-long-memory useful article depth",
+      "pass": true,
+      "detail": "300 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/blog/small-loops-long-memory contextual next step",
+      "pass": true,
+      "detail": "contextual internal link",
+      "weight": 1
+    },
+    {
+      "name": "/blog/designing-the-back-of-a-card indexable response",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 1
+    },
+    {
+      "name": "/blog/designing-the-back-of-a-card complete metadata",
+      "pass": true,
+      "detail": "58-char title, 167-char description",
+      "weight": 1
+    },
+    {
+      "name": "/blog/designing-the-back-of-a-card one H1",
+      "pass": true,
+      "detail": "single page topic",
+      "weight": 1
+    },
+    {
+      "name": "/blog/designing-the-back-of-a-card Article schema",
+      "pass": true,
+      "detail": "BlogPosting with dates and author",
+      "weight": 1
+    },
+    {
+      "name": "/blog/designing-the-back-of-a-card useful article depth",
+      "pass": true,
+      "detail": "308 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/blog/designing-the-back-of-a-card contextual next step",
+      "pass": true,
+      "detail": "contextual internal link",
+      "weight": 1
+    },
+    {
+      "name": "/market/chinese-zodiac-origins indexable response",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 1
+    },
+    {
+      "name": "/market/chinese-zodiac-origins complete metadata",
+      "pass": true,
+      "detail": "33-char title, 129-char description",
+      "weight": 1
+    },
+    {
+      "name": "/market/chinese-zodiac-origins one H1",
+      "pass": true,
+      "detail": "single page topic",
+      "weight": 1
+    },
+    {
+      "name": "/market/chinese-zodiac-origins deck schema",
+      "pass": true,
+      "detail": "LearningResource and breadcrumb data",
+      "weight": 1
+    },
+    {
+      "name": "/market/chinese-zodiac-origins descriptive preview",
+      "pass": true,
+      "detail": "227 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/market/everyday-english-core indexable response",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 1
+    },
+    {
+      "name": "/market/everyday-english-core complete metadata",
+      "pass": true,
+      "detail": "42-char title, 195-char description",
+      "weight": 1
+    },
+    {
+      "name": "/market/everyday-english-core one H1",
+      "pass": true,
+      "detail": "single page topic",
+      "weight": 1
+    },
+    {
+      "name": "/market/everyday-english-core deck schema",
+      "pass": true,
+      "detail": "LearningResource and breadcrumb data",
+      "weight": 1
+    },
+    {
+      "name": "/market/everyday-english-core descriptive preview",
+      "pass": true,
+      "detail": "194 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/market/chemistry-formulas indexable response",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 1
+    },
+    {
+      "name": "/market/chemistry-formulas complete metadata",
+      "pass": true,
+      "detail": "50-char title, 192-char description",
+      "weight": 1
+    },
+    {
+      "name": "/market/chemistry-formulas one H1",
+      "pass": true,
+      "detail": "single page topic",
+      "weight": 1
+    },
+    {
+      "name": "/market/chemistry-formulas deck schema",
+      "pass": true,
+      "detail": "LearningResource and breadcrumb data",
+      "weight": 1
+    },
+    {
+      "name": "/market/chemistry-formulas descriptive preview",
+      "pass": true,
+      "detail": "194 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/market/design-principles indexable response",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 1
+    },
+    {
+      "name": "/market/design-principles complete metadata",
+      "pass": true,
+      "detail": "51-char title, 203-char description",
+      "weight": 1
+    },
+    {
+      "name": "/market/design-principles one H1",
+      "pass": true,
+      "detail": "single page topic",
+      "weight": 1
+    },
+    {
+      "name": "/market/design-principles deck schema",
+      "pass": true,
+      "detail": "LearningResource and breadcrumb data",
+      "weight": 1
+    },
+    {
+      "name": "/market/design-principles descriptive preview",
+      "pass": true,
+      "detail": "190 visible words",
+      "weight": 1
+    }
+  ]
+}

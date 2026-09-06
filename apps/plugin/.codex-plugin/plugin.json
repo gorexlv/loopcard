@@ -1,0 +1,27 @@
+{
+  "name": "loopcard",
+  "version": "0.1.0+codex.20260902143226",
+  "description": "Create and manage LoopCard decks and cards from Codex.",
+  "author": {
+    "name": "LoopCard"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "LoopCard",
+    "shortDescription": "Create and manage memory cards.",
+    "longDescription": "List, inspect, and create user-owned LoopCard decks and cards through the local LoopCard CLI and Supabase backend.",
+    "developerName": "LoopCard",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "brandColor": "#33CFB4",
+    "defaultPrompt": [
+      "List my LoopCard decks.",
+      "Create a new deck and add cards to it.",
+      "Show the cards in one of my decks."
+    ]
+  },
+  "mcpServers": "./.mcp.json"
+}

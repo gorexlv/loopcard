@@ -1,0 +1,249 @@
+{
+  "auditedAt": "2026-09-02T14:41:25.731Z",
+  "base": "http://127.0.0.1:3000",
+  "score": 54,
+  "passed": 18,
+  "failed": 22,
+  "checks": [
+    {
+      "name": "/ returns 200",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 2
+    },
+    {
+      "name": "/ unique title",
+      "pass": true,
+      "detail": "30 chars: LoopCard — Make memory visible",
+      "weight": 1
+    },
+    {
+      "name": "/ meta description",
+      "pass": false,
+      "detail": "69 chars",
+      "weight": 1
+    },
+    {
+      "name": "/ one H1",
+      "pass": true,
+      "detail": "1 H1 elements",
+      "weight": 1
+    },
+    {
+      "name": "/ canonical",
+      "pass": false,
+      "detail": "self-referencing canonical",
+      "weight": 1
+    },
+    {
+      "name": "/ social metadata",
+      "pass": false,
+      "detail": "Open Graph image and Twitter card",
+      "weight": 1
+    },
+    {
+      "name": "/ substantial content",
+      "pass": true,
+      "detail": "284 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/market returns 200",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 2
+    },
+    {
+      "name": "/market unique title",
+      "pass": false,
+      "detail": "22 chars: Deck Market · LoopCard",
+      "weight": 1
+    },
+    {
+      "name": "/market meta description",
+      "pass": false,
+      "detail": "84 chars",
+      "weight": 1
+    },
+    {
+      "name": "/market one H1",
+      "pass": true,
+      "detail": "1 H1 elements",
+      "weight": 1
+    },
+    {
+      "name": "/market canonical",
+      "pass": false,
+      "detail": "self-referencing canonical",
+      "weight": 1
+    },
+    {
+      "name": "/market social metadata",
+      "pass": false,
+      "detail": "Open Graph image and Twitter card",
+      "weight": 1
+    },
+    {
+      "name": "/market substantial content",
+      "pass": false,
+      "detail": "126 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/tools returns 200",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 2
+    },
+    {
+      "name": "/tools unique title",
+      "pass": true,
+      "detail": "33 chars: Free Memory Card Tools · LoopCard",
+      "weight": 1
+    },
+    {
+      "name": "/tools meta description",
+      "pass": false,
+      "detail": "58 chars",
+      "weight": 1
+    },
+    {
+      "name": "/tools one H1",
+      "pass": true,
+      "detail": "1 H1 elements",
+      "weight": 1
+    },
+    {
+      "name": "/tools canonical",
+      "pass": false,
+      "detail": "self-referencing canonical",
+      "weight": 1
+    },
+    {
+      "name": "/tools social metadata",
+      "pass": false,
+      "detail": "Open Graph image and Twitter card",
+      "weight": 1
+    },
+    {
+      "name": "/tools substantial content",
+      "pass": false,
+      "detail": "109 visible words",
+      "weight": 1
+    },
+    {
+      "name": "/blog returns 200",
+      "pass": true,
+      "detail": "HTTP 200",
+      "weight": 2
+    },
+    {
+      "name": "/blog unique title",
+      "pass": false,
+      "detail": "18 chars: Journal · LoopCard",
+      "weight": 1
+    },
+    {
+      "name": "/blog meta description",
+      "pass": false,
+      "detail": "59 chars",
+      "weight": 1
+    },
+    {
+      "name": "/blog one H1",
+      "pass": true,
+      "detail": "1 H1 elements",
+      "weight": 1
+    },
+    {
+      "name": "/blog canonical",
+      "pass": false,
+      "detail": "self-referencing canonical",
+      "weight": 1
+    },
+    {
+      "name": "/blog social metadata",
+      "pass": false,
+      "detail": "Open Graph image and Twitter card",
+      "weight": 1
+    },
+    {
+      "name": "/blog substantial content",
+      "pass": false,
+      "detail": "146 visible words",
+      "weight": 1
+    },
+    {
+      "name": "Home SoftwareApplication schema",
+      "pass": true,
+      "detail": "SoftwareApplication JSON-LD",
+      "weight": 2
+    },
+    {
+      "name": "Home FAQ schema",
+      "pass": false,
+      "detail": "FAQ content and JSON-LD",
+      "weight": 1
+    },
+    {
+      "name": "Organization schema",
+      "pass": false,
+      "detail": "Organization identity",
+      "weight": 1
+    },
+    {
+      "name": "WebSite schema",
+      "pass": false,
+      "detail": "WebSite identity",
+      "weight": 1
+    },
+    {
+      "name": "Semantic navigation",
+      "pass": true,
+      "detail": "labelled navigation",
+      "weight": 1
+    },
+    {
+      "name": "Descriptive internal links",
+      "pass": true,
+      "detail": "no generic anchors",
+      "weight": 1
+    },
+    {
+      "name": "robots.txt available",
+      "pass": true,
+      "detail": "sitemap declared",
+      "weight": 2
+    },
+    {
+      "name": "AI crawler policy declared",
+      "pass": false,
+      "detail": "explicit AI crawler rules",
+      "weight": 1
+    },
+    {
+      "name": "XML sitemap available",
+      "pass": true,
+      "detail": "valid URL set",
+      "weight": 2
+    },
+    {
+      "name": "Sitemap includes content",
+      "pass": true,
+      "detail": "blog and market detail URLs",
+      "weight": 1
+    },
+    {
+      "name": "Web app manifest",
+      "pass": false,
+      "detail": "HTTP 404",
+      "weight": 1
+    },
+    {
+      "name": "No broken internal links",
+      "pass": true,
+      "detail": "16 links checked",
+      "weight": 2
+    }
+  ]
+}

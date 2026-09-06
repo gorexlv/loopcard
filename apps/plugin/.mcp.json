@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "loopcard": {
+      "command": "node",
+      "args": [
+        "/Users/rexlv/Workspace/github.com/gorexlv/loopcard/apps/plugin/src/mcp.js"
+      ],
+      "env": {
+        "LOOPCARD_SUPABASE_URL": "http://127.0.0.1:8000"
+      }
+    }
+  }
+}

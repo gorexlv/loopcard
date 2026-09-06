@@ -1,0 +1,24 @@
+# Local dependencies and build caches
+node_modules
+**/node_modules
+.next
+**/.next
+**/.dart_tool
+**/build
+coverage
+
+# Native mobile application is deployed separately
+apps/mobile
+
+# Local-only material
+docs
+.idea
+.vscode
+**/.DS_Store
+**/*.log
+apps/web/seo-reports
+
+# Never upload local credentials
+.env
+.env.*
+!.env.example
