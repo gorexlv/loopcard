@@ -38,6 +38,7 @@ node_modules/
 .next/
 .next-codex/
 **/.gradle/
+*.tsbuildinfo
 
 # Symbolication related
 app.*.symbols
