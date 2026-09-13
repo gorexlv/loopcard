@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'auth/auth_service.dart';
+import 'auth/supabase_runtime_config.dart';
 import 'auth/test_auto_login.dart';
 import 'data/deck_repository.dart';
 import 'data/demo_data.dart';
@@ -23,20 +22,16 @@ Future<void> main() async {
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   final wordCaptureFlow = OnDeviceWordCaptureFlow.standard();
 
-  const configuredUrl = String.fromEnvironment('SUPABASE_URL');
-  final supabaseUrl = configuredUrl.isNotEmpty
-      ? configuredUrl
-      : Platform.isAndroid
-      ? 'http://10.0.2.2:8000'
-      : 'http://127.0.0.1:8000';
-  const supabaseAnonKey = String.fromEnvironment(
-    'SUPABASE_ANON_KEY',
-    defaultValue:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE',
+  final authConfig = SupabaseRuntimeConfig.resolve(
+    configuredUrl: const String.fromEnvironment('SUPABASE_URL'),
+    configuredPublishableKey: const String.fromEnvironment(
+      'SUPABASE_PUBLISHABLE_KEY',
+    ),
+    legacyAnonKey: const String.fromEnvironment('SUPABASE_ANON_KEY'),
   );
   await Supabase.initialize(
-    url: supabaseUrl,
-    publishableKey: supabaseAnonKey,
+    url: authConfig.url,
+    publishableKey: authConfig.publishableKey,
     authOptions: const FlutterAuthClientOptions(
       authFlowType: AuthFlowType.pkce,
     ),
