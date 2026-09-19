@@ -1,15 +1,15 @@
 {
   "name": "loopcard",
-  "version": "0.1.0+codex.20260902143226",
-  "description": "Create and manage LoopCard decks and cards from Codex.",
+  "version": "0.1.0+codex.20260913200444",
+  "description": "Create and manage LoopCard decks and generate structured English word cards from Codex.",
   "author": {
     "name": "LoopCard"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "LoopCard",
-    "shortDescription": "Create and manage memory cards.",
-    "longDescription": "List, inspect, and create user-owned LoopCard decks and cards through the local LoopCard CLI and Supabase backend.",
+    "shortDescription": "Create decks and structured word cards.",
+    "longDescription": "List, inspect, and create user-owned LoopCard decks and cards, with a dedicated Skill contract for high-quality English vocabulary cards.",
     "developerName": "LoopCard",
     "category": "Productivity",
     "capabilities": [
@@ -20,7 +20,8 @@
     "defaultPrompt": [
       "List my LoopCard decks.",
       "Create a new deck and add cards to it.",
-      "Show the cards in one of my decks."
+      "Show the cards in one of my decks.",
+      "Generate a precise English word card with canonical parts of speech and IPA."
     ]
   },
   "mcpServers": "./.mcp.json"

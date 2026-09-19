@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import './afterimage.css';
+import './quiet.css';
 import { site } from '../lib/seo';
 
 export const metadata: Metadata = {

@@ -1,0 +1,8 @@
+interface:
+  display_name: "LoopCard Word Cards"
+  short_description: "Generate consistent, learner-ready English word cards."
+  brand_color: "#33CFB4"
+  default_prompt: "Use $word-card-generation to create a precise English vocabulary card for this word."
+
+policy:
+  allow_implicit_invocation: true

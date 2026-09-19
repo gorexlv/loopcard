@@ -44,6 +44,7 @@ class DemoData {
       prompt: '一辆车 2 小时行驶 120 千米，它的平均速度是多少？',
       eyebrow: 'MATH / REASONING 01',
       supportingText: '条件 02 · 求平均速度',
+      hint: '先找出总路程和总时间之间的关系。',
       sections: [
         CardBackSection(
           title: '关键突破',
@@ -67,6 +68,7 @@ class DemoData {
       prompt: '长方形周长是 30 cm，长为 9 cm，面积是多少？',
       eyebrow: 'GEOMETRY / REASONING 02',
       supportingText: '已知周长与长 · 先求宽',
+      hint: '面积公式里还缺少一个条件。',
       sections: [
         CardBackSection(
           title: '关键突破',
@@ -90,6 +92,7 @@ class DemoData {
       prompt: '一件 240 元的商品打八五折，现价是多少？',
       eyebrow: 'PERCENT / REASONING 03',
       supportingText: '八五折 = 原价的 85%',
+      hint: '先把折扣写成百分数。',
       sections: [
         CardBackSection(
           title: '关键突破',
@@ -118,12 +121,46 @@ class DemoData {
     String translation,
     String distinction,
   ) {
+    final meaningParts = meaning.split(RegExp(r'\s+'));
+    final partOfSpeech = meaningParts.first;
+    final definition = meaningParts.skip(1).join(' ');
+    final exampleDetails = translation.split('\n');
+    final collocations = exampleDetails.first
+        .split('·')
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .toList(growable: false);
+    final distinctionLines = distinction.split('\n');
     return StudyCard(
       id: prompt,
       prompt: prompt,
       eyebrow: 'ENGLISH / ACTIVE VOCABULARY',
       supportingText:
           '${meaning.split(' ').first.toUpperCase()} · ${sentence.split(' ').take(3).join(' ')}…',
+      hint:
+          '首字母 ${prompt.substring(0, 1).toUpperCase()} · '
+          '${prompt.length} 个字母',
+      wordContent: WordCardContent(
+        partOfSpeech: partOfSpeech,
+        pronunciations: [
+          if (_wordIpa[prompt] case final ipa?) WordPronunciation(ipa: ipa),
+        ],
+        forms: _wordForms[prompt] ?? const [],
+        definition: definition,
+        englishDefinition: _wordEnglishDefinitions[prompt] ?? '',
+        usagePatterns:
+            _wordPatterns[prompt] ??
+            collocations.take(2).toList(growable: false),
+        example: WordExample(
+          sentence: sentence,
+          translation: exampleDetails.length > 1 ? exampleDetails.last : '',
+        ),
+        collocations: collocations,
+        confusion: WordNote(
+          heading: distinctionLines.first,
+          body: distinctionLines.skip(1).join('\n'),
+        ),
+      ),
       sections: [
         CardBackSection(title: '核心释义', heading: meaning, body: explanation),
         CardBackSection(title: '例句搭配', heading: sentence, body: translation),
@@ -135,6 +172,79 @@ class DemoData {
       ],
     );
   }
+
+  static const _wordIpa = <String, String>{
+    'borrow': '/ˈbɒrəʊ/',
+    'lend': '/lend/',
+    'decide': '/dɪˈsaɪd/',
+    'practice': '/ˈpræktɪs/',
+    'important': '/ɪmˈpɔːtənt/',
+    'different': '/ˈdɪfrənt/',
+    'remember': '/rɪˈmembə/',
+    'example': '/ɪɡˈzɑːmpəl/',
+    'improve': '/ɪmˈpruːv/',
+    'language': '/ˈlæŋɡwɪdʒ/',
+    'favorite': '/ˈfeɪvərɪt/',
+    'because': '/bɪˈkɒz/',
+    'science': '/ˈsaɪəns/',
+    'history': '/ˈhɪstəri/',
+    'healthy': '/ˈhelθi/',
+    'exercise': '/ˈeksəsaɪz/',
+    'usually': '/ˈjuːʒuəli/',
+    'together': '/təˈɡeðə/',
+    'question': '/ˈkwestʃən/',
+    'answer': '/ˈɑːnsə/',
+  };
+
+  static const _wordForms = <String, List<String>>{
+    'lend': ['past / past participle: lent'],
+  };
+
+  static const _wordEnglishDefinitions = <String, String>{
+    'borrow': 'to take and use something that you will return',
+    'lend': 'to give something temporarily to another person',
+    'decide': 'to choose something after thinking about it',
+    'practice': 'to repeat an activity in order to improve',
+    'important': 'having a strong effect or great value',
+    'different': 'not the same as another person or thing',
+    'remember': 'to keep or bring information back to mind',
+    'example': 'something that shows what a rule or idea means',
+    'improve': 'to become better or make something better',
+    'language': 'a system people use to communicate',
+    'favorite': 'liked more than others of the same kind',
+    'because': 'for the reason that',
+    'science': 'the study of the natural world',
+    'history': 'events from the past and their study',
+    'healthy': 'in good physical condition or good for health',
+    'exercise': 'activity done to stay healthy or improve a skill',
+    'usually': 'in most situations or on most occasions',
+    'together': 'with another person or as one group',
+    'question': 'something asked in order to get information',
+    'answer': 'to reply to a question or request',
+  };
+
+  static const _wordPatterns = <String, List<String>>{
+    'borrow': ['borrow something from someone'],
+    'lend': ['lend someone something', 'lend something to someone'],
+    'decide': ['decide to do something'],
+    'practice': ['practice doing something'],
+    'important': ['be important for something', 'be important to someone'],
+    'different': ['be different from something'],
+    'remember': ['remember to do', 'remember doing'],
+    'example': ['give an example', 'for example'],
+    'improve': ['improve something', 'improve at something'],
+    'language': ['speak a language'],
+    'favorite': ['someone’s favorite thing'],
+    'because': ['because + clause'],
+    'science': ['the science of something'],
+    'history': ['the history of something'],
+    'healthy': ['stay healthy', 'be healthy for someone'],
+    'exercise': ['exercise regularly'],
+    'usually': ['usually + main verb'],
+    'together': ['do something together'],
+    'question': ['ask a question'],
+    'answer': ['answer a question'],
+  };
 
   static final List<StudyCard> _wordCards = [
     _word(
@@ -283,7 +393,7 @@ class DemoData {
     ),
     _word(
       'question',
-      'n./v. 问题；提问',
+      'n. 问题；疑问',
       '需要回答或解决的内容。',
       'May I ask a question?',
       'answer a question · question sb.\n我可以问一个问题吗？',
@@ -314,6 +424,7 @@ class DemoData {
       prompt: prompt,
       eyebrow: 'CHEMISTRY / FORMULA',
       supportingText: '$prompt · 相对分子质量 $mass',
+      hint: '$composition · 相对分子质量 $mass',
       sections: [
         CardBackSection(title: '化学式', heading: formula, body: '相对分子质量：$mass'),
         CardBackSection(title: '组成', heading: composition, body: ratio),

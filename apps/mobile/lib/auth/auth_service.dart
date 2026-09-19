@@ -33,10 +33,49 @@ abstract interface class AuthService {
   Future<void> signOut();
 }
 
-class SupabaseAuthService implements AuthService {
+abstract interface class AutomaticAvatarService {
+  Future<AppUser?> ensureAvatar(AppUser user);
+}
+
+class SupabaseAuthService implements AuthService, AutomaticAvatarService {
   SupabaseAuthService(this._client);
 
   final SupabaseClient _client;
+  final Map<String, String> _avatarUrls = {};
+  final Map<String, Future<AppUser?>> _avatarRequests = {};
+
+  @override
+  Future<AppUser?> ensureAvatar(AppUser user) {
+    if (user.avatarUrl?.trim().isNotEmpty ?? false) {
+      return Future.value(user);
+    }
+    return _avatarRequests.putIfAbsent(user.id, () async {
+      try {
+        final result = await _client.functions.invoke('generate-avatar');
+        final url = result.data is Map ? result.data['avatar_url'] : null;
+        if (url is String && url.trim().isNotEmpty) {
+          // Edge Functions may use an internal Docker host locally. Resolve
+          // generated storage objects using the mobile client's public host.
+          const prefix = '/storage/v1/object/public/generated-avatars/';
+          final path = Uri.tryParse(url)?.path;
+          _avatarUrls[user.id] = path != null && path.startsWith(prefix)
+              ? _client.storage
+                    .from('generated-avatars')
+                    .getPublicUrl(path.substring(prefix.length))
+              : url;
+        }
+        return _client.auth.currentUser?.id == user.id ? currentUser : null;
+      } catch (_) {
+        // Avatar availability must never prevent sign-in or onboarding.
+        return null;
+      } finally {
+        _avatarRequests.remove(user.id);
+      }
+    });
+  }
+
+  String? _nonEmpty(dynamic value) =>
+      value is String && value.trim().isNotEmpty ? value.trim() : null;
 
   AppUser? _mapUser(User? user) => user == null
       ? null
@@ -47,8 +86,9 @@ class SupabaseAuthService implements AuthService {
               user.userMetadata?['full_name'] as String? ??
               user.userMetadata?['name'] as String?,
           avatarUrl:
-              user.userMetadata?['avatar_url'] as String? ??
-              user.userMetadata?['picture'] as String?,
+              _nonEmpty(user.userMetadata?['avatar_url']) ??
+              _nonEmpty(user.userMetadata?['picture']) ??
+              _avatarUrls[user.id],
         );
 
   @override

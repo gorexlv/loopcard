@@ -1,30 +1,37 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
+import { Icon } from './ui-icon';
+import { RecallCard, RecallRatings, useCardMotion, type MemoryRating } from './recall-card';
 
 const cards = [
-  { front: 'H₂O', back: 'Water', detail: 'Two hydrogen atoms bonded to one oxygen atom.' },
-  { front: 'CO₂', back: 'Carbon dioxide', detail: 'One carbon atom bonded to two oxygen atoms.' },
-  { front: 'NaCl', back: 'Sodium chloride', detail: 'An ionic compound commonly known as table salt.' },
+  { front: 'H₂O', back: ['Water', '水'], detail: ['Two hydrogen atoms. One oxygen atom.', '两个氢原子，一个氧原子。'] },
+  { front: 'CO₂', back: ['Carbon dioxide', '二氧化碳'], detail: ['One carbon atom. Two oxygen atoms.', '一个碳原子，两个氧原子。'] },
+  { front: 'NaCl', back: ['Sodium chloride', '氯化钠'], detail: ['The compound we know as table salt.', '我们熟悉的食盐。'] },
 ];
 
 export function InlineStudyDemo({ chinese = false }: { chinese?: boolean }) {
   const [index, setIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [complete, setComplete] = useState(false);
+  const [lastRating, setLastRating] = useState<MemoryRating | null>(null);
+  const { leaving, advance } = useCardMotion();
   const card = cards[index];
-  const rate = () => {
+  const rate = (value: MemoryRating) => {
     if (!revealed) return;
-    if (index === cards.length - 1) setComplete(true);
-    else { setIndex((value) => value + 1); setRevealed(false); }
+    advance(value, () => { setLastRating(value); if (index === cards.length - 1) setComplete(true); else { setIndex(index + 1); setRevealed(false); } });
   };
-  const restart = () => { setIndex(0); setRevealed(false); setComplete(false); };
+  const restart = () => { setIndex(0); setRevealed(false); setComplete(false); setLastRating(null); };
 
-  return <div className="memory-card-scene inline-study-demo">
-    <div className="scene-progress"><span>{chinese ? '化学式入门' : 'Common Chemical Formulas'}</span><span>{Math.min(index + 1, cards.length)} / {cards.length}</span></div>
-    {complete ? <div className="inline-demo-complete"><strong>{chinese ? '你完成了一轮。' : 'You completed a loop.'}</strong><p>{chinese ? '真实学习也是这样简单：回忆、翻面、评价。' : 'That is the whole rhythm: recall, reveal, rate.'}</p><button type="button" onClick={restart}>{chinese ? '再试一次' : 'Try again'}</button></div> : <>
-      <button className={`scene-card ${revealed ? 'is-revealed' : ''}`} type="button" onClick={() => setRevealed((value) => !value)} aria-label={revealed ? 'Show prompt' : 'Reveal answer'}><small>{revealed ? 'BACK' : 'FRONT'}</small>{revealed ? <><strong>{card.back}</strong><p>{card.detail}</p></> : <><strong>{card.front}</strong><span>{chinese ? '点击翻看答案' : 'Tap to reveal'}</span></>}</button>
-      <div className="scene-ratings" aria-label={chinese ? '评价记忆' : 'Rate this memory'}><button type="button" disabled={!revealed} onClick={rate}>{chinese ? '记住了' : 'Remembered'}</button><button type="button" disabled={!revealed} onClick={rate}>{chinese ? '有点模糊' : 'A little fuzzy'}</button><button type="button" disabled={!revealed} onClick={rate}>{chinese ? '没记住' : 'Not yet'}</button></div>
-    </>}
+  return <div className="pocket-demo">
+    <div className="pocket-desk">
+      <div className="pocket-peek peek-left" aria-hidden="true"><span>Language</span><strong>serene</strong><small>/səˈriːn/</small></div>
+      <div className="pocket-peek peek-right" aria-hidden="true"><span>Ideas</span><strong>Less,<br />but better.</strong><small>LoopCard</small></div>
+      <div className="pocket-active">{complete ? <div className="pocket-complete"><Icon name="check" /><h2>{chinese ? '三张，记在心里。' : 'A little more yours.'}</h2><button className="button button-ghost" onClick={restart}><Icon name="repeat" />{chinese ? '再来一轮' : 'One more loop'}</button><Link href="/market">{chinese ? '挑选下一本' : 'Find your next deck'}</Link></div> : <RecallCard key={index} prompt={card.front} heading={card.back[chinese ? 1 : 0]} body={card.detail[chinese ? 1 : 0]} category={chinese ? '化学式' : 'Chemistry'} flipped={revealed} onFlip={() => setRevealed(!revealed)} index={index + 1} leaving={leaving} chinese={chinese} />}</div>
+    </div>
+    <div className="pocket-toolbar"><span>{chinese ? '化学式入门' : 'A little chemistry'}</span><div className="pocket-dots" aria-label={`${index + 1} / ${cards.length}`}>{cards.map((_, i) => <i key={i} data-current={i === index} data-done={i < index || complete} />)}</div></div>
+    <div className="pocket-actions">{!complete && (revealed ? <RecallRatings chinese={chinese} onRate={rate} disabled={Boolean(leaving)} /> : <button className="recall-reveal" onClick={() => setRevealed(true)}><Icon name="flip" />{chinese ? '翻看答案' : 'Turn the card'}</button>)}</div>
+    <p className="sr-only" aria-live="polite">{complete ? (chinese ? '本轮完成' : 'Loop complete') : `${index + 1} / ${cards.length}`}{lastRating ? ` · ${lastRating}` : ''}</p>
   </div>;
 }

@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:loopcard/cards/card_visuals.dart';
 import 'package:loopcard/models/card_models.dart';
+import 'package:loopcard/theme/loop_theme.dart';
 
 void main() {
   group('CardVisualEngine', () {
     const engine = CardVisualEngine();
 
-    test('recommends a distinct official theme for each knowledge kind', () {
-      expect(engine.recommend(CardKind.word).theme, CardThemeFamily.paper);
-      expect(engine.recommend(CardKind.formula).theme, CardThemeFamily.lab);
-      expect(engine.recommend(CardKind.problem).theme, CardThemeFamily.mono);
+    test('uses one glass theme for every knowledge kind', () {
+      expect(engine.recommend(CardKind.word).theme, CardThemeFamily.aurora);
+      expect(engine.recommend(CardKind.formula).theme, CardThemeFamily.aurora);
+      expect(engine.recommend(CardKind.problem).theme, CardThemeFamily.aurora);
     });
 
     test(
@@ -28,7 +29,7 @@ void main() {
         );
 
         expect(result.backgroundSource, CardBackgroundSource.official);
-        expect(result.theme, CardThemeFamily.cosmos);
+        expect(result.theme, CardThemeFamily.aurora);
         expect(result.usedFallback, isTrue);
       },
     );
@@ -53,6 +54,19 @@ void main() {
 
       expect(result.density, CardDensity.airy);
       expect(result.displayScale, greaterThan(1));
+    });
+
+    test('glass text stays readable across light and dark gradient stops', () {
+      for (final palette in [LoopTheme.darkPalette, LoopTheme.lightPalette]) {
+        final dark = identical(palette, LoopTheme.darkPalette);
+        final tokens = CardThemeTokens.fromPalette(palette);
+        for (final base in palette.gradient) {
+          final surface = Color.alphaBlend(Colors.white.withValues(alpha: dark ? 0.12 : 0.60), base);
+          for (final color in [tokens.foreground, tokens.muted, tokens.accent]) {
+            expect(_contrastRatio(color, surface), greaterThanOrEqualTo(4.5));
+          }
+        }
+      }
     });
 
     test('all official themes maintain high contrast foregrounds', () {

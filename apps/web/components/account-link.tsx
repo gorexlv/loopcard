@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { createClient } from '../lib/supabase/client';
 
-export function AccountLink({ compact = false }: { compact?: boolean }) {
+export function AccountLink({ compact = false, chinese = false }: { compact?: boolean; chinese?: boolean }) {
   const [account, setAccount] = useState<{ signedIn: boolean; initial: string }>({ signedIn: false, initial: 'P' });
   useEffect(() => {
     const supabase = createClient();
@@ -15,7 +15,8 @@ export function AccountLink({ compact = false }: { compact?: boolean }) {
     const { data } = supabase.auth.onAuthStateChange((_event, session) => update(session?.user));
     return () => data.subscription.unsubscribe();
   }, []);
-  const href = account.signedIn ? '/app/profile' : '/login?next=%2Fapp%2Fprofile';
-  if (compact) return <Link className="mobile-profile-link" href={href}>Profile <span aria-hidden="true">{account.initial}</span></Link>;
-  return <Link className="account-link header-profile" href={href} aria-label="Profile"><span className="profile-label">Profile</span><span className="profile-avatar" aria-hidden="true">{account.initial}</span></Link>;
+  const label = account.signedIn ? (chinese ? '我的卡包' : 'My decks') : (chinese ? '登录' : 'Sign in');
+  const target = account.signedIn ? '/app' : '/login?next=%2Fapp';
+  if (compact) return <Link className="mobile-profile-link" href={target}>{label}</Link>;
+  return <Link className="account-link" href={target}>{label}{account.signedIn && <span className="account-initial" aria-hidden="true">{account.initial}</span>}</Link>;
 }

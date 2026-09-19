@@ -13,9 +13,11 @@ import 'package:loopcard/screens/decks_screen.dart';
 import 'package:loopcard/screens/home_screen.dart';
 import 'package:loopcard/screens/profile_screen.dart';
 import 'package:loopcard/screens/onboarding_screen.dart';
+import 'package:loopcard/screens/ocr_result_screen.dart';
 import 'package:loopcard/screens/result_screen.dart';
 import 'package:loopcard/screens/splash_screen.dart';
 import 'package:loopcard/screens/study_screen.dart';
+import 'package:loopcard/screens/word_draft_review_screen.dart';
 import 'package:loopcard/theme/loop_theme.dart';
 
 void main() {
@@ -26,7 +28,9 @@ void main() {
       ..addFont(rootBundle.load('assets/fonts/Inter-Variable.ttf'));
     final noto = FontLoader('NotoSansSC')
       ..addFont(rootBundle.load('assets/fonts/NotoSansSC-Variable.ttf'));
-    await Future.wait([inter.load(), noto.load()]);
+    final newsreader = FontLoader('Newsreader')
+      ..addFont(rootBundle.load('assets/fonts/Newsreader-Variable.ttf'));
+    await Future.wait([inter.load(), noto.load(), newsreader.load()]);
   });
 
   Widget testApp(Widget home) => MaterialApp(
@@ -49,6 +53,12 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(testApp(home));
+    await tester.runAsync(
+      () => precacheImage(
+        const AssetImage('assets/brand/loopcard-app-icon.png'),
+        tester.element(find.byType(MaterialApp)),
+      ),
+    );
     await tester.pumpAndSettle();
   }
 
@@ -94,11 +104,57 @@ void main() {
     await tester.pumpAndSettle();
     await capture(tester, '03-card-front');
 
+    await tester.pumpWidget(
+      testApp(
+        StudyScreen(
+          deck: CardDeck(
+            id: 'long-word',
+            title: 'Long word',
+            subtitle: '',
+            kind: CardKind.word,
+            cards: const [
+              StudyCard(
+                id: 'characteristically',
+                prompt: 'characteristically',
+                hint: 'Think of something done in a typical way.',
+                sections: [
+                  CardBackSection(
+                    title: 'Meaning',
+                    heading: '典型地',
+                    body: '以某人或某物典型的方式。',
+                  ),
+                ],
+                wordContent: WordCardContent(
+                  partOfSpeech: 'adv.',
+                  pronunciations: [
+                    WordPronunciation(ipa: '/ˌkærəktəˈrɪstɪkli/'),
+                  ],
+                  definition: '典型地',
+                  example: WordExample(
+                    sentence: 'She was characteristically calm.',
+                    translation: '她一如既往地冷静。',
+                  ),
+                ),
+              ),
+            ],
+            mastered: 0,
+            fuzzy: 0,
+            forgotten: 0,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await capture(tester, '19-long-word-front');
+
+    await tester.pumpWidget(testApp(StudyScreen(deck: DemoData.wordDeck)));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('borrow'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('例句搭配'));
-    await tester.pumpAndSettle();
     await capture(tester, '04-card-back');
+    await tester.tap(find.byKey(const ValueKey('next-back-section')));
+    await tester.pumpAndSettle();
+    await capture(tester, '18-card-back-usage');
 
     await tester.pumpWidget(testApp(StudyScreen(deck: DemoData.formulaDeck)));
     await tester.pumpAndSettle();
@@ -122,12 +178,16 @@ void main() {
     await tester.pumpAndSettle();
     await capture(tester, '15-card-studio');
 
-    final attempts = DemoData.wordDeck.cards
+    final attempts = DemoData.wordDeck.cards.indexed
         .map(
-          (card) => CardAttempt(
-            cardId: card.id,
-            prompt: card.prompt,
-            familiarity: Familiarity.mastered,
+          (entry) => CardAttempt(
+            cardId: entry.$2.id,
+            prompt: entry.$2.prompt,
+            familiarity: entry.$1 < 12
+                ? Familiarity.mastered
+                : entry.$1 < 17
+                ? Familiarity.fuzzy
+                : Familiarity.forgotten,
           ),
         )
         .toList();
@@ -136,6 +196,62 @@ void main() {
     );
     await tester.pumpAndSettle();
     await capture(tester, '05-result');
+
+    await tester.pumpWidget(
+      testApp(
+        WordDraftReviewScreen(
+          initialDeckTitle: 'Captured words',
+          loadDrafts: () async => const [
+            WordCardDraft(
+              prompt: 'borrow',
+              sections: [
+                CardBackSection(
+                  title: 'Meaning',
+                  heading: 'v. 借入；借用',
+                  body: '暂时使用某物，并打算随后归还。',
+                ),
+                CardBackSection(
+                  title: 'Example & collocation',
+                  heading: 'borrow a book',
+                  body: 'May I borrow this book for the weekend?',
+                ),
+                CardBackSection(
+                  title: 'Common confusion',
+                  heading: 'borrow 与 lend',
+                  body: 'borrow 表示借入，lend 表示借出。',
+                ),
+              ],
+            ),
+          ],
+          onSave: (_, _) async {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await capture(tester, '16-word-draft-review');
+
+    await tester.pumpWidget(
+      testApp(
+        const OcrResultScreen(
+          words: [
+            'oobl',
+            'Unit',
+            'fly',
+            'flag',
+            'globe',
+            'glass',
+            'Listen',
+            'point',
+          ],
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    for (final word in ['oobl', 'Unit', 'Listen', 'point']) {
+      await tester.tap(find.text(word));
+    }
+    await tester.pumpAndSettle();
+    await capture(tester, '17-ocr-results');
   });
 
   testWidgets('captures brand and onboarding states', (tester) async {

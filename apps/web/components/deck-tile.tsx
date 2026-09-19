@@ -1,18 +1,15 @@
+import type { CSSProperties } from 'react';
 import type { PublicDeck } from '@loopcard/shared';
 import Link from 'next/link';
+import { CardPrompt } from './recall-card';
 
-export function DeckTile({ deck, embedded = false }: { deck: PublicDeck; embedded?: boolean }) {
+export function DeckTile({ deck, embedded = false, chinese = false }: { deck: PublicDeck; embedded?: boolean; chinese?: boolean }) {
   const href = `/market/${deck.slug}${embedded ? '?embedded=1' : ''}`;
-  const firstCard = deck.cards[0];
-  const front = firstCard?.prompt || deck.title.slice(0, 2);
-  const back = firstCard?.sections[0]?.heading || firstCard?.sections[0]?.body || deck.description;
-  return <Link href={href} className="deck-tile" style={{ '--accent': deck.accent } as React.CSSProperties}>
-    <div className="deck-tile-top"><span className="category">{deck.category}</span><span className="deck-open">Open deck ↗</span></div>
-    <div className="deck-face-stack" aria-label={`Front and back preview for ${deck.title}`}>
-      <div className="deck-face deck-face-back"><small>BACK</small><strong>{back}</strong><span>{firstCard?.sections[0]?.title || 'Answer'}</span></div>
-      <div className="deck-face deck-face-front"><small>FRONT</small><strong>{front}</strong><span>Tap to reveal</span></div>
-    </div>
-    <div className="deck-tile-copy"><h3>{deck.title}</h3><p>{deck.description}</p></div>
-    <div className="deck-meta"><span>{deck.cards.length} cards</span><span>{deck.saves.toLocaleString()} saves</span></div>
+  const prompt = deck.cards[0]?.prompt || deck.title;
+  const longestWord = Math.max(1, ...prompt.split(/\s+/).map((word) => Array.from(word).length));
+  const tone = ({ Language: 'sage', Science: 'blue', Design: 'rose', Arts: 'rose', Culture: 'sage', Business: 'blue', Technology: 'blue', Wellness: 'sage', '文化': 'sand' } as Record<string, string>)[deck.category] ?? 'sand';
+  return <Link href={href} className="deck-book" data-tone={tone}>
+    <div className="deck-cover" style={{ '--cover-word-length': longestWord } as CSSProperties}><span className="deck-cover-category">{deck.category}</span><strong className={prompt.length > 12 ? 'long-cover' : ''}><CardPrompt text={prompt} /></strong><span className="deck-cover-bottom"><span>LoopCard</span><span>{deck.cards.length.toString().padStart(2, '0')}</span></span></div>
+    <div className="deck-book-caption"><h3>{deck.title}</h3><span>{deck.cards.length} {chinese ? '张卡片' : 'cards'}</span></div>
   </Link>;
 }

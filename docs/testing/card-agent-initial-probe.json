@@ -1,0 +1,57 @@
+{
+  "executed_at": "2026-09-19T03:18:39.653300+00:00",
+  "endpoint": "http://127.0.0.1:54321/functions/v1/card-agent",
+  "model": "gpt-4o-mini",
+  "mocked": false,
+  "cases": [
+    {
+      "id": "W01",
+      "category": "单词卡",
+      "sources": [
+        {
+          "id": "p1",
+          "text": "borrow: to take and use something belonging to someone else and return it later. Example: May I borrow your pen?\nlend: to give something to someone temporarily, expecting it back. Example: Could you lend me your pen?"
+        }
+      ],
+      "steps": [
+        {
+          "action": "chat",
+          "input": "把 borrow 和 lend 做成单词卡。正面只显示英文单词，不要音标和词性；背面用中文释义和一个带中文翻译的英文例句。",
+          "request_rules": {
+            "preset": "word-simple",
+            "skill": "word",
+            "front": "单词居中，音标与词性作为辅助信息",
+            "back": "释义在上，例句在下",
+            "layout": "centered"
+          },
+          "status": 502,
+          "seconds": 1.32,
+          "response": {
+            "error": "provider_error"
+          }
+        }
+      ]
+    }
+  ],
+  "boundary_checks": [
+    {
+      "id": "B01",
+      "status": 400,
+      "expected": 400,
+      "seconds": 0.04,
+      "response": {
+        "error": "invalid_request"
+      }
+    },
+    {
+      "id": "B02",
+      "status": 400,
+      "expected": 400,
+      "seconds": 0.03,
+      "response": {
+        "error": "invalid_request"
+      }
+    }
+  ],
+  "test_user_deleted": true
+}

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/card_models.dart';
+import '../theme/loop_theme.dart';
 
 enum CardThemeFamily { aurora, paper, cosmos, lab, botanical, mono }
 
@@ -80,7 +81,7 @@ class CardVisualEngine {
     final usesCustom = requestedBackground != CardBackgroundSource.official;
     final fallback = usesCustom && !customBackgroundIsSafe;
     return ResolvedCardVisuals(
-      theme: preferences.theme ?? _themeFor(kind),
+      theme: CardThemeFamily.aurora,
       mood: preferences.mood,
       density: density,
       backgroundSource: fallback
@@ -94,12 +95,6 @@ class CardVisualEngine {
       usedFallback: fallback,
     );
   }
-
-  CardThemeFamily _themeFor(CardKind kind) => switch (kind) {
-    CardKind.word => CardThemeFamily.paper,
-    CardKind.formula => CardThemeFamily.lab,
-    CardKind.problem => CardThemeFamily.mono,
-  };
 
   CardDensity _densityFor(CardKind kind, int length) {
     if (length > 220) return CardDensity.compact;
@@ -126,54 +121,23 @@ class CardThemeTokens {
   final Color accent;
   final Color surface;
 
-  static CardThemeTokens forFamily(CardThemeFamily family) => switch (family) {
-    CardThemeFamily.aurora => const CardThemeTokens(
-      background: Color(0xFF10152D),
-      backgroundAlt: Color(0xFF34305F),
-      foreground: Color(0xFFF7F3FF),
-      muted: Color(0xFFC9C3DD),
-      accent: Color(0xFF8FE3CB),
-      surface: Color(0x261F2744),
-    ),
-    CardThemeFamily.paper => const CardThemeTokens(
-      background: Color(0xFFF0E7D5),
-      backgroundAlt: Color(0xFFD8C9AC),
-      foreground: Color(0xFF211C16),
-      muted: Color(0xFF655D51),
-      accent: Color(0xFFB0442F),
-      surface: Color(0x66FFFDF7),
-    ),
-    CardThemeFamily.cosmos => const CardThemeTokens(
-      background: Color(0xFF080B18),
-      backgroundAlt: Color(0xFF1B2347),
-      foreground: Color(0xFFF2F4FF),
-      muted: Color(0xFFB5BCDC),
-      accent: Color(0xFFFFC66E),
-      surface: Color(0x263A456D),
-    ),
-    CardThemeFamily.lab => const CardThemeTokens(
-      background: Color(0xFF092A31),
-      backgroundAlt: Color(0xFF164751),
-      foreground: Color(0xFFF0FBF8),
-      muted: Color(0xFFB8D4D1),
-      accent: Color(0xFFFFC857),
-      surface: Color(0x263D7C7C),
-    ),
-    CardThemeFamily.botanical => const CardThemeTokens(
-      background: Color(0xFF15251E),
-      backgroundAlt: Color(0xFF425B48),
-      foreground: Color(0xFFF4F2E7),
-      muted: Color(0xFFC7CDBF),
-      accent: Color(0xFFE8B975),
-      surface: Color(0x263F5948),
-    ),
-    CardThemeFamily.mono => const CardThemeTokens(
-      background: Color(0xFF111111),
-      backgroundAlt: Color(0xFF333333),
-      foreground: Color(0xFFF7F4EC),
-      muted: Color(0xFFC7C3BA),
-      accent: Color(0xFFE85D3F),
-      surface: Color(0x26FFFFFF),
-    ),
-  };
+  static CardThemeTokens forContext(BuildContext context) =>
+      fromPalette(context.loopColors);
+
+  // Compatibility for older stored theme choices: all resolve to one material.
+  static CardThemeTokens forFamily(CardThemeFamily family) =>
+      fromPalette(LoopTheme.darkPalette);
+
+  static CardThemeTokens fromPalette(LoopPalette palette) => CardThemeTokens(
+    background: palette.gradient.last,
+    backgroundAlt: palette.gradient.first,
+    foreground: palette.ink,
+    muted: palette.ink.computeLuminance() > 0.5
+        ? const Color(0xFFCEC8D8)
+        : palette.muted,
+    accent: palette.ink.computeLuminance() > 0.5
+        ? const Color(0xFF8FE3CB)
+        : const Color(0xFF176B60),
+    surface: palette.glass,
+  );
 }

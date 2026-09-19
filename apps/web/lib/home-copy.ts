@@ -1,7 +1,7 @@
 export const homeCopy = {
   en: {
     nav: ['Market', 'Tools', 'Journal'], open: 'Open LoopCard', home: 'LoopCard home', language: 'Switch to Chinese', themeLight: 'Use light theme', themeDark: 'Use dark theme',
-    hero: { eyebrow: 'A quieter way to remember', titleBefore: 'Keep ideas', titleMiddle: 'in', titleAccent: 'motion.', body: 'Create and study focused flashcards in your browser. Try five cards now—no account required.', primary: 'Try 5 cards', secondary: 'Explore decks', cardLabel: 'LoopCard memory cards', retain: 'To continue to have; to keep in memory.', reveal: 'FLIP TO REVEAL', water: 'Two hydrogen atoms. One oxygen. A bent, polar molecule.' },
+    hero: { eyebrow: 'A quieter way to remember', titleBefore: 'Keep ideas', titleMiddle: 'in', titleAccent: 'motion.', body: 'Create and study focused flashcards in your browser. No account required.', primary: 'Try 5 cards', secondary: 'Explore decks', cardLabel: 'LoopCard memory cards', retain: 'To continue to have; to keep in memory.', reveal: 'FLIP TO REVEAL', water: 'Two hydrogen atoms. One oxygen. A bent, polar molecule.' },
     stats: [['3 min', 'Average focused review loop'], ['One card', 'One clear thought at a time'], ['Any subject', 'Your memory sets the category']],
     community: 'Community memory', startDeck: 'Start with\na good deck.', browse: 'Browse the flashcard market →',
     method: { eyebrow: 'The LoopCard method', title: 'Less interface.\nMore recall.', cardTop: '04 / 20 · TAP TO FLIP', word: 'serene', meaning: 'Calm, peaceful, and untroubled.', steps: [['Make the front singular.', 'A word, question, formula, image, or idea. No competing signals.'], ['Reveal in layers.', 'Use compact back tabs for meaning, examples, sources, or distinctions.'], ['Rate honestly.', 'Clear, fuzzy, or forgotten. The next loop adapts to what you need.']] },
@@ -11,7 +11,7 @@ export const homeCopy = {
   },
   zh: {
     nav: ['卡组市场', '实用工具', '记忆手记'], open: '打开 LoopCard', home: 'LoopCard 首页', language: '切换至英文', themeLight: '切换浅色主题', themeDark: '切换深色主题',
-    hero: { eyebrow: '一种更安静的记忆方式', titleBefore: '让想法', titleMiddle: '持续', titleAccent: '流动。', body: '直接在浏览器制作并复习卡片。现在试学五张，无需注册。', primary: '试学 5 张卡', secondary: '探索卡组', cardLabel: 'LoopCard 记忆卡片', retain: '继续拥有；把它保留在记忆中。', reveal: '翻转查看答案', water: '两个氢原子，一个氧原子。弯曲结构的极性分子。' },
+    hero: { eyebrow: '一种更安静的记忆方式', titleBefore: '让想法', titleMiddle: '持续', titleAccent: '流动。', body: '直接在浏览器制作并复习卡片。无需注册，即可开始。', primary: '试学 5 张卡', secondary: '探索卡组', cardLabel: 'LoopCard 记忆卡片', retain: '继续拥有；把它保留在记忆中。', reveal: '翻转查看答案', water: '两个氢原子，一个氧原子。弯曲结构的极性分子。' },
     stats: [['3 分钟', '一次专注复习的平均时长'], ['一张卡片', '每次只聚焦一个清晰想法'], ['任何主题', '由你的记忆定义分类']],
     community: '社区记忆', startDeck: '从一个好卡组\n开始。', browse: '浏览卡组市场 →',
     method: { eyebrow: 'LoopCard 记忆方法', title: '更少界面，\n更多回忆。', cardTop: '04 / 20 · 点击翻转', word: 'serene', meaning: '平静、安宁，不受打扰。', steps: [['让正面保持单一。', '一个单词、问题、公式、图片或想法，不让多个信号互相竞争。'], ['分层揭示答案。', '用紧凑标签组织含义、例子、来源与差异。'], ['诚实评价记忆。', '清晰、模糊或忘记，下一轮会适应你真正的需要。']] },

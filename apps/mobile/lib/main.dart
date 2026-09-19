@@ -1,9 +1,11 @@
+import 'ocr/openrouter_text_recognizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'auth/auth_service.dart';
+import 'ai/word_card_generator.dart';
 import 'auth/supabase_runtime_config.dart';
 import 'auth/test_auto_login.dart';
 import 'data/deck_repository.dart';
@@ -12,15 +14,14 @@ import 'l10n/app_localizations.dart';
 import 'ocr/on_device_word_capture_flow.dart';
 import 'ocr/word_capture_flow.dart';
 import 'onboarding/onboarding_store.dart';
+import 'reminders/practice_reminder.dart';
 import 'screens/app_entry.dart';
 import 'settings/app_settings.dart';
 import 'theme/loop_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-  final wordCaptureFlow = OnDeviceWordCaptureFlow.standard();
 
   final authConfig = SupabaseRuntimeConfig.resolve(
     configuredUrl: const String.fromEnvironment('SUPABASE_URL'),
@@ -37,6 +38,11 @@ Future<void> main() async {
     ),
   );
   final client = Supabase.instance.client;
+  final wordCaptureFlow = OnDeviceWordCaptureFlow(
+    camera: SystemCameraImagePathSource(),
+    cropper: SystemCapturedImageCropper(),
+    recognizer: OpenRouterTextRecognizer(client),
+  );
   final authService = SupabaseAuthService(client);
   await TestAutoLogin.run(authService);
 
@@ -54,6 +60,9 @@ Future<void> main() async {
       initialSettings: settings,
       authService: authService,
       deckRepository: SupabaseDeckRepository(client),
+      wordCardGenerator: SupabaseWordCardGenerator(client),
+      reminderStore: SharedPreferencesPracticeReminderStore(),
+      reminderScheduler: LocalPracticeReminderScheduler(),
     ),
   );
 }
@@ -68,6 +77,9 @@ class LoopCardApp extends StatefulWidget {
     this.settingsStore,
     this.authService,
     this.deckRepository,
+    this.wordCardGenerator,
+    this.reminderStore,
+    this.reminderScheduler,
     this.initialSettings = const AppSettings(
       locale: Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
       themeMode: ThemeMode.dark,
@@ -81,6 +93,9 @@ class LoopCardApp extends StatefulWidget {
   final AppSettingsStore? settingsStore;
   final AuthService? authService;
   final DeckRepository? deckRepository;
+  final WordCardGenerator? wordCardGenerator;
+  final PracticeReminderStore? reminderStore;
+  final PracticeReminderScheduler? reminderScheduler;
   final AppSettings initialSettings;
 
   @override
@@ -123,6 +138,10 @@ class _LoopCardAppState extends State<LoopCardApp> {
         authService: widget.authService ?? MemoryAuthService.authenticated(),
         deckRepository:
             widget.deckRepository ?? MemoryDeckRepository(DemoData.decks),
+        wordCardGenerator:
+            widget.wordCardGenerator ?? const MemoryWordCardGenerator(),
+        reminderStore: widget.reminderStore ?? MemoryPracticeReminderStore(),
+        reminderScheduler: widget.reminderScheduler,
         wordCaptureFlow: widget.wordCaptureFlow,
         onboardingStore:
             widget.onboardingStore ?? MemoryOnboardingStore(completed: true),

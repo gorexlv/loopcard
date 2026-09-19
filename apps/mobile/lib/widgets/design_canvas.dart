@@ -7,6 +7,7 @@ class DesignCanvas extends StatelessWidget {
     super.key,
     required this.child,
     this.resizeToAvoidBottomInset = true,
+    this.backgroundColor,
   });
 
   static const double width = 390;
@@ -14,6 +15,7 @@ class DesignCanvas extends StatelessWidget {
 
   final Widget child;
   final bool resizeToAvoidBottomInset;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -21,17 +23,10 @@ class DesignCanvas extends StatelessWidget {
       key: const ValueKey('design-canvas'),
       child: Scaffold(
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-        backgroundColor: context.loopColors.pageBackground,
-        body: Center(
-          child: FittedBox(
-            fit: BoxFit.contain,
-            child: SizedBox(
-              key: const ValueKey('design-canvas-content'),
-              width: width,
-              height: height,
-              child: child,
-            ),
-          ),
+        backgroundColor: backgroundColor ?? context.loopColors.pageBackground,
+        body: SizedBox.expand(
+          key: const ValueKey('design-canvas-content'),
+          child: child,
         ),
       ),
     );
@@ -47,33 +42,33 @@ class GradientPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.loopColors;
     return ClipRRect(
-      borderRadius: BorderRadius.circular(32),
+      borderRadius: BorderRadius.circular(
+        MediaQuery.sizeOf(context).width < 600 ? 32 : 0,
+      ),
       child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment(-1, -0.45),
-            end: Alignment(1, 0.45),
+            begin: const Alignment(-1, -0.45),
+            end: const Alignment(1, 0.45),
             colors: palette.gradient,
-            stops: [0, 0.50, 0.95],
+            stops: const [0, 0.50, 0.95],
           ),
         ),
         child: Stack(
-          clipBehavior: Clip.none,
+          fit: StackFit.expand,
           children: [
-            Positioned.fill(
-              child: IgnorePointer(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.transparent,
-                        palette.bottomScrim,
-                      ],
-                      stops: [0, 0.56, 1],
-                    ),
+            IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.transparent,
+                      palette.bottomScrim,
+                    ],
+                    stops: const [0, 0.56, 1],
                   ),
                 ),
               ),

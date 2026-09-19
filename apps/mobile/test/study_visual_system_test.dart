@@ -34,15 +34,17 @@ void main() {
 
     expect(find.byKey(const ValueKey('problem-composition')), findsOneWidget);
     expect(find.text('关键突破'), findsNothing);
-    expect(find.text('门清儿'), findsNothing);
+    expect(find.text('熟悉'), findsOneWidget);
 
     await tester.tap(find.byType(EditorialCard));
     await tester.pumpAndSettle();
 
     expect(find.text('关键突破'), findsWidgets);
-    expect(find.text('门清儿'), findsOneWidget);
+    expect(find.text('记不牢'), findsOneWidget);
 
-    await tester.tap(find.text('方法迁移'));
+    await tester.tap(find.byKey(const ValueKey('next-back-section')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('next-back-section')));
     await tester.pumpAndSettle();
 
     expect(find.textContaining('总量 ÷ 份数'), findsOneWidget);

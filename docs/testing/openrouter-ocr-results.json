@@ -1,0 +1,41 @@
+{
+  "fixture_type": "synthetic clean printed text, not camera photos",
+  "model": "qwen/qwen3-vl-235b-a22b-instruct",
+  "cases": [
+    {
+      "name": "英文单词",
+      "expected": "borrow: 借入\nlend: 借出\nMay I borrow your pen?",
+      "status": 200,
+      "seconds": 2.45,
+      "response": {
+        "text": "borrow: 借入\nlend: 借出\nMay I borrow your pen?",
+        "model": "qwen/qwen3-vl-235b-a22b-instruct"
+      },
+      "exact_match": true
+    },
+    {
+      "name": "诗词",
+      "expected": "静夜思 李白\n床前明月光，疑是地上霜。\n举头望明月，低头思故乡。",
+      "status": 200,
+      "seconds": 1.85,
+      "response": {
+        "text": "静夜思 李白\n床前明月光，疑是地上霜。\n举头望明月，低头思故乡。",
+        "model": "qwen/qwen3-vl-235b-a22b-instruct"
+      },
+      "exact_match": true
+    },
+    {
+      "name": "古文繁体",
+      "expected": "學而時習之，不亦說乎？\n人不知而不慍，不亦君子乎？\n說：yuè，同「悅」。",
+      "status": 200,
+      "seconds": 2.76,
+      "response": {
+        "text": "學而時習之，不亦說乎？\n人不知而不慍，不亦君子乎？\n說：yuè，同「悅」。",
+        "model": "qwen/qwen3-vl-235b-a22b-instruct"
+      },
+      "exact_match": true
+    }
+  ],
+  "authentication_and_validation": "passed",
+  "test_user_deleted": true
+}

@@ -15,6 +15,16 @@ void main() {
     prompt: 'borrow',
     eyebrow: 'LANGUAGE / 01',
     supportingText: '/ˈbɒrəʊ/ · verb',
+    hint: 'Starts with b · 6 letters',
+    wordContent: WordCardContent(
+      partOfSpeech: 'v.',
+      pronunciations: [WordPronunciation(region: 'UK', ipa: '/ˈbɒrəʊ/')],
+      definition: '借入；借用',
+      example: WordExample(
+        sentence: 'May I borrow this book?',
+        translation: '我可以借这本书吗？',
+      ),
+    ),
     sections: [
       CardBackSection(
         title: '核心释义',
@@ -58,10 +68,88 @@ void main() {
     );
 
     expect(find.byKey(const ValueKey('word-composition')), findsOneWidget);
-    expect(find.byKey(const ValueKey('word-classification')), findsOneWidget);
-    expect(find.byKey(const ValueKey('lexical-rule')), findsOneWidget);
+    expect(find.byKey(const ValueKey('word-classification')), findsNothing);
+    expect(find.byKey(const ValueKey('word-prompt-fit')), findsOneWidget);
+    expect(find.byKey(const ValueKey('word-cue-mask')), findsOneWidget);
+    expect(find.byKey(const ValueKey('revealed-word-cue')), findsNothing);
+    expect(find.text('v.   UK /ˈbɒrəʊ/'), findsNothing);
+    expect(find.byKey(const ValueKey('lexical-rule')), findsNothing);
+    expect(find.text('LANGUAGE / 01'), findsNothing);
+    expect(find.text('/ˈbɒrəʊ/ · verb'), findsNothing);
+    expect(find.text('Reveal hint'), findsOneWidget);
+    expect(find.text('Starts with b · 6 letters'), findsNothing);
     expect(find.text('borrow'), findsOneWidget);
-    expect(find.bySemanticsLabel('卡片正面：borrow'), findsOneWidget);
+    expect(find.bySemanticsLabel('Card front: borrow'), findsOneWidget);
+    final fit = tester.widget<FittedBox>(
+      find.byKey(const ValueKey('word-prompt-fit')),
+    );
+    final prompt = tester.widget<Text>(find.text('borrow'));
+    expect(fit.alignment, Alignment.center);
+    expect(prompt.style?.fontFamily, 'Inter');
+    expect(prompt.style?.fontWeight, FontWeight.w600);
+    expect(
+      tester.getTopLeft(find.byKey(const ValueKey('word-cue-mask'))).dy,
+      greaterThan(tester.getBottomLeft(find.text('borrow')).dy),
+    );
+  });
+
+  testWidgets('reveals part of speech and IPA in place', (tester) async {
+    var revealed = false;
+    await tester.pumpWidget(
+      app(
+        StatefulBuilder(
+          builder: (context, setState) => EditorialCard(
+            card: word,
+            kind: CardKind.word,
+            hintRevealed: revealed,
+            onHintTap: () => setState(() => revealed = true),
+          ),
+        ),
+      ),
+    );
+
+    final maskedRect = tester.getRect(
+      find.byKey(const ValueKey('word-cue-surface')),
+    );
+    await tester.tap(find.byKey(const ValueKey('card-hint-action')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('word-cue-mask')), findsNothing);
+    expect(find.byKey(const ValueKey('revealed-word-cue')), findsOneWidget);
+    expect(
+      tester.getRect(find.byKey(const ValueKey('word-cue-surface'))),
+      maskedRect,
+    );
+  });
+
+  testWidgets('keeps a long word on one line and scales it to the card', (
+    tester,
+  ) async {
+    const longWord = StudyCard(
+      id: 'characteristically',
+      prompt: 'characteristically',
+      sections: [
+        CardBackSection(title: 'Meaning', heading: '典型地', body: '以某人或某物典型的方式。'),
+      ],
+      wordContent: WordCardContent(
+        partOfSpeech: 'adv.',
+        definition: '典型地',
+        example: WordExample(
+          sentence: 'She was characteristically calm.',
+          translation: '她一如既往地冷静。',
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(
+      app(const EditorialCard(card: longWord, kind: CardKind.word)),
+    );
+
+    final prompt = tester.widget<Text>(find.text('characteristically'));
+    expect(prompt.maxLines, 1);
+    expect(prompt.style?.fontFamily, 'Inter');
+    expect(find.byKey(const ValueKey('word-prompt-fit')), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('renders distinct formula front composition', (tester) async {
@@ -100,7 +188,104 @@ void main() {
     expect(find.byKey(const ValueKey('answer-heading')), findsOneWidget);
     expect(find.byKey(const ValueKey('answer-body')), findsOneWidget);
     expect(find.byKey(const ValueKey('answer-step-0')), findsOneWidget);
-    expect(find.bySemanticsLabel('卡片背面：速度 = 路程 ÷ 时间'), findsOneWidget);
+    expect(find.bySemanticsLabel('Card back: 速度 = 路程 ÷ 时间'), findsOneWidget);
+    expect(find.bySemanticsLabel('关键突破'), findsOneWidget);
+    expect(find.bySemanticsLabel('Answer detail'), findsOneWidget);
+  });
+
+  testWidgets('back exposes readable content and 48dp paging controls', (
+    tester,
+  ) async {
+    const pagedWord = StudyCard(
+      id: 'paged-word',
+      prompt: 'borrow',
+      sections: [
+        CardBackSection(
+          title: 'Meaning',
+          heading: '借入；借用',
+          body: '暂时取得并在之后归还。',
+        ),
+        CardBackSection(
+          title: 'Example & collocation',
+          heading: 'borrow a book',
+          body: 'May I borrow this book?',
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      app(
+        EditorialCard(
+          card: pagedWord,
+          kind: CardKind.word,
+          face: CardFace.back,
+          onTap: () {},
+          onSectionChanged: (_) {},
+        ),
+      ),
+    );
+
+    expect(find.bySemanticsLabel('Card back: 借入；借用'), findsOneWidget);
+    expect(find.bySemanticsLabel('暂时取得并在之后归还。'), findsOneWidget);
+    expect(find.bySemanticsLabel('Explanation 1 / 2'), findsOneWidget);
+    expect(find.byTooltip('Previous explanation'), findsOneWidget);
+    expect(find.byTooltip('Next explanation'), findsOneWidget);
+    expect(
+      tester.getSize(find.byKey(const ValueKey('previous-back-section'))),
+      const Size(48, 48),
+    );
+    expect(
+      tester.getSize(find.byKey(const ValueKey('next-back-section'))),
+      const Size(48, 48),
+    );
+  });
+
+  testWidgets('structured word back keeps lexical metadata in its header', (
+    tester,
+  ) async {
+    var pronunciationPlayed = false;
+    const structuredWord = StudyCard(
+      id: 'structured-word',
+      prompt: 'borrow',
+      sections: [
+        CardBackSection(
+          title: 'Meaning',
+          heading: '借入；借用',
+          body: '暂时取得并在之后归还。',
+        ),
+      ],
+      wordContent: WordCardContent(
+        partOfSpeech: 'v.',
+        pronunciations: [WordPronunciation(region: 'UK', ipa: '/ˈbɒrəʊ/')],
+        definition: '借入；借用',
+        englishDefinition: 'to take something temporarily and return it',
+        usagePatterns: ['borrow something from someone'],
+        example: WordExample(
+          sentence: 'May I borrow your charger?',
+          translation: '我可以借用你的充电器吗？',
+        ),
+        collocations: ['borrow money', 'borrow a book'],
+      ),
+    );
+
+    await tester.pumpWidget(
+      app(
+        EditorialCard(
+          card: structuredWord,
+          kind: CardKind.word,
+          face: CardFace.back,
+          onPronounce: () => pronunciationPlayed = true,
+          onSectionChanged: (_) {},
+        ),
+      ),
+    );
+
+    expect(find.text('borrow'), findsOneWidget);
+    expect(find.text('v.'), findsOneWidget);
+    expect(find.text('UK /ˈbɒrəʊ/'), findsOneWidget);
+    expect(find.text('borrow something from someone'), findsOneWidget);
+    expect(find.bySemanticsLabel('Explanation 1 / 2'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('play-word-pronunciation')));
+    expect(pronunciationPlayed, isTrue);
   });
 
   testWidgets('long back content scrolls without overflow', (tester) async {

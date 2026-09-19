@@ -23,6 +23,8 @@ Never ask for or use the Supabase service-role key. The CLI stores only the sign
 - Use `get_deck` when the card list or back sections are needed.
 - Use `create_deck` before adding cards to a new collection.
 - Use `create_card` with concise front text and one or more clearly named back sections.
+- For English vocabulary cards, also use the `word-card-generation` Skill and
+  satisfy its content contract before calling `create_card`.
 - Report the returned deck or card ID after creating data.
 
 Do not invent IDs or claim a write succeeded without a successful tool result.
