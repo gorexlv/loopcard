@@ -38,7 +38,7 @@ export default async function MarketDetail({ params, searchParams }: { params: P
       <nav className="breadcrumbs" aria-label="Breadcrumb">{!embedded && <><Link href="/">Home</Link><span>／</span></>}<Link href={marketHref}>Flashcard decks</Link><span>／</span><span>{deck.title}</span></nav>
       <header className="deck-detail-hero">
         <div className="deck-detail-title"><span className="eyebrow">{deck.category} · By {deck.author}</span><h1>{deck.title}</h1></div>
-        <div className="deck-detail-summary"><p>{deck.description}</p><dl><div><dt>{deck.cards.length}</dt><dd>Cards</dd></div><div><dt>{deck.saves.toLocaleString()}</dt><dd>Saves</dd></div></dl>
+        <div className="deck-detail-summary"><p>{deck.description}</p><dl><div><dt>{deck.cards.length}</dt><dd>Cards</dd></div></dl>
           {query.status === 'added' && <div className="form-message" role="status">Added to your decks. You can start now.</div>}
           {query.status === 'already' && <div className="form-message" role="status">Already in your library. Ready when you are.</div>}
           {query.error && <div className="form-message form-error" role="alert">{query.error}</div>}

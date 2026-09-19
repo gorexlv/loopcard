@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import './afterimage.css';
+import './fonts.css';
 import './quiet.css';
+import './system.css';
 import { site } from '../lib/seo';
 
 export const metadata: Metadata = {
@@ -23,8 +25,8 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f3f0e9' },
-    { media: '(prefers-color-scheme: dark)', color: '#202334' },
+    { media: '(prefers-color-scheme: light)', color: '#f5f3ed' },
+    { media: '(prefers-color-scheme: dark)', color: '#192720' },
   ],
   colorScheme: 'light dark',
 };
@@ -33,7 +35,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const preferenceScript = `(function(){try{var t=localStorage.getItem('loopcard-theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';var l=localStorage.getItem('loopcard-locale')==='zh'?'zh':'en';document.documentElement.dataset.theme=t;document.documentElement.dataset.locale=l;document.documentElement.lang=l==='zh'?'zh-CN':'en'}catch(e){}})()`;
   return (
     <html lang="en" suppressHydrationWarning>
-      <head><script dangerouslySetInnerHTML={{ __html: preferenceScript }} /></head>
+      <head><link rel="preload" href="/fonts/loop-sans-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" /><script dangerouslySetInnerHTML={{ __html: preferenceScript }} /></head>
       <body>{children}</body>
     </html>
   );

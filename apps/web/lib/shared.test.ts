@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getPublicDeck, publicDecks } from '@loopcard/shared';
+import { getPublicDeck, publicDecks, editorialOrder } from '@loopcard/shared';
 import { codexPlugin, mobileDownloads } from './downloads';
 import { heroParticles } from './hero-motion';
 import { resolveLocale, resolveTheme } from './preferences';
@@ -7,6 +7,21 @@ import { resolveLocale, resolveTheme } from './preferences';
 describe('public deck catalog', () => {
   it('provides unique indexable slugs and usable cards', () => { expect(new Set(publicDecks.map((deck) => deck.slug)).size).toBe(publicDecks.length); expect(publicDecks.every((deck) => deck.cards.length > 0)).toBe(true); });
   it('offers at least 50 decks across a broad set of filters', () => { expect(publicDecks.length).toBeGreaterThanOrEqual(50); expect(new Set(publicDecks.map((deck) => deck.category)).size).toBeGreaterThanOrEqual(8); });
+  it('only recommends complete collections with real answers and text-only usable prompts', () => {
+    for (const slug of editorialOrder) {
+      const deck = getPublicDeck(slug);
+      expect(deck?.editorialStatus).toBe('ready');
+      expect(deck?.cards.length).toBeGreaterThanOrEqual(3);
+      for (const card of deck!.cards) {
+        expect(card.sections[0].body).not.toMatch(/This card keeps|practical context, then recall/);
+        expect(card.sections[0].heading).not.toMatch(/^Remember /);
+      }
+    }
+    expect(getPublicDeck('everyday-english-core')!.cards[0].prompt).toContain('your pen');
+    expect(getPublicDeck('arts-40-photography-basics')!.cards[0].prompt).toContain('f/2');
+    expect(getPublicDeck('arts-37-color-theory')!.cards[0].prompt).toContain('blue and orange');
+    expect(publicDecks.filter((deck) => deck.editorialStatus !== 'draft').flatMap((deck) => deck.cards).every((card) => !card.sections.some((section) => section.body.includes('This card keeps')))).toBe(true);
+  });
   it('contains the complete zodiac CLI fixture', () => { const deck = getPublicDeck('chinese-zodiac-origins'); expect(deck?.cards).toHaveLength(12); expect(deck?.cards[0].prompt).toBe('子鼠'); expect(deck?.cards[11].prompt).toBe('亥猪'); });
 });
 

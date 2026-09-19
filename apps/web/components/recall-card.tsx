@@ -1,6 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
+import type { MemoryCard } from '@loopcard/shared';
+import { CardVisual, visualQuestion } from './card-visual';
 import { Icon } from './ui-icon';
 
 export type MemoryRating = 'forgot' | 'fuzzy' | 'clear';
@@ -27,15 +29,17 @@ export function CardPrompt({ text }: { text: string }) {
   return <>{Array.from(text).map((character, index) => '₀₁₂₃₄₅₆₇₈₉'.includes(character) ? <sub key={index}>{'₀₁₂₃₄₅₆₇₈₉'.indexOf(character)}</sub> : character)}</>;
 }
 
-export function RecallCard({ prompt, heading, body, category, answerLabel, flipped, onFlip, index = 1, leaving = null, disabled = false, chinese = false }: {
-  prompt: string; heading?: string; body?: string; category: string; answerLabel?: string;
+export function RecallCard({ prompt, visual, heading, body, category, answerLabel, flipped, onFlip, index = 1, leaving = null, disabled = false, chinese = false }: {
+  prompt: string; visual?: MemoryCard['visual']; heading?: string; body?: string; category: string; answerLabel?: string;
   flipped: boolean; onFlip: () => void; index?: number; leaving?: MemoryRating | null; disabled?: boolean; chinese?: boolean;
 }) {
-  return <div className="recall-object" data-leaving={leaving ?? undefined}>
+  const longestWord = Math.max(1, ...prompt.split(/\s+/).map((word) => Array.from(word).length));
+  return <div className="recall-object" data-leaving={leaving ?? undefined} style={{ '--prompt-word-length': longestWord } as CSSProperties}>
     <button className="recall-card" type="button" data-flipped={flipped} aria-pressed={flipped} disabled={disabled || Boolean(leaving)} aria-label={chinese ? (flipped ? '查看正面' : '翻看答案') : (flipped ? 'Show prompt' : 'Reveal answer')} onClick={onFlip}>
-      <span className="recall-face recall-front" aria-hidden={flipped}>
+      <span className="recall-face recall-front" data-illustrated={Boolean(visual)} aria-hidden={flipped}>
         <span className="recall-meta"><span>{category}</span><Icon name="flip" /></span>
-        <span className={`recall-word ${prompt.length > 35 ? 'recall-word-long' : ''}`}><CardPrompt text={prompt} /></span>
+        <CardVisual kind={visual} />
+        <span className={`recall-word ${prompt.length > 35 ? 'recall-word-long' : ''}`}><CardPrompt text={visualQuestion(prompt, visual)} /></span>
         <span className="recall-imprint"><span>LoopCard</span><span>{String(index).padStart(2, '0')}</span></span>
       </span>
       <span className="recall-face recall-back" aria-hidden={!flipped}>
