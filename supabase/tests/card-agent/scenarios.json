@@ -1,0 +1,159 @@
+[
+  {
+    "id": "W01",
+    "category": "单词卡",
+    "preset": "word-simple",
+    "sources": [
+      {
+        "id": "p1",
+        "text": "borrow: to take and use something belonging to someone else and return it later. Example: May I borrow your pen?\nlend: to give something to someone temporarily, expecting it back. Example: Could you lend me your pen?"
+      }
+    ],
+    "turns": [
+      "把 borrow 和 lend 做成单词卡。正面只显示英文单词，不要音标和词性；背面用中文释义和一个带中文翻译的英文例句。",
+      "背面改成先例句、后释义。继续保持正面只有英文单词。"
+    ],
+    "generate": true
+  },
+  {
+    "id": "W02",
+    "category": "单词卡：歧义澄清",
+    "preset": "word-simple",
+    "sources": [
+      {
+        "id": "p1",
+        "text": "bank"
+      }
+    ],
+    "turns": [
+      "我要做 bank 的单词卡，但不确定该用哪个意思。请先问我需要补充什么信息，暂时不要生成。"
+    ],
+    "generate": false
+  },
+  {
+    "id": "W03",
+    "category": "单词卡：多图去重",
+    "preset": "word-simple",
+    "sources": [
+      {
+        "id": "p1",
+        "text": "apple: 苹果。pear: 梨。"
+      },
+      {
+        "id": "p2",
+        "text": "apple: 苹果。banana: 香蕉。"
+      }
+    ],
+    "turns": [
+      "把两页里的英语单词都做成卡片。同一个单词只做一张，重复出现的 apple 保留两页来源。正面英文，背面中文释义和简单例句。"
+    ],
+    "generate": true
+  },
+  {
+    "id": "P01",
+    "category": "诗词卡：默认入口切换",
+    "preset": "word-simple",
+    "sources": [
+      {
+        "id": "p1",
+        "text": "《静夜思》 李白\n床前明月光，疑是地上霜。\n举头望明月，低头思故乡。"
+      }
+    ],
+    "turns": [
+      "这次不是英语单词，是古诗。请为《静夜思》选一个合适的卡片方案。正面展示题目和作者，背面完整原诗和白话释义。"
+    ],
+    "generate": true
+  },
+  {
+    "id": "P02",
+    "category": "诗词卡：逐句背诵",
+    "preset": "poetry-recall",
+    "sources": [
+      {
+        "id": "p1",
+        "text": "《静夜思》 李白\n床前明月光，疑是地上霜。\n举头望明月，低头思故乡。"
+      }
+    ],
+    "turns": [
+      "做两张接句背诵卡：正面分别为“床前明月光”和“举头望明月”；背面分别给出对应的下一句，再加该联白话解释。保持诗句原文，不要改写。",
+      "正面不能泄露下一句。背面先显示下一句，再显示解释。"
+    ],
+    "generate": true
+  },
+  {
+    "id": "P03",
+    "category": "诗词卡：作者纠错",
+    "preset": "poetry-overview",
+    "sources": [
+      {
+        "id": "p1",
+        "text": "《静夜思》 李白\n床前明月光，疑是地上霜。\n举头望明月，低头思故乡。"
+      }
+    ],
+    "turns": [
+      "我想把杜甫的《静夜思》做成作者记忆卡。请先核对我的说法与素材是否一致，不要直接沿用错误作者。"
+    ],
+    "generate": false
+  },
+  {
+    "id": "C01",
+    "category": "古文卡：原文与翻译",
+    "preset": "word-simple",
+    "sources": [
+      {
+        "id": "p1",
+        "text": "《论语·学而》\n学而时习之，不亦说乎？\n有朋自远方来，不亦乐乎？\n人不知而不愠，不亦君子乎？"
+      }
+    ],
+    "turns": [
+      "为这段古文选合适的卡片类型，按三句各做一张。正面古文原句，背面依次为白话翻译、重点字词、句意说明。"
+    ],
+    "generate": true
+  },
+  {
+    "id": "C02",
+    "category": "古文卡：重点字词",
+    "preset": "classical-words",
+    "sources": [
+      {
+        "id": "p1",
+        "text": "《论语·学而》：学而时习之，不亦说乎？人不知而不愠，不亦君子乎？\n注：说，同“悦”，yuè，高兴、愉快。愠，yùn，生气、恼怒。"
+      }
+    ],
+    "turns": [
+      "只为“说”和“愠”做两张字词卡。正面只写字；背面包含本文读音、古义、对应原句。不要按现代常用读音把这里的“说”读成 shuō。",
+      "背面顺序改为：原句、读音、古义。"
+    ],
+    "generate": true
+  },
+  {
+    "id": "C03",
+    "category": "古文卡：素材不足",
+    "preset": "classical-translation",
+    "sources": [
+      {
+        "id": "p1",
+        "text": "《滕王阁序》"
+      }
+    ],
+    "turns": [
+      "请把这份材料制作成全文逐句翻译卡。如果我提供的材料不足，请先告诉我需要补充什么，不要自行补全文。"
+    ],
+    "generate": false
+  },
+  {
+    "id": "S01",
+    "category": "跨类型：能力边界",
+    "preset": "poetry-overview",
+    "sources": [
+      {
+        "id": "p1",
+        "text": "《静夜思》 李白：床前明月光，疑是地上霜。"
+      }
+    ],
+    "turns": [
+      "请制作诗词卡，并在正面直接嵌入一段自动播放的朗诵音频和动态水墨背景。如果当前卡片不支持这些能力，请明确说明，并提供可用替代方案。"
+    ],
+    "generate": false
+  }
+]

@@ -1,5 +1,9 @@
 allprojects {
     repositories {
+        // Keep Android builds available when the primary Google Maven endpoint
+        // is unreachable from the local network. The canonical repository
+        // remains configured as the fallback.
+        maven(url = "https://maven.aliyun.com/repository/google")
         google()
         mavenCentral()
     }

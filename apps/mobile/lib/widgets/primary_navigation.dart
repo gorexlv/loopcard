@@ -3,8 +3,50 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/loop_theme.dart';
 import 'figma_icon.dart';
+import 'app_layout.dart';
 
 enum AppSection { learn, decks, profile }
+
+class PrimaryNavigationDock extends StatelessWidget {
+  const PrimaryNavigationDock({
+    super.key,
+    required this.current,
+    required this.onSelected,
+  });
+
+  final AppSection current;
+  final ValueChanged<AppSection> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final viewportWidth = MediaQuery.sizeOf(context).width;
+    final gutter = AppLayout.horizontalPadding(viewportWidth);
+    return SafeArea(
+      top: false,
+      minimum: EdgeInsets.fromLTRB(gutter, 0, gutter, AppLayout.bottomGap),
+      child: LayoutBuilder(
+        builder: (context, constraints) => Align(
+          alignment: Alignment.bottomCenter,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: viewportWidth >= AppLayout.tabletBreakpoint
+                  ? AppLayout.maxContentWidth
+                  : 326,
+            ),
+            child: SizedBox(
+              key: const ValueKey('primary-navigation-dock'),
+              height: AppLayout.dockHeight,
+              child: PrimaryNavigation(
+                current: current,
+                onSelected: onSelected,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class PrimaryNavigation extends StatelessWidget {
   const PrimaryNavigation({super.key, required this.current, this.onSelected});
@@ -70,6 +112,7 @@ class _NavItem extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onSelected == null ? null : () => onSelected!(section),
         child: SizedBox(
+          key: ValueKey('primary-nav-${section.name}'),
           width: 72,
           height: 64,
           child: Column(

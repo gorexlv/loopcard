@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:loopcard/auth/auth_service.dart';
+import 'package:loopcard/widgets/brand_lockup.dart';
 import 'package:loopcard/data/deck_repository.dart';
 import 'package:loopcard/main.dart';
 import 'package:loopcard/ocr/word_capture_flow.dart';
@@ -10,20 +11,29 @@ import 'package:loopcard/ocr/word_capture_flow.dart';
 void main() {
   testWidgets('switches between all three primary pages', (tester) async {
     await tester.pumpWidget(const LoopCardApp());
+    final navigation = find.byKey(const ValueKey('primary-navigation-dock'));
+    final initialNavigationRect = tester.getRect(navigation);
+    final brandRect = tester.getRect(find.byType(BrandLockup));
 
-    await tester.tap(find.text('卡包'));
+    await tester.tap(find.byKey(const ValueKey('primary-nav-decks')));
     await tester.pumpAndSettle();
+    expect(tester.getRect(navigation), initialNavigationRect);
+    expect(tester.getRect(find.byType(BrandLockup)), brandRect);
     expect(find.text('全部卡包'), findsOneWidget);
     expect(find.byKey(const ValueKey('open-market')), findsOneWidget);
     expect(find.text('日常英语词汇'), findsOneWidget);
 
-    await tester.tap(find.text('我的'));
+    await tester.tap(find.byKey(const ValueKey('primary-nav-profile')));
     await tester.pumpAndSettle();
+    expect(tester.getRect(navigation), initialNavigationRect);
+    expect(tester.getRect(find.byType(BrandLockup)), brandRect);
     expect(find.text('user'), findsOneWidget);
     expect(find.text('连续天数'), findsOneWidget);
 
-    await tester.tap(find.text('生成'));
+    await tester.tap(find.byKey(const ValueKey('primary-nav-learn')));
     await tester.pumpAndSettle();
+    expect(tester.getRect(navigation), initialNavigationRect);
+    expect(tester.getRect(find.byType(BrandLockup)), brandRect);
     expect(find.text('拍照生成卡片'), findsOneWidget);
   });
 
@@ -63,30 +73,36 @@ void main() {
     expect(auth.currentUser?.email, 'reader@example.com');
   });
 
-  testWidgets('keeps the login canvas stable when the keyboard opens', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    addTearDown(() => tester.view.viewInsets = FakeViewPadding.zero);
+  testWidgets(
+    'keeps the login brand stable and form reachable above the keyboard',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(() => tester.view.viewInsets = FakeViewPadding.zero);
 
-    await tester.pumpWidget(LoopCardApp(authService: MemoryAuthService()));
-    final emailField = find.byKey(const ValueKey('login-email'));
-    final initialTop = tester.getTopLeft(emailField).dy;
+      await tester.pumpWidget(LoopCardApp(authService: MemoryAuthService()));
+      final emailField = find.byKey(const ValueKey('login-email'));
+      final initialBrand = tester.getRect(find.byType(BrandLockup));
 
-    tester.view.viewInsets = const FakeViewPadding(bottom: 320);
-    await tester.tap(emailField);
-    await tester.pumpAndSettle();
+      tester.view.viewInsets = const FakeViewPadding(bottom: 320);
+      await tester.tap(emailField);
+      await tester.pumpAndSettle();
 
-    expect(tester.getTopLeft(emailField).dy, initialTop);
-    expect(
-      tester.getSize(find.byKey(const ValueKey('design-canvas-content'))),
-      const Size(390, 844),
-    );
-    expect(tester.takeException(), isNull);
-  });
+      expect(tester.getRect(find.byType(BrandLockup)), initialBrand);
+      expect(
+        tester.getSize(find.byKey(const ValueKey('design-canvas-content'))),
+        const Size(390, 524),
+      );
+      final submit = find.byKey(const ValueKey('login-submit'));
+      await tester.ensureVisible(submit);
+      await tester.pumpAndSettle();
+      expect(tester.getBottomLeft(submit).dy, lessThanOrEqualTo(524));
+      expect(tester.getRect(find.byType(BrandLockup)), initialBrand);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('opens a deck and advances after rating a card', (tester) async {
     await tester.pumpWidget(const LoopCardApp());
@@ -97,21 +113,22 @@ void main() {
     await tester.tap(find.text('日常英语词汇'));
     await tester.pumpAndSettle();
     expect(find.text('本轮练习'), findsOneWidget);
-    expect(find.text('建议完整练习，约 3 分钟'), findsOneWidget);
-    expect(find.text('门清儿'), findsOneWidget);
-    expect(find.text('搂一眼'), findsOneWidget);
-    expect(find.text('忘记了'), findsOneWidget);
-    expect(find.text('开始练习'), findsOneWidget);
+    expect(find.text('复习 20 张到期卡'), findsWidgets);
+    expect(find.text('熟悉'), findsOneWidget);
+    expect(find.text('记不牢'), findsOneWidget);
+    expect(find.text('不熟悉'), findsOneWidget);
+    expect(find.text('复习 20 张到期卡'), findsWidgets);
 
-    await tester.tap(find.text('开始练习'));
+    await tester.tap(find.text('复习 20 张到期卡').last);
     await tester.pumpAndSettle();
     expect(find.text('borrow'), findsOneWidget);
 
     await tester.tap(find.text('borrow'));
     await tester.pumpAndSettle();
-    expect(find.text('v. 借入；借用'), findsOneWidget);
+    expect(find.text('v.'), findsOneWidget);
+    expect(find.text('借入；借用'), findsOneWidget);
 
-    await tester.tap(find.text('门清儿'));
+    await tester.tap(find.byKey(const ValueKey('rate-up')));
     await tester.pumpAndSettle();
     expect(find.text('lend'), findsOneWidget);
   });

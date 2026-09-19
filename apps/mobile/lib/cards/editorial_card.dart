@@ -1,8 +1,13 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/card_models.dart';
+import '../widgets/figma_icon.dart';
 import 'card_background.dart';
 import 'card_visuals.dart';
+import 'generated_card_face.dart';
 
 enum CardFace { front, back }
 
@@ -13,22 +18,41 @@ class EditorialCard extends StatelessWidget {
     required this.kind,
     this.face = CardFace.front,
     this.sectionIndex = 0,
+    this.hintRevealed = false,
     this.preferences = const CardVisualPreferences(),
     this.onTap,
+    this.onHintTap,
+    this.onSectionChanged,
+    this.onBackScrollabilityChanged,
+    this.onPronounce,
   });
 
   final StudyCard card;
   final CardKind kind;
   final CardFace face;
   final int sectionIndex;
+  final bool hintRevealed;
   final CardVisualPreferences preferences;
   final VoidCallback? onTap;
+  final VoidCallback? onHintTap;
+  final ValueChanged<int>? onSectionChanged;
+  final ValueChanged<bool>? onBackScrollabilityChanged;
+  final VoidCallback? onPronounce;
 
   @override
   Widget build(BuildContext context) {
+    if (card.presentation.isNotEmpty) {
+      return GeneratedCardFace(
+        card: card,
+        back: face == CardFace.back,
+        onTap: onTap,
+        onScrollabilityChanged: onBackScrollabilityChanged,
+      );
+    }
+    final sections = card.learningSections;
     final contentLength =
         card.prompt.length +
-        card.sections.fold<int>(
+        sections.fold<int>(
           0,
           (sum, section) => sum + section.heading.length + section.body.length,
         );
@@ -37,56 +61,124 @@ class EditorialCard extends StatelessWidget {
       preferences: preferences,
       contentLength: contentLength,
     );
-    final tokens = CardThemeTokens.forFamily(visuals.theme);
-    final section =
-        card.sections[sectionIndex.clamp(0, card.sections.length - 1)];
-    final label = face == CardFace.front
-        ? '卡片正面：${card.prompt}'
-        : '卡片背面：${section.heading}';
+    final tokens = CardThemeTokens.forContext(context);
+    final section = sections[sectionIndex.clamp(0, sections.length - 1)];
+    final label = context.l10n.tr(
+      face == CardFace.front ? 'cardFrontSemantic' : 'cardBackSemantic',
+      {'content': face == CardFace.front ? card.prompt : section.heading},
+    );
 
     return Semantics(
       label: label,
-      excludeSemantics: true,
+      hint: face == CardFace.back && onTap != null
+          ? context.l10n.tr('tapToReturnFront')
+          : null,
+      container: true,
+      explicitChildNodes: face == CardFace.back,
+      excludeSemantics: face == CardFace.front,
       button: onTap != null,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(32),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(32),
-            child: CardBackground(
-              family: visuals.theme,
-              mood: visuals.mood,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: tokens.foreground.withValues(alpha: 0.12),
-                  ),
-                  borderRadius: BorderRadius.circular(32),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x52000000),
-                      blurRadius: 34,
-                      offset: Offset(0, 18),
-                    ),
-                  ],
-                ),
-                child: face == CardFace.front
-                    ? _Front(
-                        card: card,
-                        kind: kind,
-                        visuals: visuals,
-                        tokens: tokens,
-                      )
-                    : _Back(
-                        section: section,
-                        kind: kind,
-                        visuals: visuals,
-                        tokens: tokens,
-                      ),
+      onTap: onTap,
+      child: _PressableCardSurface(
+        onTap: onTap,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: CardBackground(
+            family: visuals.theme,
+            mood: visuals.mood,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.transparent),
+                borderRadius: BorderRadius.circular(28),
               ),
+              child: face == CardFace.front
+                  ? _Front(
+                      card: card,
+                      kind: kind,
+                      visuals: visuals,
+                      tokens: tokens,
+                      hintRevealed: hintRevealed,
+                      onHintTap: onHintTap,
+                    )
+                  : kind == CardKind.word && card.wordContent != null
+                  ? _WordBack(
+                      card: card,
+                      sectionIndex: sectionIndex,
+                      visuals: visuals,
+                      tokens: tokens,
+                      onSectionChanged: onSectionChanged,
+                      onScrollabilityChanged: onBackScrollabilityChanged,
+                      onPronounce: onPronounce,
+                    )
+                  : _Back(
+                      card: card,
+                      sectionIndex: sectionIndex,
+                      kind: kind,
+                      visuals: visuals,
+                      tokens: tokens,
+                      onSectionChanged: onSectionChanged,
+                      onScrollabilityChanged: onBackScrollabilityChanged,
+                    ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PressableCardSurface extends StatefulWidget {
+  const _PressableCardSurface({required this.child, required this.onTap});
+
+  final Widget child;
+  final VoidCallback? onTap;
+
+  @override
+  State<_PressableCardSurface> createState() => _PressableCardSurfaceState();
+}
+
+class _PressableCardSurfaceState extends State<_PressableCardSurface> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final reduceMotion =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final duration = reduceMotion
+        ? Duration.zero
+        : const Duration(milliseconds: 100);
+    return AnimatedScale(
+      key: const ValueKey('editorial-card-press-motion'),
+      scale: _pressed ? 0.992 : 1,
+      duration: duration,
+      curve: Curves.easeOutCubic,
+      child: AnimatedContainer(
+        duration: duration,
+        curve: Curves.easeOutCubic,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(
+                alpha: Theme.of(context).brightness == Brightness.dark
+                    ? (_pressed ? 0.18 : 0.26)
+                    : (_pressed ? 0.05 : 0.08),
+              ),
+              blurRadius: _pressed ? 18 : 24,
+              offset: Offset(0, _pressed ? 6 : 10),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: widget.onTap,
+            onHighlightChanged: (pressed) {
+              if (_pressed == pressed) return;
+              setState(() => _pressed = pressed);
+            },
+            excludeFromSemantics: true,
+            borderRadius: BorderRadius.circular(28),
+            child: widget.child,
           ),
         ),
       ),
@@ -100,12 +192,16 @@ class _Front extends StatelessWidget {
     required this.kind,
     required this.visuals,
     required this.tokens,
+    required this.hintRevealed,
+    required this.onHintTap,
   });
 
   final StudyCard card;
   final CardKind kind;
   final ResolvedCardVisuals visuals;
   final CardThemeTokens tokens;
+  final bool hintRevealed;
+  final VoidCallback? onHintTap;
 
   @override
   Widget build(BuildContext context) {
@@ -114,30 +210,29 @@ class _Front extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _Eyebrow(text: card.eyebrow ?? _defaultEyebrow(kind), tokens: tokens),
           Expanded(child: _composition()),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  card.supportingText ?? _defaultSupport(kind),
-                  style: TextStyle(
-                    fontSize: 12,
-                    letterSpacing: 0.8,
-                    color: tokens.muted,
-                  ),
-                ),
-              ),
-              Container(width: 28, height: 2, color: tokens.accent),
-            ],
-          ),
+          if (kind != CardKind.word &&
+              card.hint?.trim().isNotEmpty == true) ...[
+            _HintDisclosure(
+              hint: card.hint!.trim(),
+              revealed: hintRevealed,
+              tokens: tokens,
+              onTap: onHintTap,
+            ),
+            const SizedBox(height: 18),
+          ],
         ],
       ),
     );
   }
 
   Widget _composition() => switch (kind) {
-    CardKind.word => _WordFront(card: card, visuals: visuals, tokens: tokens),
+    CardKind.word => _WordFront(
+      card: card,
+      tokens: tokens,
+      hintRevealed: hintRevealed,
+      onHintTap: onHintTap,
+    ),
     CardKind.formula => _FormulaFront(
       card: card,
       visuals: visuals,
@@ -151,86 +246,249 @@ class _Front extends StatelessWidget {
   };
 }
 
-class _WordFront extends StatelessWidget {
-  const _WordFront({
-    required this.card,
-    required this.visuals,
+class _HintDisclosure extends StatelessWidget {
+  const _HintDisclosure({
+    required this.hint,
+    required this.revealed,
     required this.tokens,
+    required this.onTap,
   });
-  final StudyCard card;
-  final ResolvedCardVisuals visuals;
+
+  final String hint;
+  final bool revealed;
   final CardThemeTokens tokens;
+  final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) => Stack(
-    key: const ValueKey('word-composition'),
-    alignment: Alignment.centerLeft,
-    children: [
-      Positioned(
-        right: -18,
-        top: 42,
-        child: Text(
-          card.prompt.characters.first.toUpperCase(),
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 220,
-            height: 1,
-            fontWeight: FontWeight.w800,
-            color: tokens.foreground.withValues(alpha: 0.055),
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: !revealed,
+      label: revealed
+          ? '${context.l10n.tr('hintRevealed')}: $hint'
+          : context.l10n.tr('revealHint'),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          key: const ValueKey('card-hint-action'),
+          onTap: revealed ? null : onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 180),
+              child: revealed
+                  ? Row(
+                      key: const ValueKey('revealed-hint'),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FigmaIcon('hint', size: 18, color: tokens.accent),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            hint,
+                            style: TextStyle(
+                              fontSize: 13,
+                              height: 1.45,
+                              fontWeight: FontWeight.w600,
+                              color: tokens.foreground,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Row(
+                      key: const ValueKey('hidden-hint'),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FigmaIcon('hint', size: 18, color: tokens.muted),
+                        const SizedBox(width: 9),
+                        Text(
+                          context.l10n.tr('revealHint'),
+                          style: TextStyle(
+                            fontSize: 13,
+                            height: 1.45,
+                            fontWeight: FontWeight.w500,
+                            color: tokens.muted,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
           ),
         ),
       ),
-      Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            key: const ValueKey('word-classification'),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: tokens.accent.withValues(alpha: 0.12),
-              border: Border.all(color: tokens.accent.withValues(alpha: 0.38)),
-              borderRadius: BorderRadius.circular(99),
-            ),
+    );
+  }
+}
+
+class _WordFront extends StatelessWidget {
+  const _WordFront({
+    required this.card,
+    required this.tokens,
+    required this.hintRevealed,
+    required this.onHintTap,
+  });
+  final StudyCard card;
+  final CardThemeTokens tokens;
+  final bool hintRevealed;
+  final VoidCallback? onHintTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final cue = _wordFrontCue(card);
+    return Column(
+      key: const ValueKey('word-composition'),
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: FittedBox(
+            key: const ValueKey('word-prompt-fit'),
+            alignment: Alignment.center,
+            fit: BoxFit.scaleDown,
             child: Text(
-              _wordClass(card),
+              card.prompt,
+              maxLines: 1,
+              softWrap: false,
               style: TextStyle(
                 fontFamily: 'Inter',
-                fontSize: 9,
-                letterSpacing: 1.2,
-                fontWeight: FontWeight.w700,
-                color: tokens.accent,
+                fontFamilyFallback: const ['NotoSansSC'],
+                fontSize: 62,
+                height: 1.02,
+                letterSpacing: -0.8,
+                fontWeight: FontWeight.w600,
+                fontVariations: const [ui.FontVariation('wght', 600)],
+                color: tokens.foreground,
               ),
             ),
           ),
-          const SizedBox(height: 22),
-          Text(
-            card.prompt,
-            maxLines: 2,
-            overflow: TextOverflow.fade,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 58 * visuals.displayScale,
-              height: 0.96,
-              letterSpacing: -2.8,
-              fontWeight: FontWeight.w700,
-              color: tokens.foreground,
-            ),
-          ),
-          const SizedBox(height: 18),
-          Container(
-            key: const ValueKey('lexical-rule'),
-            width: 68,
-            height: 3,
-            decoration: BoxDecoration(
-              color: tokens.accent,
-              borderRadius: BorderRadius.circular(2),
-            ),
+        ),
+        if (cue.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          _WordHintMask(
+            cue: cue,
+            revealed: hintRevealed,
+            tokens: tokens,
+            onTap: onHintTap,
           ),
         ],
+      ],
+    );
+  }
+}
+
+class _WordHintMask extends StatelessWidget {
+  const _WordHintMask({
+    required this.cue,
+    required this.revealed,
+    required this.tokens,
+    required this.onTap,
+  });
+
+  final String cue;
+  final bool revealed;
+  final CardThemeTokens tokens;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final reduceMotion =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    return Semantics(
+      excludeSemantics: true,
+      button: !revealed,
+      label: revealed
+          ? '${context.l10n.tr('hintRevealed')}: $cue'
+          : context.l10n.tr('revealHint'),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          key: const ValueKey('card-hint-action'),
+          onTap: revealed ? null : onTap,
+          borderRadius: BorderRadius.circular(8),
+          child: SizedBox(
+            key: const ValueKey('word-cue-surface'),
+            width: double.infinity,
+            height: 48,
+            child: Center(
+              child: AnimatedSwitcher(
+                duration: reduceMotion
+                    ? Duration.zero
+                    : const Duration(milliseconds: 180),
+                child: revealed
+                    ? Padding(
+                        key: const ValueKey('revealed-word-cue'),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: _WordCueText(cue: cue, tokens: tokens),
+                      )
+                    : Row(
+                        key: const ValueKey('word-cue-mask'),
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FigmaIcon('hint', size: 16, color: tokens.muted),
+                          const SizedBox(width: 8),
+                          Text(
+                            context.l10n.tr('revealHint'),
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: tokens.muted,
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+            ),
+          ),
+        ),
       ),
-    ],
+    );
+  }
+}
+
+class _WordCueText extends StatelessWidget {
+  const _WordCueText({required this.cue, required this.tokens});
+
+  final String cue;
+  final CardThemeTokens tokens;
+
+  @override
+  Widget build(BuildContext context) => FittedBox(
+    fit: BoxFit.scaleDown,
+    child: Text(
+      cue,
+      key: const ValueKey('word-cue-content'),
+      maxLines: 1,
+      softWrap: false,
+      style: TextStyle(
+        fontFamily: 'Inter',
+        fontSize: 13,
+        height: 1.2,
+        letterSpacing: 0.15,
+        fontWeight: FontWeight.w500,
+        color: tokens.muted,
+      ),
+    ),
   );
+}
+
+String _wordFrontCue(StudyCard card) {
+  final content = card.wordContent;
+  if (content != null) {
+    final parts = <String>[
+      if (content.partOfSpeech.trim().isNotEmpty) content.partOfSpeech.trim(),
+      for (final pronunciation in content.pronunciations)
+        [
+          if (pronunciation.region.trim().isNotEmpty)
+            pronunciation.region.trim(),
+          pronunciation.ipa.trim(),
+        ].where((value) => value.isNotEmpty).join(' '),
+    ].where((value) => value.isNotEmpty).toList(growable: false);
+    if (parts.isNotEmpty) return parts.join('   ');
+  }
+  return card.hint?.trim() ?? '';
 }
 
 class _FormulaFront extends StatelessWidget {
@@ -270,9 +528,7 @@ class _FormulaFront extends StatelessWidget {
               height: 148,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: tokens.foreground.withValues(alpha: 0.12),
-                ),
+                border: Border.all(color: Colors.transparent),
               ),
             ),
             Positioned(
@@ -378,66 +634,873 @@ class _ProblemFront extends StatelessWidget {
   );
 }
 
-class _Back extends StatelessWidget {
-  const _Back({
-    required this.section,
-    required this.kind,
+class _WordBack extends StatelessWidget {
+  const _WordBack({
+    required this.card,
+    required this.sectionIndex,
     required this.visuals,
     required this.tokens,
+    required this.onSectionChanged,
+    required this.onScrollabilityChanged,
+    required this.onPronounce,
   });
-  final CardBackSection section;
-  final CardKind kind;
+
+  final StudyCard card;
+  final int sectionIndex;
   final ResolvedCardVisuals visuals;
   final CardThemeTokens tokens;
+  final ValueChanged<int>? onSectionChanged;
+  final ValueChanged<bool>? onScrollabilityChanged;
+  final VoidCallback? onPronounce;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(34, 32, 30, 24),
-    child: Column(
+  Widget build(BuildContext context) {
+    final content = card.wordContent!;
+    final sections = content.sections;
+    final safeIndex = sectionIndex.clamp(0, sections.length - 1);
+    final canGoPrevious = safeIndex > 0;
+    final canGoNext = safeIndex < sections.length - 1;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(32, 24, 24, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      card.prompt,
+                      maxLines: 1,
+                      overflow: TextOverflow.fade,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 34,
+                        height: 1.05,
+                        letterSpacing: -1.3,
+                        fontWeight: FontWeight.w800,
+                        color: tokens.foreground,
+                      ),
+                    ),
+                    const SizedBox(height: 9),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 5,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        if (content.partOfSpeech.isNotEmpty)
+                          Text(
+                            content.partOfSpeech,
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.8,
+                              color: tokens.accent,
+                            ),
+                          ),
+                        for (final pronunciation in content.pronunciations)
+                          Text(
+                            [
+                              if (pronunciation.region.isNotEmpty)
+                                pronunciation.region,
+                              pronunciation.ipa,
+                            ].join(' '),
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 13,
+                              height: 1.35,
+                              color: tokens.muted,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Semantics(
+                button: true,
+                label: context.l10n.tr('playPronunciation'),
+                child: IconButton(
+                  key: const ValueKey('play-word-pronunciation'),
+                  tooltip: context.l10n.tr('playPronunciation'),
+                  constraints: const BoxConstraints.tightFor(
+                    width: 48,
+                    height: 48,
+                  ),
+                  onPressed: onPronounce,
+                  icon: FigmaIcon(
+                    'volume',
+                    size: 23,
+                    color: onPronounce == null
+                        ? tokens.muted.withValues(alpha: 0.42)
+                        : tokens.foreground,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (content.forms.isNotEmpty) ...[
+            const SizedBox(height: 11),
+            Text(
+              '${context.l10n.tr('wordForms')}  ${content.forms.join(' · ')}',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 11,
+                height: 1.4,
+                fontWeight: FontWeight.w600,
+                color: tokens.muted,
+              ),
+            ),
+          ],
+          const SizedBox(height: 17),
+          Container(height: 1, color: Colors.transparent),
+          const SizedBox(height: 18),
+          Expanded(
+            child: _HorizontalSectionPager(
+              key: const ValueKey('back-content'),
+              index: safeIndex,
+              onPrevious: canGoPrevious
+                  ? () => onSectionChanged?.call(safeIndex - 1)
+                  : null,
+              onNext: canGoNext
+                  ? () => onSectionChanged?.call(safeIndex + 1)
+                  : null,
+              child: _AdaptiveBackSection(
+                key: ValueKey('word-back-section-$safeIndex'),
+                onScrollabilityChanged: onScrollabilityChanged,
+                alignment: Alignment.topLeft,
+                child: _WordBackPage(
+                  index: safeIndex,
+                  content: content,
+                  tokens: tokens,
+                  compact: visuals.density == CardDensity.compact,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          _BackFooter(
+            index: safeIndex,
+            count: sections.length,
+            tokens: tokens,
+            onPrevious: canGoPrevious
+                ? () => onSectionChanged?.call(safeIndex - 1)
+                : null,
+            onNext: canGoNext
+                ? () => onSectionChanged?.call(safeIndex + 1)
+                : null,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WordBackPage extends StatelessWidget {
+  const _WordBackPage({
+    required this.index,
+    required this.content,
+    required this.tokens,
+    required this.compact,
+  });
+
+  final int index;
+  final WordCardContent content;
+  final CardThemeTokens tokens;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    if (index == 0) return _meaning(context);
+    if (index == 1) return _usage(context);
+    final notes = [content.confusion, content.extension].whereType<WordNote>();
+    final note = notes.elementAt(index - 2);
+    final isConfusion = content.confusion != null && index == 2;
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _Eyebrow(text: section.title.toUpperCase(), tokens: tokens),
-        const SizedBox(height: 28),
+        _WordSectionLabel(
+          text: context.l10n.tr(
+            isConfusion ? 'sectionDistinction' : 'wordExtension',
+          ),
+          tokens: tokens,
+        ),
+        const SizedBox(height: 18),
         Text(
-          section.heading,
-          key: const ValueKey('answer-heading'),
+          note.heading,
           style: TextStyle(
-            fontFamily: kind == CardKind.formula ? 'Inter' : null,
-            fontSize: kind == CardKind.formula ? 44 : 25,
-            height: 1.3,
+            fontFamily: _metadataFontFamily(note.heading),
+            fontFamilyFallback: const ['NotoSansSC'],
+            fontSize: compact ? 21 : 24,
+            height: 1.25,
             fontWeight: FontWeight.w700,
             color: tokens.foreground,
           ),
         ),
-        const SizedBox(height: 20),
-        Container(width: 48, height: 3, color: tokens.accent),
-        const SizedBox(height: 22),
-        Expanded(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: _StructuredBody(
-              key: const ValueKey('answer-body'),
-              body: section.body,
-              kind: kind,
-              tokens: tokens,
-              compact: visuals.density == CardDensity.compact,
-            ),
-          ),
+        const SizedBox(height: 15),
+        _StructuredBody(
+          body: note.body,
+          kind: CardKind.word,
+          tokens: tokens,
+          compact: compact,
         ),
-        const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  Widget _meaning(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      _WordSectionLabel(
+        text: context.l10n.tr('sectionMeaning'),
+        tokens: tokens,
+      ),
+      const SizedBox(height: 16),
+      Text(
+        content.definition,
+        key: const ValueKey('answer-heading'),
+        style: TextStyle(
+          fontFamily: _metadataFontFamily(content.definition),
+          fontFamilyFallback: const ['NotoSansSC'],
+          fontSize: compact ? 25 : 28,
+          height: 1.24,
+          fontWeight: FontWeight.w700,
+          color: tokens.foreground,
+        ),
+      ),
+      if (content.englishDefinition.isNotEmpty) ...[
+        const SizedBox(height: 11),
         Text(
-          'LOOPCARD  /  TAP TO RETURN',
+          content.englishDefinition,
+          key: const ValueKey('answer-body'),
           style: TextStyle(
             fontFamily: 'Inter',
-            fontSize: 9,
-            letterSpacing: 1.2,
-            fontWeight: FontWeight.w600,
-            color: tokens.muted.withValues(alpha: 0.72),
+            fontSize: compact ? 14 : 15,
+            height: 1.5,
+            color: tokens.muted,
           ),
         ),
       ],
+      if (content.usagePatterns.isNotEmpty) ...[
+        const SizedBox(height: 26),
+        _WordMetadataLabel(
+          text: context.l10n.tr('usagePattern'),
+          tokens: tokens,
+        ),
+        const SizedBox(height: 10),
+        for (final pattern in content.usagePatterns) ...[
+          _WordLine(text: pattern, tokens: tokens),
+          const SizedBox(height: 8),
+        ],
+      ],
+    ],
+  );
+
+  Widget _usage(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      _WordSectionLabel(
+        text: context.l10n.tr('sectionExamples'),
+        tokens: tokens,
+      ),
+      const SizedBox(height: 17),
+      Text(
+        content.example.sentence,
+        style: TextStyle(
+          fontFamily: 'Inter',
+          fontSize: compact ? 20 : 23,
+          height: 1.35,
+          letterSpacing: -0.25,
+          fontWeight: FontWeight.w700,
+          color: tokens.foreground,
+        ),
+      ),
+      const SizedBox(height: 10),
+      Text(
+        content.example.translation,
+        style: TextStyle(fontSize: 14, height: 1.5, color: tokens.muted),
+      ),
+      if (content.collocations.isNotEmpty) ...[
+        const SizedBox(height: 25),
+        _WordMetadataLabel(
+          text: context.l10n.tr('commonCollocations'),
+          tokens: tokens,
+        ),
+        const SizedBox(height: 10),
+        for (final collocation in content.collocations) ...[
+          _WordLine(text: collocation, tokens: tokens),
+          const SizedBox(height: 8),
+        ],
+      ],
+    ],
+  );
+}
+
+class _WordSectionLabel extends StatelessWidget {
+  const _WordSectionLabel({required this.text, required this.tokens});
+
+  final String text;
+  final CardThemeTokens tokens;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      Container(width: 22, height: 2, color: tokens.accent),
+      const SizedBox(width: 9),
+      Text(
+        text.toUpperCase(),
+        style: TextStyle(
+          fontSize: 11,
+          letterSpacing: 1.1,
+          fontWeight: FontWeight.w800,
+          color: tokens.muted,
+        ),
+      ),
+    ],
+  );
+}
+
+class _WordMetadataLabel extends StatelessWidget {
+  const _WordMetadataLabel({required this.text, required this.tokens});
+
+  final String text;
+  final CardThemeTokens tokens;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: TextStyle(
+      fontSize: 11,
+      letterSpacing: 0.7,
+      fontWeight: FontWeight.w700,
+      color: tokens.muted,
     ),
   );
+}
+
+class _WordLine extends StatelessWidget {
+  const _WordLine({required this.text, required this.tokens});
+
+  final String text;
+  final CardThemeTokens tokens;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Container(
+          width: 5,
+          height: 5,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: tokens.accent,
+          ),
+        ),
+      ),
+      const SizedBox(width: 10),
+      Expanded(
+        child: Text(
+          text,
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontSize: 14,
+            height: 1.45,
+            fontWeight: FontWeight.w600,
+            color: tokens.foreground,
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+class _Back extends StatelessWidget {
+  const _Back({
+    required this.card,
+    required this.sectionIndex,
+    required this.kind,
+    required this.visuals,
+    required this.tokens,
+    required this.onSectionChanged,
+    required this.onScrollabilityChanged,
+  });
+  final StudyCard card;
+  final int sectionIndex;
+  final CardKind kind;
+  final ResolvedCardVisuals visuals;
+  final CardThemeTokens tokens;
+  final ValueChanged<int>? onSectionChanged;
+  final ValueChanged<bool>? onScrollabilityChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final sections = card.learningSections;
+    final safeIndex = sectionIndex.clamp(0, sections.length - 1);
+    final core = sections.first;
+    final section = sections[safeIndex];
+    final canGoPrevious = safeIndex > 0;
+    final canGoNext = safeIndex < sections.length - 1;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(36, 28, 28, 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _Eyebrow(
+            text: card.prompt.toUpperCase(),
+            tokens: tokens,
+            trailing: _BackFaceMarker(tokens: tokens),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            core.heading,
+            key: const ValueKey('answer-heading'),
+            style: TextStyle(
+              fontFamily: kind == CardKind.formula
+                  ? 'Inter'
+                  : _metadataFontFamily(core.heading),
+              fontFamilyFallback: const ['NotoSansSC'],
+              fontSize: kind == CardKind.formula ? 38 : 28,
+              height: 1.2,
+              letterSpacing: _metadataFontFamily(core.heading) == 'Inter'
+                  ? -0.5
+                  : 0,
+              fontWeight: FontWeight.w700,
+              color: tokens.foreground,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Container(width: 42, height: 2, color: tokens.accent),
+          const SizedBox(height: 24),
+          Expanded(
+            child: _HorizontalSectionPager(
+              key: const ValueKey('back-content'),
+              index: safeIndex,
+              onPrevious: canGoPrevious
+                  ? () => onSectionChanged?.call(safeIndex - 1)
+                  : null,
+              onNext: canGoNext
+                  ? () => onSectionChanged?.call(safeIndex + 1)
+                  : null,
+              child: _AdaptiveBackSection(
+                key: ValueKey('back-section-$safeIndex'),
+                onScrollabilityChanged: onScrollabilityChanged,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(width: 18, height: 2, color: tokens.accent),
+                        const SizedBox(width: 9),
+                        Expanded(
+                          child: Text(
+                            context.l10n.sectionTitle(section.title),
+                            style: TextStyle(
+                              fontFamily: _metadataFontFamily(
+                                context.l10n.sectionTitle(section.title),
+                              ),
+                              fontFamilyFallback: const ['NotoSansSC'],
+                              fontSize: 12,
+                              letterSpacing:
+                                  _metadataFontFamily(
+                                        context.l10n.sectionTitle(
+                                          section.title,
+                                        ),
+                                      ) ==
+                                      'Inter'
+                                  ? 0.8
+                                  : 0,
+                              fontWeight: FontWeight.w700,
+                              color: tokens.foreground,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (safeIndex > 0 || section.heading != core.heading) ...[
+                      const SizedBox(height: 9),
+                      Text(
+                        section.heading,
+                        style: TextStyle(
+                          fontFamily: _metadataFontFamily(section.heading),
+                          fontFamilyFallback: const ['NotoSansSC'],
+                          fontSize: 20,
+                          height: 1.35,
+                          letterSpacing:
+                              _metadataFontFamily(section.heading) == 'Inter'
+                              ? -0.25
+                              : 0,
+                          fontWeight: FontWeight.w700,
+                          color: tokens.foreground,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 14),
+                    _StructuredBody(
+                      key: const ValueKey('answer-body'),
+                      body: section.body,
+                      kind: kind,
+                      tokens: tokens,
+                      compact: visuals.density == CardDensity.compact,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          _BackFooter(
+            index: safeIndex,
+            count: sections.length,
+            tokens: tokens,
+            onPrevious: canGoPrevious
+                ? () => onSectionChanged?.call(safeIndex - 1)
+                : null,
+            onNext: canGoNext
+                ? () => onSectionChanged?.call(safeIndex + 1)
+                : null,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AdaptiveBackSection extends StatefulWidget {
+  const _AdaptiveBackSection({
+    super.key,
+    required this.child,
+    required this.onScrollabilityChanged,
+    this.alignment = const Alignment(0, -0.42),
+  });
+
+  final Widget child;
+  final ValueChanged<bool>? onScrollabilityChanged;
+  final Alignment alignment;
+
+  @override
+  State<_AdaptiveBackSection> createState() => _AdaptiveBackSectionState();
+}
+
+class _AdaptiveBackSectionState extends State<_AdaptiveBackSection> {
+  final ScrollController _controller = ScrollController();
+  bool? _lastReportedValue;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _reportScrollability() {
+    if (!mounted || !_controller.hasClients) return;
+    final scrollable = _controller.position.maxScrollExtent > 0.5;
+    if (_lastReportedValue == scrollable) return;
+    _lastReportedValue = scrollable;
+    widget.onScrollabilityChanged?.call(scrollable);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => _reportScrollability(),
+        );
+        return NotificationListener<ScrollMetricsNotification>(
+          onNotification: (_) {
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => _reportScrollability(),
+            );
+            return false;
+          },
+          child: SingleChildScrollView(
+            controller: _controller,
+            physics: const ClampingScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Align(alignment: widget.alignment, child: widget.child),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _HorizontalSectionPager extends StatefulWidget {
+  const _HorizontalSectionPager({
+    super.key,
+    required this.index,
+    required this.child,
+    required this.onPrevious,
+    required this.onNext,
+  });
+
+  final int index;
+  final Widget child;
+  final VoidCallback? onPrevious;
+  final VoidCallback? onNext;
+
+  @override
+  State<_HorizontalSectionPager> createState() =>
+      _HorizontalSectionPagerState();
+}
+
+class _HorizontalSectionPagerState extends State<_HorizontalSectionPager> {
+  static const _distanceThreshold = 64.0;
+  static const _flickDistanceFloor = 28.0;
+  static const _velocityThreshold = 700.0;
+  static const _horizontalIntentRatio = 1.35;
+  static const _intentSlop = 14.0;
+  static const _maximumFollowDistance = 42.0;
+
+  Offset? _origin;
+  Offset? _lastPosition;
+  bool _horizontalIntentAccepted = false;
+  double _dragOffset = 0;
+  int _pageDirection = 1;
+
+  bool get _reduceMotion =>
+      MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+
+  @override
+  void didUpdateWidget(covariant _HorizontalSectionPager oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.index != widget.index) {
+      _pageDirection = widget.index > oldWidget.index ? 1 : -1;
+      _dragOffset = 0;
+    }
+  }
+
+  double _followOffset(double rawOffset) {
+    final movingPastStart = rawOffset > 0 && widget.onPrevious == null;
+    final movingPastEnd = rawOffset < 0 && widget.onNext == null;
+    final resisted = movingPastStart || movingPastEnd
+        ? rawOffset * 0.28
+        : rawOffset;
+    return resisted.clamp(-_maximumFollowDistance, _maximumFollowDistance);
+  }
+
+  void _updateHorizontalDrag(Offset position) {
+    _lastPosition = position;
+    final origin = _origin;
+    if (origin == null) return;
+    final displacement = position - origin;
+    if (!_horizontalIntentAccepted) {
+      final hasClearIntent =
+          displacement.dx.abs() >= _intentSlop &&
+          displacement.dx.abs() >=
+              displacement.dy.abs() * _horizontalIntentRatio;
+      if (!hasClearIntent) return;
+      _horizontalIntentAccepted = true;
+    }
+    setState(() => _dragOffset = _followOffset(displacement.dx));
+  }
+
+  void _resetGesture() {
+    _origin = null;
+    _lastPosition = null;
+    _horizontalIntentAccepted = false;
+    if (_dragOffset != 0 && mounted) setState(() => _dragOffset = 0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onHorizontalDragDown: (details) {
+        _origin = details.globalPosition;
+        _lastPosition = details.globalPosition;
+        _horizontalIntentAccepted = false;
+      },
+      onHorizontalDragStart: (details) {
+        _origin ??= details.globalPosition;
+        _horizontalIntentAccepted = false;
+        _updateHorizontalDrag(details.globalPosition);
+      },
+      onHorizontalDragUpdate: (details) =>
+          _updateHorizontalDrag(details.globalPosition),
+      onHorizontalDragEnd: (details) {
+        final origin = _origin;
+        final lastPosition = _lastPosition;
+        if (origin == null || lastPosition == null) {
+          _resetGesture();
+          return;
+        }
+        final displacement = lastPosition - origin;
+        final velocity = details.primaryVelocity ?? 0;
+        final hasHorizontalIntent =
+            _horizontalIntentAccepted &&
+            displacement.dx.abs() >=
+                displacement.dy.abs() * _horizontalIntentRatio;
+        final hasEnoughTravel =
+            displacement.dx.abs() >= _distanceThreshold ||
+            (displacement.dx.abs() >= _flickDistanceFloor &&
+                velocity.abs() >= _velocityThreshold);
+        if (!hasHorizontalIntent || !hasEnoughTravel) {
+          _resetGesture();
+          return;
+        }
+        if (displacement.dx < 0 && widget.onNext != null) {
+          _pageDirection = 1;
+          _resetGesture();
+          widget.onNext!();
+        } else if (displacement.dx > 0 && widget.onPrevious != null) {
+          _pageDirection = -1;
+          _resetGesture();
+          widget.onPrevious!();
+        } else {
+          _resetGesture();
+        }
+      },
+      onHorizontalDragCancel: _resetGesture,
+      child: ClipRect(
+        clipBehavior: Clip.hardEdge,
+        child: TweenAnimationBuilder<double>(
+          tween: Tween<double>(end: _dragOffset),
+          duration: _horizontalIntentAccepted || _reduceMotion
+              ? Duration.zero
+              : const Duration(milliseconds: 160),
+          curve: Curves.easeOutCubic,
+          builder: (context, offset, child) => Transform.translate(
+            key: const ValueKey('back-content-motion'),
+            offset: Offset(offset, 0),
+            child: child,
+          ),
+          child: AnimatedSwitcher(
+            duration: _reduceMotion
+                ? const Duration(milliseconds: 100)
+                : const Duration(milliseconds: 220),
+            reverseDuration: _reduceMotion
+                ? const Duration(milliseconds: 100)
+                : const Duration(milliseconds: 160),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            // Dense text becomes unreadable when two explanations crossfade.
+            // Paint only the incoming page during the section transition.
+            layoutBuilder: (currentChild, _) =>
+                currentChild ?? const SizedBox.shrink(),
+            transitionBuilder: (child, animation) {
+              if (_reduceMotion) {
+                return FadeTransition(opacity: animation, child: child);
+              }
+              return FadeTransition(
+                opacity: CurvedAnimation(
+                  parent: animation,
+                  curve: const Interval(0.15, 1, curve: Curves.easeOut),
+                ),
+                child: SlideTransition(
+                  position:
+                      Tween<Offset>(
+                        begin: Offset(0.06 * _pageDirection, 0),
+                        end: Offset.zero,
+                      ).animate(
+                        CurvedAnimation(
+                          parent: animation,
+                          curve: Curves.easeOutCubic,
+                        ),
+                      ),
+                  child: child,
+                ),
+              );
+            },
+            child: widget.child,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BackFooter extends StatelessWidget {
+  const _BackFooter({
+    required this.index,
+    required this.count,
+    required this.tokens,
+    required this.onPrevious,
+    required this.onNext,
+  });
+
+  final int index;
+  final int count;
+  final CardThemeTokens tokens;
+  final VoidCallback? onPrevious;
+  final VoidCallback? onNext;
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = count == 1
+        ? context.l10n.tr('answerDetail')
+        : context.l10n.tr('explanationProgress', {
+            'current': index + 1,
+            'count': count,
+          });
+    return Semantics(
+      container: true,
+      child: Row(
+        children: [
+          Expanded(
+            child: Semantics(
+              label: progress,
+              liveRegion: true,
+              child: ExcludeSemantics(
+                child: Text(
+                  progress,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    height: 1.35,
+                    fontWeight: FontWeight.w600,
+                    color: tokens.muted,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          if (count > 1) ...[
+            IconButton(
+              key: const ValueKey('previous-back-section'),
+              constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+              padding: EdgeInsets.zero,
+              tooltip: context.l10n.tr('previousExplanation'),
+              onPressed: onPrevious,
+              icon: FigmaIcon(
+                'back',
+                size: 20,
+                color: onPrevious == null
+                    ? tokens.muted.withValues(alpha: 0.38)
+                    : tokens.foreground,
+              ),
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              key: const ValueKey('next-back-section'),
+              constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+              padding: EdgeInsets.zero,
+              tooltip: context.l10n.tr('nextExplanation'),
+              onPressed: onNext,
+              icon: FigmaIcon(
+                'forward',
+                size: 20,
+                color: onNext == null
+                    ? tokens.muted.withValues(alpha: 0.38)
+                    : tokens.foreground,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 }
 
 class _StructuredBody extends StatelessWidget {
@@ -573,18 +1636,43 @@ class _AnswerText extends StatelessWidget {
   Widget build(BuildContext context) => Text(
     text,
     style: TextStyle(
-      fontSize: compact ? 13 : (strong ? 16 : 15),
-      height: 1.65,
+      fontSize: compact ? 15 : (strong ? 17 : 16),
+      height: 1.58,
       fontWeight: strong ? FontWeight.w600 : FontWeight.w400,
       color: strong ? tokens.foreground : tokens.muted,
     ),
   );
 }
 
+class _BackFaceMarker extends StatelessWidget {
+  const _BackFaceMarker({required this.tokens});
+
+  final CardThemeTokens tokens;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      FigmaIcon('flip', size: 16, color: tokens.muted),
+      const SizedBox(width: 6),
+      Text(
+        context.l10n.tr('answerSide'),
+        style: TextStyle(
+          fontSize: 11,
+          height: 1.2,
+          fontWeight: FontWeight.w600,
+          color: tokens.muted,
+        ),
+      ),
+    ],
+  );
+}
+
 class _Eyebrow extends StatelessWidget {
-  const _Eyebrow({required this.text, required this.tokens});
+  const _Eyebrow({required this.text, required this.tokens, this.trailing});
   final String text;
   final CardThemeTokens tokens;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -601,41 +1689,30 @@ class _Eyebrow extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            fontFamily: _containsCjk(text) ? 'NotoSansSC' : 'Inter',
-            fontSize: 10,
-            letterSpacing: 1.5,
+            fontFamily: _metadataFontFamily(text),
+            fontFamilyFallback: const ['NotoSansSC'],
+            fontSize: 11,
+            letterSpacing: _metadataFontFamily(text) == 'Inter' ? 1.25 : 0,
             fontWeight: FontWeight.w700,
             color: tokens.muted,
           ),
         ),
       ),
-      Text('∞', style: TextStyle(fontSize: 18, color: tokens.muted)),
+      const SizedBox(width: 12),
+      trailing ??
+          ExcludeSemantics(
+            child: Container(
+              width: 22,
+              height: 1,
+              color: tokens.muted.withValues(alpha: 0.58),
+            ),
+          ),
     ],
   );
 }
 
-String _defaultEyebrow(CardKind kind) => switch (kind) {
-  CardKind.word => 'LANGUAGE / LEXICON',
-  CardKind.formula => 'SCIENCE / FORMULA',
-  CardKind.problem => 'PROBLEM / REASONING',
-};
-
-String _defaultSupport(CardKind kind) => switch (kind) {
-  CardKind.word => 'WORD · MEANING · CONTEXT',
-  CardKind.formula => 'FORM · VARIABLES · CONDITIONS',
-  CardKind.problem => 'CLUE · METHOD · TRANSFER',
-};
-
-bool _containsCjk(String value) => RegExp(r'[\u3400-\u9fff]').hasMatch(value);
-
-String _wordClass(StudyCard card) {
-  final heading = card.sections.first.heading.trim();
-  final token = heading.split(RegExp(r'\s+')).first;
-  if (token.length <= 6 && RegExp(r'[a-zA-Z]').hasMatch(token)) {
-    return token.toUpperCase();
-  }
-  return 'LEXICON';
-}
+String? _metadataFontFamily(String value) =>
+    RegExp(r'^[\u0000-\u024f\s·/—–_-]+$').hasMatch(value) ? 'Inter' : null;
 
 List<String> _problemMarkers(StudyCard card) {
   final support = card.supportingText;

@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../auth/auth_service.dart';
+import '../ai/word_card_generator.dart';
 import '../data/deck_repository.dart';
 import '../ocr/word_capture_flow.dart';
 import '../onboarding/onboarding_models.dart';
 import '../onboarding/onboarding_store.dart';
+import '../reminders/practice_reminder.dart';
 import 'main_shell.dart';
 import 'login_screen.dart';
 import 'onboarding_screen.dart';
@@ -23,6 +25,9 @@ class AppEntry extends StatefulWidget {
     this.showSplash = true,
     required this.locale,
     required this.themeMode,
+    required this.wordCardGenerator,
+    required this.reminderStore,
+    this.reminderScheduler,
     required this.onLocaleChanged,
     required this.onThemeModeChanged,
   });
@@ -35,6 +40,9 @@ class AppEntry extends StatefulWidget {
   final bool showSplash;
   final Locale? locale;
   final ThemeMode themeMode;
+  final WordCardGenerator wordCardGenerator;
+  final PracticeReminderStore reminderStore;
+  final PracticeReminderScheduler? reminderScheduler;
   final ValueChanged<Locale?> onLocaleChanged;
   final ValueChanged<ThemeMode> onThemeModeChanged;
 
@@ -54,9 +62,31 @@ class _AppEntryState extends State<AppEntry> {
     _splashFinished = !widget.showSplash;
     _onboardingCompleted = widget.initialOnboardingCompleted;
     _user = widget.authService.currentUser;
+    _loadAvatar(_user);
     _authSubscription = widget.authService.userChanges.listen((user) {
-      if (mounted) setState(() => _user = user);
+      if (!mounted) return;
+      final accountChanged = _user?.id != user?.id;
+      setState(() => _user = user);
+      if (accountChanged) _loadAvatar(user);
     });
+  }
+
+  int _avatarRequest = 0;
+
+  Future<void> _loadAvatar(AppUser? user) async {
+    final request = ++_avatarRequest;
+    final service = widget.authService;
+    if (user == null || service is! AutomaticAvatarService) return;
+    final updated = await (service as AutomaticAvatarService).ensureAvatar(
+      user,
+    );
+    if (!mounted ||
+        request != _avatarRequest ||
+        updated == null ||
+        _user?.id != updated.id) {
+      return;
+    }
+    setState(() => _user = updated);
   }
 
   @override
@@ -95,6 +125,9 @@ class _AppEntryState extends State<AppEntry> {
       page = MainShell(
         key: const ValueKey('main'),
         repository: widget.deckRepository,
+        wordCardGenerator: widget.wordCardGenerator,
+        reminderStore: widget.reminderStore,
+        reminderScheduler: widget.reminderScheduler,
         user: _user!,
         onSignOut: widget.authService.signOut,
         wordCaptureFlow: widget.wordCaptureFlow,

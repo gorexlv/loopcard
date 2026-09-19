@@ -9,5 +9,5 @@ export default async function EditDeckPage({ params, searchParams }: { params: P
   const { supabase, user } = await requireUser(); const { id } = await params;
   const { data } = await supabase.from('decks').select(deckSelection).eq('id', id).eq('user_id', user.id).maybeSingle();
   if (!data) notFound(); const deck = deckFromRow(data, true); const query = await searchParams;
-  return <main className="workspace-page editor-page"><header className="workspace-header"><div><span className="eyebrow">{deck.visibility === 'public' ? 'Published' : 'Private deck'}</span><h1>Edit deck</h1></div></header>{query.saved && <div className="form-message" role="status">Deck saved. Your next card is ready.</div>}<DeckEditor deck={deck} /><DeleteDeckForm deckId={deck.id} /></main>;
+  return <main className="workspace-page editor-page"><header className="workspace-header"><div><span className="eyebrow">{deck.visibility === 'public' ? 'Published' : 'Private deck'}</span><h1>Edit deck</h1></div></header>{query.saved && <div className="form-message" role="status">Saved.</div>}<DeckEditor deck={deck} /><DeleteDeckForm deckId={deck.id} /></main>;
 }

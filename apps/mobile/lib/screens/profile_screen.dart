@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import '../auth/auth_service.dart';
 import '../l10n/app_localizations.dart';
 import '../models/card_models.dart';
+import '../reminders/practice_reminder.dart';
 import '../theme/loop_theme.dart';
-import '../widgets/brand_lockup.dart';
-import '../widgets/design_canvas.dart';
+import '../widgets/primary_page.dart';
 import '../widgets/glass_surface.dart';
-import '../widgets/primary_navigation.dart';
+import '../widgets/user_avatar.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
@@ -15,21 +15,25 @@ class ProfileScreen extends StatelessWidget {
     required this.decks,
     required this.user,
     required this.onSignOut,
-    this.onTabSelected,
     required this.locale,
     required this.themeMode,
     required this.onLocaleChanged,
     required this.onThemeModeChanged,
+    this.reminderSettings = const PracticeReminderSettings(),
+    this.onReminderEnabledChanged,
+    this.onReminderTimeChanged,
   });
 
   final List<CardDeck> decks;
   final AppUser user;
   final Future<void> Function() onSignOut;
-  final ValueChanged<AppSection>? onTabSelected;
   final Locale? locale;
   final ThemeMode themeMode;
   final ValueChanged<Locale?> onLocaleChanged;
   final ValueChanged<ThemeMode> onThemeModeChanged;
+  final PracticeReminderSettings reminderSettings;
+  final Future<bool> Function(bool enabled)? onReminderEnabledChanged;
+  final Future<void> Function(TimeOfDay time)? onReminderTimeChanged;
 
   void _showMessage(BuildContext context, String message) {
     ScaffoldMessenger.of(context)
@@ -131,54 +135,131 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final total = decks.fold<int>(0, (sum, deck) => sum + deck.cards.length);
-    final mastered = decks.fold<int>(0, (sum, deck) => sum + deck.mastered);
-    final rate = total == 0 ? 0 : (mastered / total * 100).round();
-    final l10n = context.l10n;
-    final palette = context.loopColors;
-    return DesignCanvas(
-      child: GradientPage(
-        children: [
-          const Positioned(left: 32, top: 58, child: BrandLockup()),
-          Positioned(
-            left: 32,
-            top: 118,
-            child: Row(
+  void _showReminderSettings(BuildContext context) {
+    var settings = reminderSettings;
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (context, setSheetState) => SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const _Avatar(),
-                const SizedBox(width: 18),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user.displayName ??
-                          user.email?.split('@').first ??
-                          l10n.tr('myCards'),
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w700,
-                        color: palette.ink,
+                Text(
+                  context.l10n.tr('practiceReminder'),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: context.loopColors.ink,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SwitchListTile(
+                  key: const ValueKey('practice-reminder-toggle'),
+                  title: Text(context.l10n.tr('dailyReminder')),
+                  subtitle: Text(context.l10n.tr('dailyReminderHint')),
+                  value: settings.enabled,
+                  onChanged: (enabled) async {
+                    final accepted =
+                        await onReminderEnabledChanged?.call(enabled) ?? false;
+                    if (!context.mounted) return;
+                    if (!accepted && enabled) {
+                      _showMessage(
+                        context,
+                        context.l10n.tr('permissionDenied'),
+                      );
+                      return;
+                    }
+                    setSheetState(
+                      () => settings = settings.copyWith(enabled: enabled),
+                    );
+                  },
+                ),
+                ListTile(
+                  key: const ValueKey('practice-reminder-time'),
+                  enabled: settings.enabled,
+                  title: Text(context.l10n.tr('reminderTime')),
+                  trailing: Text(settings.timeLabel),
+                  onTap: () async {
+                    final time = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay(
+                        hour: settings.hour,
+                        minute: settings.minute,
                       ),
-                    ),
-                    const SizedBox(height: 3),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3),
-                      child: Text(
-                        user.email ?? l10n.tr('accountConnected'),
-                        style: TextStyle(fontSize: 14, color: palette.muted),
+                    );
+                    if (time == null) return;
+                    await onReminderTimeChanged?.call(time);
+                    if (!context.mounted) return;
+                    setSheetState(
+                      () => settings = settings.copyWith(
+                        hour: time.hour,
+                        minute: time.minute,
                       ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ],
             ),
           ),
-          Positioned(
-            left: 32,
-            top: 228,
-            width: 326,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final total = decks.fold<int>(0, (sum, deck) => sum + deck.cards.length);
+    final mastered = decks.fold<int>(0, (sum, deck) => sum + deck.mastered);
+    final fuzzy = decks.fold<int>(0, (sum, deck) => sum + deck.fuzzy);
+    final rate = total == 0
+        ? 0
+        : ((mastered + fuzzy * 0.5) / total * 100).round();
+    final l10n = context.l10n;
+    final palette = context.loopColors;
+    return PrimaryPage(
+      child: ListView(
+        padding: const EdgeInsets.only(bottom: 24),
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 24),
+            child: Row(
+              children: [
+                UserAvatar(user: user),
+                const SizedBox(width: 18),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user.displayName ??
+                            user.email?.split('@').first ??
+                            l10n.tr('myCards'),
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w700,
+                          color: palette.ink,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 3),
+                        child: Text(
+                          user.email ?? l10n.tr('accountConnected'),
+                          style: TextStyle(fontSize: 14, color: palette.muted),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
             height: 126,
             child: GlassSurface(
               radius: 28,
@@ -194,9 +275,9 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            left: 32,
-            top: 398,
+          const SizedBox(height: 32),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 0),
             child: Text(
               l10n.tr('settings'),
               style: TextStyle(
@@ -206,10 +287,8 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            left: 32,
-            top: 434,
-            width: 326,
+          const SizedBox(height: 16),
+          SizedBox(
             height: 300,
             child: GlassSurface(
               radius: 28,
@@ -236,9 +315,11 @@ class ProfileScreen extends StatelessWidget {
                   _SettingRow(label: l10n.tr('signOut'), onTap: onSignOut),
                   const _SettingDivider(),
                   _SettingRow(
-                    label: l10n.tr('memoryPreferences'),
-                    onTap: () =>
-                        _showMessage(context, l10n.tr('defaultPreferences')),
+                    label: l10n.tr('practiceReminder'),
+                    value: reminderSettings.enabled
+                        ? reminderSettings.timeLabel
+                        : l10n.tr('reminderOff'),
+                    onTap: () => _showReminderSettings(context),
                   ),
                   const _SettingDivider(),
                   _SettingRow(
@@ -250,44 +331,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            left: 32,
-            top: 744,
-            width: 326,
-            height: 72,
-            child: PrimaryNavigation(
-              current: AppSection.profile,
-              onSelected: onTabSelected,
-            ),
-          ),
         ],
-      ),
-    );
-  }
-}
-
-class _Avatar extends StatelessWidget {
-  const _Avatar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 72,
-      height: 72,
-      decoration: BoxDecoration(
-        color: context.loopColors.glass,
-        shape: BoxShape.circle,
-        border: Border.all(color: context.loopColors.border),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        'L',
-        style: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 30,
-          fontWeight: FontWeight.w700,
-          color: context.loopColors.ink,
-        ),
       ),
     );
   }

@@ -4,7 +4,7 @@ import '../l10n/app_localizations.dart';
 import '../onboarding/onboarding_models.dart';
 import '../theme/loop_theme.dart';
 import '../widgets/brand_lockup.dart';
-import '../widgets/design_canvas.dart';
+import '../widgets/app_page.dart';
 import '../widgets/glass_surface.dart';
 
 typedef OnboardingComplete = Future<void> Function(OnboardingAnswers answers);
@@ -36,97 +36,88 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DesignCanvas(
-      child: GradientPage(
-        children: [
-          const Positioned(left: 32, top: 58, child: BrandLockup()),
-          Positioned(
-            right: 32,
-            top: 66,
-            child: Row(
-              children: List.generate(
-                4,
-                (index) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
-                  width: index == _step ? 22 : 6,
-                  height: 6,
-                  margin: const EdgeInsets.only(left: 6),
-                  decoration: BoxDecoration(
-                    color: index == _step
-                        ? LoopTheme.teal
-                        : context.loopColors.divider,
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
+    return AppPage(
+      branded: true,
+      actions: [
+        Row(
+          children: List.generate(
+            4,
+            (index) => AnimatedContainer(
+              duration: const Duration(milliseconds: 220),
+              width: index == _step ? 22 : 6,
+              height: 6,
+              margin: const EdgeInsets.only(left: 6),
+              decoration: BoxDecoration(
+                color: index == _step
+                    ? LoopTheme.teal
+                    : context.loopColors.divider,
+                borderRadius: BorderRadius.circular(3),
               ),
             ),
           ),
-          Positioned(
-            left: 32,
-            top: 142,
-            width: 326,
-            height: 570,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 260),
-              transitionBuilder: (child, animation) => FadeTransition(
-                opacity: animation,
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0.05, 0),
-                    end: Offset.zero,
-                  ).animate(animation),
-                  child: child,
-                ),
-              ),
-              child: switch (_step) {
-                0 => _QuestionStep<String>(
-                  key: const ValueKey('source-step'),
-                  eyebrow: context.l10n.tr('sourceEyebrow'),
-                  title: context.l10n.tr('sourceTitle'),
-                  options: const ['camera', 'text', 'manual'],
-                  selected: _source,
-                  labelFor: (value) => context.l10n.tr(switch (value) {
-                    'camera' => 'sourceCamera',
-                    'text' => 'sourceText',
-                    _ => 'sourceManual',
-                  }),
-                  onSelected: (value) => setState(() => _source = value),
-                  onNext: _next,
-                ),
-                1 => _QuestionStep<String>(
-                  key: const ValueKey('pace-step'),
-                  eyebrow: context.l10n.tr('paceEyebrow'),
-                  title: context.l10n.tr('paceTitle'),
-                  options: const ['light', 'steady', 'focus'],
-                  selected: _pace,
-                  labelFor: (value) => context.l10n.tr(switch (value) {
-                    'light' => 'paceLight',
-                    'steady' => 'paceSteady',
-                    _ => 'paceFocus',
-                  }),
-                  onSelected: (value) => setState(() => _pace = value),
-                  onNext: _next,
-                ),
-                2 => _QuestionStep<int>(
-                  key: const ValueKey('goal-step'),
-                  eyebrow: context.l10n.tr('goalEyebrow'),
-                  title: context.l10n.tr('goalTitle'),
-                  options: const [10, 20, 30],
-                  selected: _dailyGoal,
-                  labelFor: (value) =>
-                      context.l10n.tr('countUnit', {'count': value}),
-                  onSelected: (value) => setState(() => _dailyGoal = value),
-                  onNext: _next,
-                ),
-                _ => _ReadyStep(
-                  key: const ValueKey('ready-step'),
-                  answers: _answers,
-                  onStart: _finish,
-                ),
-              },
+        ),
+      ],
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 24),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 260),
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.05, 0),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
             ),
           ),
-        ],
+          child: switch (_step) {
+            0 => _QuestionStep<String>(
+              key: const ValueKey('source-step'),
+              eyebrow: context.l10n.tr('sourceEyebrow'),
+              title: context.l10n.tr('sourceTitle'),
+              options: const ['camera', 'text', 'manual'],
+              selected: _source,
+              labelFor: (value) => context.l10n.tr(switch (value) {
+                'camera' => 'sourceCamera',
+                'text' => 'sourceText',
+                _ => 'sourceManual',
+              }),
+              onSelected: (value) => setState(() => _source = value),
+              onNext: _next,
+            ),
+            1 => _QuestionStep<String>(
+              key: const ValueKey('pace-step'),
+              eyebrow: context.l10n.tr('paceEyebrow'),
+              title: context.l10n.tr('paceTitle'),
+              options: const ['light', 'steady', 'focus'],
+              selected: _pace,
+              labelFor: (value) => context.l10n.tr(switch (value) {
+                'light' => 'paceLight',
+                'steady' => 'paceSteady',
+                _ => 'paceFocus',
+              }),
+              onSelected: (value) => setState(() => _pace = value),
+              onNext: _next,
+            ),
+            2 => _QuestionStep<int>(
+              key: const ValueKey('goal-step'),
+              eyebrow: context.l10n.tr('goalEyebrow'),
+              title: context.l10n.tr('goalTitle'),
+              options: const [10, 20, 30],
+              selected: _dailyGoal,
+              labelFor: (value) =>
+                  context.l10n.tr('countUnit', {'count': value}),
+              onSelected: (value) => setState(() => _dailyGoal = value),
+              onNext: _next,
+            ),
+            _ => _ReadyStep(
+              key: const ValueKey('ready-step'),
+              answers: _answers,
+              onStart: _finish,
+            ),
+          },
+        ),
       ),
     );
   }
@@ -188,7 +179,7 @@ class _QuestionStep<T> extends StatelessWidget {
             ),
           ),
         ),
-        const Spacer(),
+        const SizedBox(height: 32),
         _PrimaryButton(label: context.l10n.tr('continue'), onTap: onNext),
       ],
     );
@@ -347,7 +338,7 @@ class _ReadyStep extends StatelessWidget {
             ),
           ),
         ),
-        const Spacer(),
+        const SizedBox(height: 32),
         _PrimaryButton(label: context.l10n.tr('getStarted'), onTap: onStart),
         const SizedBox(height: 16),
         Center(

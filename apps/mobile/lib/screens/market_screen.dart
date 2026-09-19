@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+
+import '../widgets/app_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../data/deck_repository.dart';
 import '../l10n/app_localizations.dart';
-import '../theme/loop_theme.dart';
 
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key, required this.onAddDeck});
@@ -93,14 +94,11 @@ class _MarketScreenState extends State<MarketScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.tr('market')),
-        backgroundColor: context.loopColors.pageBackground,
-        foregroundColor: context.loopColors.ink,
-        surfaceTintColor: Colors.transparent,
-      ),
-      body: Stack(
+    return AppPage(
+      title: context.l10n.tr('market'),
+      maxWidth: double.infinity,
+      contentGutters: false,
+      child: Stack(
         children: [
           if (!_loadFailed) WebViewWidget(controller: _controller),
           if (_loadFailed)

@@ -25,6 +25,9 @@ max_rows = 1000
 [api.tls]
 # Enable HTTPS endpoints locally using a self-signed certificate.
 enabled = false
+
+[functions.generate-word-cards]
+verify_jwt = true
 # Paths to self-signed certificate pair.
 # cert_path = "../certs/my-cert.pem"
 # key_path = "../certs/my-key.pem"
@@ -422,3 +425,13 @@ enabled = true
 # declarative_schema_path = "./schemas"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+[functions.card-agent]
+verify_jwt = true
+static_files = ["./functions/card-agent/skills/*.md", "./functions/card-agent/skills/*/SKILL.md"]
+
+[functions.photo-ocr]
+verify_jwt = true
+
+[functions.generate-avatar]
+verify_jwt = true

@@ -1,21 +1,35 @@
 # LoopCard local backend
 
-LoopCard reuses the Supabase Docker stack in `/Users/rexlv/Workspace/supabase-local`.
-The API is available at `http://127.0.0.1:8000`; Studio is exposed through the
-same Kong stack. Database migrations and pgTAP checks live in this repository's
-`supabase/` directory.
+LoopCard can reuse the running local Supabase Docker stack. Database migrations,
+Edge Functions and pgTAP checks live in this repository's `supabase/` directory.
 
 ## Start and migrate
 
 ```sh
-cd /Users/rexlv/Workspace/supabase-local
-docker compose up -d
-
 cd /Users/rexlv/Workspace/github.com/gorexlv/loopcard
-docker exec -i supabase-db psql -U postgres -d postgres \
-  < supabase/migrations/20260902125429_initial_loopcard_schema.sql
-docker exec -i supabase-db psql -U postgres -d postgres \
-  < supabase/tests/database/rls.test.sql
+supabase start
+supabase migration up --local
+supabase test db
+```
+
+## Word-card generation
+
+The phone performs OCR locally. Only the selected words are sent to the Edge
+Function, which returns reviewable drafts and never writes cards automatically.
+
+```sh
+cp supabase/functions/.env.example supabase/functions/.env.local
+# Add DEEPSEEK_API_KEY to .env.local, then:
+supabase functions serve generate-word-cards \
+  --env-file supabase/functions/.env.local
+```
+
+For a linked hosted project, set the secret and deploy the function separately:
+
+```sh
+supabase secrets set AI_PROVIDER=deepseek AI_MODEL=deepseek-flash \
+  DEEPSEEK_API_KEY=<key>
+supabase functions deploy generate-word-cards
 ```
 
 Email/password auth is enabled and auto-confirms accounts locally. Google and
@@ -73,3 +87,43 @@ The session is stored with mode `0600` at
 The installed Codex plugin exposes the same operations as MCP tools:
 `list_decks`, `get_deck`, `create_deck`, `list_cards`, `get_card`, and
 `create_card`.
+
+## Multi-photo Card Agent
+
+The mobile photo entry now collects up to 10 photos and 4000 characters of
+corrected OCR text. Photos stay on device; all text sources enter one chat.
+Choose a front/back preset, customize it in conversation, then generate and
+explicitly save the drafts. Unfinished conversations are restored on this device
+and isolated by signed-in user. Starting a new capture replaces the current
+saved conversation only after the new material is submitted.
+
+Apply the new `card_agent_generation` migration after `structured_word_cards`.
+The migration preserves presentation/source metadata and adds an idempotent
+`create_agent_deck` RPC. Chat previews and saved study cards share the renderer.
+
+```sh
+supabase migration up --local
+supabase functions serve card-agent --env-file supabase/functions/.env.local
+```
+
+The same AI provider settings as `generate-word-cards` are used. Missing provider
+credentials return `503 generation_not_configured`; there is no fake response
+fallback. Local CLI services use port **54321**; configure the mobile
+`SUPABASE_URL` accordingly (Android emulator: `http://10.0.2.2:54321`). The
+separate Docker stack on port 8000 needs its own migration/function deployment.
+
+Runtime Skills live in `supabase/functions/card-agent/skills/`; the preset and
+structured-response contract lives in `_shared/card_agent.ts`. Skill files are
+bundled with the function through `static_files` in `config.toml`. To add a Skill,
+register its id, version, presets and validation, add its instruction file, and
+expose the corresponding preset metadata to the client. The first Skills are
+English vocabulary and source-grounded knowledge questions. OCR retains the
+existing Latin-script recognizer; adding other script recognition models is a
+separate platform setup task.
+
+```sh
+deno test supabase/functions/_shared
+supabase test db
+cd apps/mobile
+flutter test
+```

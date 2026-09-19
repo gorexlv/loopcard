@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
 
+import '../ai/word_card_generator.dart';
 import '../l10n/app_localizations.dart';
 import '../models/card_models.dart';
 import '../theme/loop_theme.dart';
-import '../widgets/brand_lockup.dart';
-import '../widgets/design_canvas.dart';
+import '../widgets/primary_page.dart';
 import '../widgets/glass_surface.dart';
-import '../widgets/primary_navigation.dart';
 import 'deck_detail_screen.dart';
 
 class DecksScreen extends StatelessWidget {
   const DecksScreen({
     super.key,
     required this.decks,
-    this.onTabSelected,
     this.onAttemptsCompleted,
     this.onOpenMarket,
+    this.wordCardGenerator,
+    this.onAppendGeneratedCards,
   });
 
   final List<CardDeck> decks;
-  final ValueChanged<AppSection>? onTabSelected;
-  final Future<void> Function(CardDeck deck, List<CardAttempt> attempts)?
+  final Future<List<CardScheduleUpdate>> Function(
+    CardDeck deck,
+    List<CardAttempt> attempts,
+  )?
   onAttemptsCompleted;
   final VoidCallback? onOpenMarket;
+  final WordCardGenerator? wordCardGenerator;
+  final Future<void> Function(CardDeck deck, List<WordCardDraft> drafts)?
+  onAppendGeneratedCards;
 
   void _openDeck(BuildContext context, CardDeck deck) {
     Navigator.of(context).push(
@@ -32,9 +37,13 @@ class DecksScreen extends StatelessWidget {
           opacity: animation,
           child: DeckDetailScreen(
             deck: deck,
+            wordCardGenerator: wordCardGenerator,
             onAttemptsCompleted: onAttemptsCompleted == null
                 ? null
                 : (attempts) => onAttemptsCompleted!(deck, attempts),
+            onAppendGeneratedCards: onAppendGeneratedCards == null
+                ? null
+                : (drafts) => onAppendGeneratedCards!(deck, drafts),
           ),
         ),
       ),
@@ -47,115 +56,129 @@ class DecksScreen extends StatelessWidget {
       0,
       (sum, deck) => sum + deck.cards.length,
     );
-    final dueCards = decks.fold<int>(
-      0,
-      (sum, deck) => sum + deck.fuzzy + deck.forgotten,
+    final dueCards = decks.fold<int>(0, (sum, deck) => sum + deck.dueCount());
+    return PrimaryPage(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final tablet = constraints.maxWidth >= 600;
+          return CustomScrollView(
+            key: ValueKey(tablet ? 'deck-grid' : 'deck-list'),
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _Header(onOpenMarket: onOpenMarket),
+                    SizedBox(height: tablet ? 28 : 22),
+                    SizedBox(
+                      height: 104,
+                      child: GlassSurface(
+                        radius: 28,
+                        child: Row(
+                          children: [
+                            _OverviewValue(
+                              value: '${decks.length}',
+                              label: context.l10n.tr('navDecks'),
+                            ),
+                            const _Divider(),
+                            _OverviewValue(
+                              value: '$totalCards',
+                              label: context.l10n.tr('cards'),
+                            ),
+                            const _Divider(),
+                            _OverviewValue(
+                              value: '$dueCards',
+                              label: context.l10n.tr('due'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: tablet ? 30 : 28),
+                    Text(
+                      context.l10n.tr('allDecks'),
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                        color: context.loopColors.ink,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                  ],
+                ),
+              ),
+              SliverList.separated(
+                itemCount: tablet ? (decks.length / 2).ceil() : decks.length,
+                separatorBuilder: (_, _) => const SizedBox(height: 18),
+                itemBuilder: (context, index) {
+                  Widget card(int i) => _DeckRow(
+                    deck: decks[i],
+                    onTap: () => _openDeck(context, decks[i]),
+                  );
+                  if (!tablet) return card(index);
+                  final left = index * 2;
+                  return IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(child: card(left)),
+                        const SizedBox(width: 18),
+                        Expanded(
+                          child: left + 1 < decks.length
+                              ? card(left + 1)
+                              : const SizedBox.shrink(),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            ],
+          );
+        },
+      ),
     );
-    return DesignCanvas(
-      child: GradientPage(
-        children: [
-          Positioned(
-            left: 32,
-            top: 58,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const BrandLockup(),
-                const SizedBox(height: 10),
-                Text(
-                  context.l10n.tr('decksTitle'),
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w700,
-                    color: context.loopColors.ink,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            right: 32,
-            top: 58,
-            child: TextButton.icon(
-              key: const ValueKey('open-market'),
-              onPressed: onOpenMarket,
-              icon: const Icon(Icons.storefront_outlined, size: 20),
-              label: Text(context.l10n.tr('market')),
-              style: TextButton.styleFrom(
-                foregroundColor: context.loopColors.ink,
-                backgroundColor: context.loopColors.glassStrong,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 11,
-                ),
-                shape: const StadiumBorder(),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 32,
-            top: 142,
-            width: 326,
-            height: 104,
-            child: GlassSurface(
-              radius: 28,
-              child: Row(
-                children: [
-                  _OverviewValue(
-                    value: '${decks.length}',
-                    label: context.l10n.tr('navDecks'),
-                  ),
-                  const _Divider(),
-                  _OverviewValue(
-                    value: '$totalCards',
-                    label: context.l10n.tr('cards'),
-                  ),
-                  const _Divider(),
-                  _OverviewValue(
-                    value: '$dueCards',
-                    label: context.l10n.tr('due'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            left: 32,
-            top: 282,
-            child: Text(
-              context.l10n.tr('allDecks'),
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header({required this.onOpenMarket});
+
+  final VoidCallback? onOpenMarket;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              context.l10n.tr('decksTitle'),
               style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w500,
+                fontSize: 30,
+                fontWeight: FontWeight.w700,
                 color: context.loopColors.ink,
               ),
             ),
+          ],
+        ),
+        const Spacer(),
+        TextButton.icon(
+          key: const ValueKey('open-market'),
+          onPressed: onOpenMarket,
+          icon: const Icon(Icons.storefront_outlined, size: 20),
+          label: Text(context.l10n.tr('market')),
+          style: TextButton.styleFrom(
+            foregroundColor: context.loopColors.ink,
+            backgroundColor: context.loopColors.glassStrong,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+            shape: const StadiumBorder(),
           ),
-          ...List.generate(decks.length, (index) {
-            final deck = decks[index];
-            return Positioned(
-              left: 32,
-              top: 318 + index * 154,
-              width: 326,
-              height: 136,
-              child: _DeckRow(
-                deck: deck,
-                onTap: () => _openDeck(context, deck),
-              ),
-            );
-          }),
-          Positioned(
-            left: 32,
-            top: 744,
-            width: 326,
-            height: 72,
-            child: PrimaryNavigation(
-              current: AppSection.decks,
-              onSelected: onTabSelected,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -209,7 +232,7 @@ class _DeckRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = deck.mastered / deck.cards.length;
+    final progress = deck.masteryProgress;
     final subject = deck.kind == CardKind.word
         ? context.l10n.tr('wordVocabulary')
         : context.l10n.tr('chemicalFormulas');
@@ -258,7 +281,7 @@ class _DeckRow extends StatelessWidget {
                   ),
                 ],
               ),
-              const Spacer(),
+              const SizedBox(height: 18),
               ClipRRect(
                 borderRadius: BorderRadius.circular(3),
                 child: LinearProgressIndicator(
@@ -272,9 +295,9 @@ class _DeckRow extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                context.l10n.tr('progressSummary', {
-                  'mastered': deck.mastered,
-                  'due': deck.fuzzy + deck.forgotten,
+                context.l10n.tr('deckProgressSummary', {
+                  'rate': (deck.masteryProgress * 100).round(),
+                  'due': deck.dueCount(),
                 }),
                 style: TextStyle(
                   fontSize: 12,

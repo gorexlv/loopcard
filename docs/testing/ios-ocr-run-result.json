@@ -1,0 +1,19 @@
+{
+  "device": "iPhone 16 Pro",
+  "os": "iOS 18.5",
+  "integration_test": "passed",
+  "test_seconds": 34,
+  "screenshots": 13,
+  "flutter_tests": 118,
+  "deno_tests": 24,
+  "database_tests": 62,
+  "analyze": "passed",
+  "test_account_deleted": true,
+  "temporary_credentials_removed": true,
+  "limitations": [
+    "camera and crop input injected",
+    "hosted card-agent HTTP 404",
+    "iOS 26 simulator blocked by retained ML Kit native dependencies",
+    "long card backs require inner scrolling"
+  ]
+}
