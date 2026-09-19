@@ -24,7 +24,7 @@ export function StudyExperience({ decks, anonymous = false, returnHref = '/app',
   const complete = Boolean(deck && ratings.length >= deck.cards.length);
   const [chinese, setChinese] = useState(false);
   useEffect(() => { setChinese(document.documentElement.dataset.locale === 'zh'); }, []);
-  const { leaving, advance } = useCardMotion();
+  const { leaving, advance, isPending } = useCardMotion();
   const labels = chinese
     ? { back: '返回卡包', hint: '先在心里作答，再翻看答案', reveal: '翻看答案', clear: '记住了', fuzzy: '有点模糊', forgot: '没记住', complete: '本轮完成', again: '再来一轮', browse: '发现更多卡包', save: '保存到我的卡包', undo: '撤销上次评分', progress: '本轮进度', keyboard: '快捷键', reviewed: '张卡已复习' }
     : { back: 'Back to decks', hint: 'Recall first, then reveal the answer', reveal: 'Reveal answer', clear: 'Remembered', fuzzy: 'A little fuzzy', forgot: 'Not yet', complete: 'Loop complete', again: 'Review again', browse: 'Browse more decks', save: 'Save to my decks', undo: 'Undo last rating', progress: 'This loop', keyboard: 'Keyboard', reviewed: 'cards reviewed' };
@@ -58,13 +58,14 @@ export function StudyExperience({ decks, anonymous = false, returnHref = '/app',
     });
   }, [cardIndex, complete, deck, flipped, leaving, advance]);
   const undo = useCallback(() => {
+    if (isPending()) return;
     setRatings((items) => {
       const previous = items.at(-1);
       if (!previous) return items;
       setCardIndex(previous.cardIndex); setSectionIndex(0); setFlipped(true);
       return items.slice(0, -1);
     });
-  }, []);
+  }, [isPending]);
   const restart = useCallback(() => { setRatings([]); setCardIndex(0); setSectionIndex(0); setFlipped(false); }, []);
 
   useEffect(() => {
@@ -81,13 +82,13 @@ export function StudyExperience({ decks, anonymous = false, returnHref = '/app',
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [complete, flipped, rate, reveal, undo]);
 
-  function selectDeck(index: number) { setDeckIndex(index); setCardIndex(0); setSectionIndex(0); setFlipped(false); setRatings([]); setRestored(false); }
+  function selectDeck(index: number) { if (isPending()) return; setDeckIndex(index); setCardIndex(0); setSectionIndex(0); setFlipped(false); setRatings([]); setRestored(false); }
   if (!deck || !card) return <main className="empty-study"><Logo /><h1>This deck has no cards yet.</h1><Link href={returnHref}>Return to decks</Link></main>;
 
   return <main className="focus-study">
     <header className="focus-header">
       <Link className="icon-button" href={returnHref} aria-label={labels.back}><Icon name="back" /></Link>
-      <div><h1>{deck.title}</h1>{decks.length > 1 && <select aria-label="Choose a deck" value={deckIndex} onChange={(event) => selectDeck(Number(event.target.value))}>{decks.map((item, index) => <option key={item.slug} value={index}>{item.title}</option>)}</select>}</div>
+      <div><h1>{deck.title}</h1>{decks.length > 1 && <select disabled={Boolean(leaving)} aria-label="Choose a deck" value={deckIndex} onChange={(event) => selectDeck(Number(event.target.value))}>{decks.map((item, index) => <option key={item.slug} value={index}>{item.title}</option>)}</select>}</div>
       <span className="focus-count">{complete ? deck.cards.length : cardIndex + 1}<span> / {deck.cards.length}</span></span>
     </header>
     <progress className="focus-progress" value={ratings.length} max={deck.cards.length} aria-label={labels.progress} />

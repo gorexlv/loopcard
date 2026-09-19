@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Icon } from './ui-icon';
 
 export type MemoryRating = 'forgot' | 'fuzzy' | 'clear';
@@ -19,7 +19,12 @@ export function useCardMotion() {
     const duration = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220;
     timer.current = setTimeout(() => { commit(); setLeaving(null); pending.current = false; }, duration);
   }
-  return { leaving, advance };
+  const isPending = useCallback(() => pending.current, []);
+  return { leaving, advance, isPending };
+}
+
+export function CardPrompt({ text }: { text: string }) {
+  return <>{Array.from(text).map((character, index) => '₀₁₂₃₄₅₆₇₈₉'.includes(character) ? <sub key={index}>{'₀₁₂₃₄₅₆₇₈₉'.indexOf(character)}</sub> : character)}</>;
 }
 
 export function RecallCard({ prompt, heading, body, category, answerLabel, flipped, onFlip, index = 1, leaving = null, disabled = false, chinese = false }: {
@@ -30,7 +35,7 @@ export function RecallCard({ prompt, heading, body, category, answerLabel, flipp
     <button className="recall-card" type="button" data-flipped={flipped} aria-pressed={flipped} disabled={disabled || Boolean(leaving)} aria-label={chinese ? (flipped ? '查看正面' : '翻看答案') : (flipped ? 'Show prompt' : 'Reveal answer')} onClick={onFlip}>
       <span className="recall-face recall-front" aria-hidden={flipped}>
         <span className="recall-meta"><span>{category}</span><Icon name="flip" /></span>
-        <span className={`recall-word ${prompt.length > 35 ? 'recall-word-long' : ''}`}>{prompt}</span>
+        <span className={`recall-word ${prompt.length > 35 ? 'recall-word-long' : ''}`}><CardPrompt text={prompt} /></span>
         <span className="recall-imprint"><span>LoopCard</span><span>{String(index).padStart(2, '0')}</span></span>
       </span>
       <span className="recall-face recall-back" aria-hidden={!flipped}>

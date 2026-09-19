@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-19T07:34:43.416303+00:00",
+  "title": "Design System: Loopcard Web",
+  "extensions": {
+    "shadows": [
+      {
+        "name": "card",
+        "value": "0 12px 30px #263c3212,0 2px 4px #263c3208",
+        "purpose": "Shared paper card depth."
+      }
+    ],
+    "motion": [
+      {
+        "name": "quiet-ease",
+        "value": "cubic-bezier(.2,.8,.2,1)",
+        "purpose": "Deal and turn continuity."
+      },
+      {
+        "name": "deal",
+        "value": "420ms",
+        "purpose": "Card arrival."
+      },
+      {
+        "name": "turn",
+        "value": "520ms",
+        "purpose": "Front/back turn."
+      },
+      {
+        "name": "file",
+        "value": "220ms",
+        "purpose": "Rating exit; zero delay with reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact",
+        "value": "700px"
+      },
+      {
+        "name": "medium",
+        "value": "1000px"
+      },
+      {
+        "name": "outer-inset",
+        "value": "1200px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "description": "Compact flat action.",
+      "html": "<button class=\"ds-button\">Browse decks</button>",
+      "css": ".ds-button{background:var(--teal,#275d4b);color:var(--paper,#f5f3ed);border:1px solid var(--line,#dcded4);border-radius:8px;padding:12px 22px;min-height:46px;font:550 14px \"Loop Inter\",\"Loop CJK\",sans-serif;cursor:pointer}.ds-button:hover{box-shadow:none;transform:none}.ds-button:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "description": "Compact flat action.",
+      "html": "<button class=\"ds-button\">Browse decks</button>",
+      "css": ".ds-button{background:transparent;color:var(--ink,#243830);border:1px solid var(--line,#dcded4);border-radius:8px;padding:12px 22px;min-height:46px;font:550 14px \"Loop Inter\",\"Loop CJK\",sans-serif;cursor:pointer}.ds-button:hover{box-shadow:none;transform:none}.ds-button:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
+    },
+    {
+      "name": "Catalog Search",
+      "kind": "input",
+      "description": "Minimal discovery search field.",
+      "html": "<input class=\"ds-search\" aria-label=\"Search decks\" placeholder=\"Search decks\">",
+      "css": ".ds-search{background:transparent;color:var(--ink,#243830);border:0;border-bottom:1px solid var(--line,#dcded4);padding:12px 4px;min-height:46px;font:14px \"Loop Inter\",\"Loop CJK\",sans-serif}.ds-search:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
+    },
+    {
+      "name": "Public Navigation",
+      "kind": "nav",
+      "description": "Muted public links; mobile uses a disclosure menu.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#market\">Decks</a><a href=\"#about\">About</a></nav>",
+      "css": ".ds-nav{display:flex;gap:28px;font:13px \"Loop Inter\",\"Loop CJK\",sans-serif}.ds-nav a{color:var(--muted,#66716a);text-decoration:none}.ds-nav a:hover{color:var(--ink,#243830)}.ds-nav a:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
+    },
+    {
+      "name": "Recall Front",
+      "kind": "card",
+      "description": "Static front-face specimen; production RecallCard supplies both faces and motion.",
+      "html": "<button class=\"ds-card\"><span class=\"ds-meta\">Language</span><strong>serendipity</strong><span class=\"ds-imprint\">LoopCard <span>01</span></span></button>",
+      "css": ".ds-card{display:flex;flex-direction:column;width:320px;max-width:100%;min-height:400px;padding:26px 28px 22px;border:1px solid var(--card-line,#d8dbcf);border-radius:12px;background:var(--card-stock,#fffdf5);color:var(--card-ink,#263c32);box-shadow:0 12px 30px #263c3212,0 2px 4px #263c3208;text-align:left;cursor:pointer}.ds-meta{font:11px \"Loop Inter\",\"Loop CJK\",sans-serif;color:var(--card-muted,#697469)}.ds-card strong{font:450 68px/1.05 \"Loop Newsreader\",\"Loop CJK\",serif;margin:auto 0;overflow-wrap:anywhere}.ds-imprint{display:flex;justify-content:space-between;border-top:1px solid var(--card-line,#d8dbcf);padding-top:16px;font:16px \"Loop Newsreader\",serif}.ds-card:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "A quiet, tactile pocket-card collection",
+    "overview": "Warm paper, deep green ink and compact controls frame the card as the primary object. Copy stays brief; a prompt, a turn and a rating communicate the central interaction. The LoopCard mark remains on card faces and collection covers.",
+    "keyCharacteristics": [
+      "Paper surfaces with restrained depth.",
+      "Literary Latin display type paired with clean multilingual UI type.",
+      "Shared card geometry and purposeful motion across discovery, recall and editing."
+    ],
+    "rules": [
+      {
+        "name": "The Cascade Boundary Rule",
+        "body": "Root layout imports `globals.css`, then `afterimage.css`, then `quiet.css`. The first two still support legacy routes and structures. The final file owns this visual layer and aliases the older `--after-*` palette variables. Do not remove earlier styles as though every route had migrated.",
+        "section": "layout"
+      }
+    ],
+    "dos": [
+      "**Do** reuse the common card object and rating order across applicable surfaces.",
+      "**Do** preserve semantic controls, focus visibility, keyboard behavior, undo and reduced motion.",
+      "**Do** preserve public SEO routes, metadata and structured data while simplifying visible copy.",
+      "**Do** maintain both common CJK subset and full fallback when updating fonts."
+    ],
+    "donts": [
+      "**Don't** expand concise labels into promotional explanations inside the recall flow.",
+      "**Don't** treat supporting styles or bilingual examples as proof that every route is redesigned or translated.",
+      "**Don't** turn card animation or local ratings into claims about backend scheduling."
+    ]
+  }
+}
