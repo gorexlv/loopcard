@@ -1,6 +1,6 @@
 # Automatic profile avatars
 
-New authenticated accounts without an existing avatar receive a individually generated Pixar-style 3D animal portrait. Generation begins after sign-in/session restoration and does not block onboarding. A bundled teal owl portrait is immediately visible, including offline and while generation is pending. Existing OAuth avatars are preserved. Old accounts without an avatar receive the same backfill behavior.
+New authenticated accounts without an existing avatar receive an individually generated Pixar-style 3D animal portrait. Generation begins after sign-in/session restoration and does not block onboarding. A bundled teal owl portrait is immediately visible, including offline and while generation is pending. Existing OAuth avatars are preserved. Old accounts without an avatar receive the same backfill behavior.
 
 ## Implementation
 
@@ -30,6 +30,6 @@ The schema has been applied and its migration recorded in the local database. No
 - Flutter component tests: missing/invalid URLs, network failure fallback. Profile screenshot checks the 72px circular image in context.
 - Local live check: created a temporary authenticated account, generated through OpenRouter, uploaded and fetched its PNG, and verified a repeat call returns the same URL. Temporary account and files were deleted afterward.
 - Relevant Dart analysis and local database security advisors passed.
-- The broader mobile widget suite currently cannot compile because existing study/result screens pass `adaptiveLayout` to GradientPage, whose current constructor does not define that parameter. This is outside the avatar changes.
+- The earlier `adaptiveLayout` compilation blocker has been resolved by the shared page layout changes included in this release. The profile golden test explicitly precaches both avatar and brand assets to avoid asynchronous image-decoding differences.
 
 References: [OpenRouter image generation](https://openrouter.ai/docs/guides/overview/multimodal/image-generation), [Supabase Flutter function invocation](https://supabase.com/docs/reference/dart/functions-invoke).

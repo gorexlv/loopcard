@@ -48,10 +48,16 @@ void main() {
       ),
     );
     await tester.runAsync(
-      () => precacheImage(
-        const AssetImage(UserAvatar.defaultAsset),
-        tester.element(find.byType(UserAvatar)),
-      ),
+      () => Future.wait([
+        precacheImage(
+          const AssetImage(UserAvatar.defaultAsset),
+          tester.element(find.byType(UserAvatar)),
+        ),
+        precacheImage(
+          const AssetImage('assets/brand/loopcard-app-icon.png'),
+          tester.element(find.byType(UserAvatar)),
+        ),
+      ]),
     );
     await tester.pumpAndSettle();
     expect(find.byType(UserAvatar), findsOneWidget);
