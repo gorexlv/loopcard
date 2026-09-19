@@ -53,35 +53,35 @@
       "kind": "button",
       "description": "Compact flat action.",
       "html": "<button class=\"ds-button\">Browse decks</button>",
-      "css": ".ds-button{background:var(--teal,#275d4b);color:var(--paper,#f5f3ed);border:1px solid var(--line,#dcded4);border-radius:8px;padding:12px 22px;min-height:46px;font:550 14px \"Loop Inter\",\"Loop CJK\",sans-serif;cursor:pointer}.ds-button:hover{box-shadow:none;transform:none}.ds-button:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
+      "css": ".ds-button{background:var(--teal,#275d4b);color:var(--paper,#f5f3ed);border:1px solid var(--line,#dcded4);border-radius:8px;padding:12px 22px;min-height:46px;font:500 14px \"Loop Sans\",sans-serif;cursor:pointer}.ds-button:hover{box-shadow:none;transform:none}.ds-button:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
     },
     {
       "name": "Ghost Button",
       "kind": "button",
       "description": "Compact flat action.",
       "html": "<button class=\"ds-button\">Browse decks</button>",
-      "css": ".ds-button{background:transparent;color:var(--ink,#243830);border:1px solid var(--line,#dcded4);border-radius:8px;padding:12px 22px;min-height:46px;font:550 14px \"Loop Inter\",\"Loop CJK\",sans-serif;cursor:pointer}.ds-button:hover{box-shadow:none;transform:none}.ds-button:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
+      "css": ".ds-button{background:transparent;color:var(--ink,#243830);border:1px solid var(--line,#dcded4);border-radius:8px;padding:12px 22px;min-height:46px;font:500 14px \"Loop Sans\",sans-serif;cursor:pointer}.ds-button:hover{box-shadow:none;transform:none}.ds-button:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
     },
     {
       "name": "Catalog Search",
       "kind": "input",
       "description": "Minimal discovery search field.",
       "html": "<input class=\"ds-search\" aria-label=\"Search decks\" placeholder=\"Search decks\">",
-      "css": ".ds-search{background:transparent;color:var(--ink,#243830);border:0;border-bottom:1px solid var(--line,#dcded4);padding:12px 4px;min-height:46px;font:14px \"Loop Inter\",\"Loop CJK\",sans-serif}.ds-search:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
+      "css": ".ds-search{background:transparent;color:var(--ink,#243830);border:0;border-bottom:1px solid var(--line,#dcded4);padding:12px 4px;min-height:46px;font:14px \"Loop Sans\",sans-serif}.ds-search:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
     },
     {
       "name": "Public Navigation",
       "kind": "nav",
       "description": "Muted public links; mobile uses a disclosure menu.",
       "html": "<nav class=\"ds-nav\"><a href=\"#market\">Decks</a><a href=\"#about\">About</a></nav>",
-      "css": ".ds-nav{display:flex;gap:28px;font:13px \"Loop Inter\",\"Loop CJK\",sans-serif}.ds-nav a{color:var(--muted,#66716a);text-decoration:none}.ds-nav a:hover{color:var(--ink,#243830)}.ds-nav a:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
+      "css": ".ds-nav{display:flex;gap:28px;font:13px \"Loop Sans\",sans-serif}.ds-nav a{color:var(--muted,#66716a);text-decoration:none}.ds-nav a:hover{color:var(--ink,#243830)}.ds-nav a:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
     },
     {
       "name": "Recall Front",
       "kind": "card",
       "description": "Static front-face specimen; production RecallCard supplies both faces and motion.",
       "html": "<button class=\"ds-card\"><span class=\"ds-meta\">Language</span><strong>serendipity</strong><span class=\"ds-imprint\">LoopCard <span>01</span></span></button>",
-      "css": ".ds-card{display:flex;flex-direction:column;width:320px;max-width:100%;min-height:400px;padding:26px 28px 22px;border:1px solid var(--card-line,#d8dbcf);border-radius:12px;background:var(--card-stock,#fffdf5);color:var(--card-ink,#263c32);box-shadow:0 12px 30px #263c3212,0 2px 4px #263c3208;text-align:left;cursor:pointer}.ds-meta{font:11px \"Loop Inter\",\"Loop CJK\",sans-serif;color:var(--card-muted,#697469)}.ds-card strong{font:450 68px/1.05 \"Loop Newsreader\",\"Loop CJK\",serif;margin:auto 0;overflow-wrap:anywhere}.ds-imprint{display:flex;justify-content:space-between;border-top:1px solid var(--card-line,#d8dbcf);padding-top:16px;font:16px \"Loop Newsreader\",serif}.ds-card:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
+      "css": ".ds-card{display:flex;flex-direction:column;width:320px;max-width:100%;min-height:400px;padding:26px 28px 22px;border:1px solid var(--card-line,#d8dbcf);border-radius:12px;background:var(--card-stock,#fffdf5);color:var(--card-ink,#263c32);box-shadow:0 12px 30px #263c3212,0 2px 4px #263c3208;text-align:left;cursor:pointer}.ds-meta{font:11px \"Loop Sans\",sans-serif;color:var(--card-muted,#697469)}.ds-card strong{font:400 58px/1.3 \"Loop Sans\",sans-serif;margin:auto 0;overflow-wrap:anywhere}.ds-imprint{display:flex;justify-content:space-between;border-top:1px solid var(--card-line,#d8dbcf);padding-top:16px;font:16px \"Loop Sans\",sans-serif}.ds-card:focus-visible{outline:2px solid var(--teal,#275d4b);outline-offset:5px}"
     }
   ],
   "narrative": {

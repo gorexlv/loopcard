@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { JournalFigure } from '../../../components/journal-example';
 import { notFound } from 'next/navigation';
 import { JsonLd } from '../../../components/json-ld';
 import { SiteFooter } from '../../../components/site-footer';
@@ -36,5 +37,5 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug; const article = getArticle(slug); const body = content[slug]; if (!article || !body) notFound(); const current = articles.findIndex((item) => item.slug === slug); const next = articles[(current + 1) % articles.length];
   const jsonLd = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: article.title, description: article.excerpt, datePublished: article.isoDate, dateModified: article.isoDate, author: { '@type': 'Organization', name: 'LoopCard Studio', url: `${site.url}/about` }, publisher: { '@type': 'Organization', name: 'LoopCard Studio', logo: { '@type': 'ImageObject', url: `${site.url}/brand/loopcard-app-icon.png` } }, mainEntityOfPage: `${site.url}/blog/${slug}`, image: `${site.url}${site.ogImage}` };
-  return <><SiteHeader /><main><section className="page-hero"><span className="eyebrow"><time dateTime={article.isoDate}>{article.date}</time> · {article.read} read</span><h1>{article.title}</h1><p>{body.intro}</p></section><article className="prose"><p className="lead">{body.heading}.</p>{body.sections.map(([heading, first, second]) => <section key={heading}><h2>{heading}</h2><p>{first}</p><p>{second}</p></section>)}<aside className="article-next"><span className="eyebrow">Continue the practice</span><Link href={`/blog/${next.slug}`}>Next guide: {next.title} →</Link><Link href="/tools">Turn your notes into flashcards →</Link></aside></article></main><SiteFooter /><JsonLd data={jsonLd} /></>;
+  return <><SiteHeader /><main><section className="page-hero"><span className="eyebrow"><time dateTime={article.isoDate}>{article.date}</time></span><h1>{article.title}</h1><p>{body.intro}</p></section><article className="prose"><JournalFigure kind={current} /><p className="lead">{body.heading}.</p>{body.sections.map(([heading, first, second]) => <section key={heading}><h2>{heading}</h2><p>{first}</p><p>{second}</p></section>)}<aside className="article-next"><span className="eyebrow">Continue the practice</span><Link href={`/blog/${next.slug}`}>Next guide: {next.title} →</Link><Link href="/tools">Turn your notes into flashcards →</Link></aside></article></main><SiteFooter /><JsonLd data={jsonLd} /></>;
 }

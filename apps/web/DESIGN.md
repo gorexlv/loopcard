@@ -15,13 +15,13 @@ colors:
   card-muted: "#697469"
 typography:
   display:
-    fontFamily: "Loop Newsreader, Loop Inter, Loop CJK, serif"
-    fontSize: "clamp(34px, 4vw, 48px)"
-    fontWeight: 450
-    lineHeight: 1.15
+    fontFamily: "Loop Sans, sans-serif"
+    fontSize: "clamp(30px, 3.3vw, 42px)"
+    fontWeight: 500
+    lineHeight: 1.25
     letterSpacing: "-0.025em"
   body:
-    fontFamily: "Loop Inter, Loop CJK, sans-serif"
+    fontFamily: "Loop Sans, sans-serif"
 rounded:
   control: "8px"
   card: "12px"
@@ -53,10 +53,10 @@ Warm paper, deep green ink and compact controls frame the card as the primary ob
 **Key Characteristics:**
 
 - Paper surfaces with restrained depth.
-- Literary Latin display type paired with clean multilingual UI type.
+- One humanist sans-serif family across Latin and Chinese interface/content text.
 - Shared card geometry and purposeful motion across discovery, recall and editing.
 
-This captures the implementation on 2026-09-19. The full card treatment covers `/`, `/market`, `/market/[slug]`, `/study/[slug]`, `/app/study/[id]` and editor previews in `/app/decks/new` and `/app/decks/[id]`. Workspace and login receive supporting typography, palette and spacing. Other public content routes retain their existing structures; this is not a claim of whole-app localization.
+This captures the implementation on 2026-09-19. The full card treatment covers `/`, `/market`, `/market/[slug]`, `/study/[slug]`, `/app/study/[id]` and editor previews in `/app/decks/new` and `/app/decks/[id]`. Workspace and login receive supporting typography, palette and spacing. Tools, reading pages, download notices and login now share the same typography, controls and surfaces; this is not a claim of whole-app localization.
 
 ## Colors
 
@@ -71,18 +71,16 @@ Dark mode uses explicit overrides on `html[data-theme=dark]`: forest paper (`#19
 
 ## Typography
 
-**Display Font:** Loop Newsreader, then Loop Inter, Loop CJK and serif.
-**Body Font:** Loop Inter, then Loop CJK and sans-serif.
+**Single family:** locally hosted Noto Sans SC, named `Loop Sans` in CSS. Both `--font-body` and `--font-display` resolve to this family. No UI role switches to Newsreader, Inter, or a platform-specific display face.
 
-Self-hosted files in `public/fonts/` are `newsreader-latin.woff2` (weights 200–800), `inter-latin.woff2` (100–900), `noto-sans-sc-ui.woff2` and `noto-sans-sc.woff2` (100–900). The CJK UI file is the explicitly ranged common-character subset; the unrestricted full file supplies remaining characters. Both share the Loop CJK family. All use `font-display: swap`; synthesized font styles are disabled.
+`fonts.css` defines the 100–900 variable weight range. `loop-sans-latin.woff2` (55KB) covers Latin and common punctuation, `loop-sans-ui.woff2` (136KB) covers remaining source characters, and the complete Noto Sans SC file supplies uncommon content. Run `python3 apps/web/scripts/build-fonts.py` to regenerate subsets and their matching unicode ranges. Font synthesis is disabled. The original OFL notice remains in `public/fonts`.
 
-Newsreader supplies Latin headlines and prompts. Inter handles controls, while CJK glyphs fall through to Loop CJK; the Chinese homepage headline explicitly uses the body stack. This is a typography strategy, not a translation guarantee.
-
-- Homepage display follows the frontmatter scale; Chinese uses a smaller, more open treatment.
-- Card prompts use large display type (68px base; 72px in desktop study). Long prompts receive a smaller style and can wrap.
-- Answers use a display heading with readable body text (15px, line-height 1.8).
-- UI labels generally range from 11–14px; counters use tabular numerals.
-- Covers use a longest-word measurement and container-relative type for prompts over 12 characters: `clamp(18px, calc(175cqw / var(--cover-word-length)), 29px)`, capped at 24px on mobile. Preserve wrapping and the long-word fit rule when changing grids.
+- Page titles: 30–42px, weight 500, line-height 1.25–1.3.
+- Section titles: 22–25px, weight 500, line-height 1.4.
+- Body: 16px, weight 400, line-height 1.8–1.85; control text 13–15px.
+- Card questions fit their longest word and available container width; illustrated prompts use 23–25px in recall and 16–21px in covers.
+- Latin heading tracking is restrained; Chinese headings use normal tracking.
+- Typography Anatomy uses a static outline illustration of two letterforms. It is educational content, not another loaded interface font.
 
 ## Layout
 
@@ -90,11 +88,11 @@ Public collections and discovery use a centered maximum width (1136px); the head
 
 The homepage active card is 320px wide, reducing to at most 280px on mobile, with partial neighboring cards. Study centers a single card in a stage up to 400px wide, reducing to 350px on mobile. The editor combines a card list, fields and the same preview object; the editing stage collapses at 1000px and the broader builder at 700px.
 
-**The Cascade Boundary Rule.** Root layout imports `globals.css`, then `afterimage.css`, then `quiet.css`. The first two still support legacy routes and structures. The final file owns this visual layer and aliases the older `--after-*` palette variables. Do not remove earlier styles as though every route had migrated.
+**The Cascade Boundary Rule.** Root layout imports `globals.css`, then `afterimage.css`, then `fonts.css`, `quiet.css`, and `system.css`. The first two still support legacy routes and structures. The last two files own this visual layer and aliases the older `--after-*` palette variables. Do not remove earlier styles as though every route had migrated.
 
 ## Elevation & Depth
 
-Depth belongs mainly to physical cards and covers. The shared card shadow is `0 12px 30px #263c3212, 0 2px 4px #263c3208`, with a darker theme equivalent. Covers add a faint inset spine and lift 5px on hover. Primary controls remain flat. Avoid multiplying elevated wrappers around the card object.
+Depth belongs mainly to physical cards and covers. The shared card shadow is `0 12px 30px #263c3212, 0 2px 4px #263c3208`, with a darker theme equivalent. Covers add a faint inset spine and lift 3px on hover. Primary controls remain flat. Avoid multiplying elevated wrappers around the card object.
 
 ## Shapes
 
@@ -122,7 +120,7 @@ With reduced motion enabled, animations and transitions stop, the card uses face
 
 ### Collection cover
 
-`DeckTile` uses the first prompt (or deck title), category, imprint and card count, followed by a simple caption. The whole cover is a link. Preserve semantic subscripts through `CardPrompt`, the category tone and responsive long-word sizing.
+`DeckTile` uses the first prompt (or deck title), category, imprint and card count, followed by a simple caption. The cover is a semantic flip button; the caption is the separate detail link. Covers scale at native width:height 1:1.74. Curated diagrams convey the question without altering the saved text prompt. Preserve semantic subscripts through `CardPrompt`, the category tone and responsive long-word sizing.
 
 ## Do's and Don'ts
 

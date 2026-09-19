@@ -1,5 +1,7 @@
+import { editorialCards, editorialOrder } from './editorial';
+export { editorialOrder };
 export type CardSection = { title: string; heading: string; body: string };
-export type MemoryCard = { id: string; prompt: string; sections: CardSection[] };
+export type MemoryCard = { id: string; prompt: string; sections: CardSection[]; visual?: 'color' | 'type' | 'aperture' | 'dialogue' | 'cafe' | 'hierarchy' };
 export type PublicDeck = {
   slug: string;
   title: string;
@@ -10,6 +12,7 @@ export type PublicDeck = {
   saves: number;
   accent: string;
   cards: MemoryCard[];
+  editorialStatus?: 'draft' | 'ready';
 };
 
 const zodiacOrigins = [
@@ -81,11 +84,12 @@ const catalogBlueprints = [
 const discoveryDecks: PublicDeck[] = catalogBlueprints.map(([category, accent, title, description, prompts], deckIndex) => ({
   slug: `${category.toLowerCase()}-${deckIndex + 1}-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`,
   title,
-  subtitle: `${18 + (deckIndex % 5) * 4} cards · ${category}`,
+  subtitle: `${prompts.length} cards · ${category}`,
   description,
   category,
-  author: deckIndex % 3 === 0 ? 'LoopCard Studio' : deckIndex % 3 === 1 ? 'Open Memory Lab' : 'Community Curator',
-  saves: 620 + ((deckIndex * 487) % 8900),
+  editorialStatus: 'draft',
+  author: 'LoopCard Studio',
+  saves: 0,
   accent,
   cards: prompts.map((prompt, cardIndex) => ({
     id: `catalog-${deckIndex + 1}-${cardIndex + 1}`,
@@ -97,7 +101,7 @@ const discoveryDecks: PublicDeck[] = catalogBlueprints.map(([category, accent, t
   })),
 }));
 
-export const publicDecks: PublicDeck[] = [
+const sourceDecks: PublicDeck[] = [
   {
     slug: 'chinese-zodiac-origins',
     title: '十二生肖的来历',
@@ -162,5 +166,11 @@ export const publicDecks: PublicDeck[] = [
   },
   ...discoveryDecks,
 ];
+
+export const publicDecks: PublicDeck[] = sourceDecks.map((deck) => {
+  const cards = editorialCards[deck.slug] ?? deck.cards;
+  return { ...deck, cards, saves: 0, subtitle: `${cards.length} cards · ${deck.category}`,
+    ...(editorialCards[deck.slug] ? { editorialStatus: 'ready' as const, author: 'LoopCard Studio' } : {}) };
+});
 
 export const getPublicDeck = (slug: string) => publicDecks.find((deck) => deck.slug === slug);

@@ -100,7 +100,7 @@ export function StudyExperience({ decks, anonymous = false, returnHref = '/app',
         <Link className="study-save-link" href={anonymous && saveHref ? saveHref : returnHref}>{anonymous && saveHref ? labels.save : labels.back}</Link>
         <Link className="study-save-link" href="/market">{labels.browse}</Link>
       </div> : <>
-        <RecallCard key={`${deck.slug}-${cardIndex}`} prompt={card.prompt} heading={section?.heading} body={section?.body} category={deck.category} answerLabel={section?.title} flipped={flipped} onFlip={() => setFlipped(!flipped)} index={cardIndex + 1} leaving={leaving} chinese={chinese} />
+        <RecallCard key={`${deck.slug}-${cardIndex}`} prompt={card.prompt} visual={card.visual} heading={section?.heading} body={section?.body} category={deck.category} answerLabel={section?.title} flipped={flipped} onFlip={() => setFlipped(!flipped)} index={cardIndex + 1} leaving={leaving} chinese={chinese} />
         {flipped && card.sections.length > 1 && <div className="focus-tabs" aria-label="Card back sections">{card.sections.map((item, index) => <button type="button" aria-pressed={index === sectionIndex} key={item.title} onClick={() => setSectionIndex(index)}>{item.title}</button>)}</div>}
         <div className="focus-controls">{!flipped ? <button className="recall-reveal" type="button" onClick={reveal}><Icon name="flip" />{labels.reveal}<kbd>Space</kbd></button> : <RecallRatings chinese={chinese} onRate={rate} disabled={Boolean(leaving)} keyboard />}</div>
       </>}

@@ -1,13 +1,13 @@
 # Loopcard Web fonts
 
-Locally hosted subsets of the font files already used by Loopcard mobile:
+The active interface family is Noto Sans SC, served locally as `Loop Sans` for both Latin and Chinese. Source: `apps/mobile/assets/fonts/NotoSansSC-Variable.ttf`; complete WOFF2 retained as the uncommon-character fallback. License: SIL OFL 1.1 in `NotoSansSC-OFL.txt`.
 
-- Inter: UI text; source `apps/mobile/assets/fonts/Inter-Variable.ttf`.
-- Newsreader: Latin card content and editorial headings; source `apps/mobile/assets/fonts/Newsreader-Variable.ttf`.
-- Noto Sans SC: Chinese UI/content; source `apps/mobile/assets/fonts/NotoSansSC-Variable.ttf`.
+- `loop-sans-latin.woff2`: Latin and common punctuation, about 55KB.
+- `loop-sans-ui.woff2`: remaining characters in Web/shared TypeScript source, about 136KB.
+- `noto-sans-sc.woff2`: full fallback. Rare user content can request this larger file.
 
-All are SIL OFL 1.1; corresponding license files accompany these distributions.
+Regenerate small subsets and `app/fonts.css` together with `python3 apps/web/scripts/build-fonts.py` (fontTools with WOFF2 support). Every subset comes from the same variable font; weights remain 100–900. Latin is preloaded; other subsets load by Unicode range.
 
-The small Noto UI subset includes Chinese characters in Web/shared TypeScript source. `quiet.css` declares its precise unicode range after the full face, so ordinary interface text uses the small file; other Chinese card content can load the complete CJK fallback. Latin subsets include extended Latin and punctuation. Chemical subscript digits render as semantic `sub` elements in the same face rather than an unrelated fallback glyph.
+Legacy Inter/Newsreader files are no longer declared as interface faces. Their OFL notices remain because `type-specimen.svg` contains two outlined glyphs from these typefaces, at equal em size, for the Typography Anatomy educational diagram. Original mobile font assets are unchanged.
 
-Subset generation uses fontTools `pyftsubset --flavor=woff2 --layout-features='*'`; original mobile font files remain unchanged. Regenerate the UI subset and unicode range together when introducing Chinese interface copy.
+Research: https://notofonts.github.io/noto-docs/website/use/ and https://github.com/notofonts/noto-cjk/blob/main/Sans/README.md . Noto Sans CJK shares the Source Han Sans design and uses Latin forms based on Source Sans Pro.
