@@ -7,11 +7,12 @@ import '../models/card_models.dart';
 import '../widgets/figma_icon.dart';
 import 'card_background.dart';
 import 'card_visuals.dart';
+import 'card_reading_layout.dart';
 import 'generated_card_face.dart';
 
 enum CardFace { front, back }
 
-class EditorialCard extends StatelessWidget {
+class EditorialCard extends StatefulWidget {
   const EditorialCard({
     super.key,
     required this.card,
@@ -40,8 +41,44 @@ class EditorialCard extends StatelessWidget {
   final VoidCallback? onPronounce;
 
   @override
+  State<EditorialCard> createState() => _EditorialCardState();
+}
+
+class _EditorialCardState extends State<EditorialCard> {
+  int _localSection = 0;
+  StudyCard get card => widget.card;
+  CardKind get kind => widget.kind;
+  CardFace get face => widget.face;
+  int get sectionIndex =>
+      widget.onSectionChanged == null ? _localSection : widget.sectionIndex;
+  bool get hintRevealed => widget.hintRevealed;
+  CardVisualPreferences get preferences => widget.preferences;
+  VoidCallback? get onTap => widget.onTap;
+  VoidCallback? get onHintTap => widget.onHintTap;
+  VoidCallback? get onPronounce => widget.onPronounce;
+  ValueChanged<bool>? get onBackScrollabilityChanged =>
+      widget.onBackScrollabilityChanged;
+  void onSectionChanged(int index) {
+    setState(() => _localSection = index);
+    widget.onSectionChanged?.call(index);
+  }
+
+  @override
+  void didUpdateWidget(covariant EditorialCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.card.id != card.id ||
+        oldWidget.card.prompt != card.prompt ||
+        oldWidget.face != face) {
+      _localSection = 0;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (card.presentation.isNotEmpty) {
+    if (card.presentation.isNotEmpty &&
+        (face == CardFace.front ||
+            card.presentation['skill'] == 'poetry' ||
+            card.presentation['skill'] == 'classical')) {
       return GeneratedCardFace(
         card: card,
         back: face == CardFace.back,
@@ -49,7 +86,9 @@ class EditorialCard extends StatelessWidget {
         onScrollabilityChanged: onBackScrollabilityChanged,
       );
     }
-    final sections = card.learningSections;
+    final sections = card.reviewSections.isEmpty
+        ? const [CardBackSection(title: '', heading: '', body: '')]
+        : card.reviewSections;
     final contentLength =
         card.prompt.length +
         sections.fold<int>(
@@ -99,7 +138,7 @@ class EditorialCard extends StatelessWidget {
                       hintRevealed: hintRevealed,
                       onHintTap: onHintTap,
                     )
-                  : kind == CardKind.word && card.wordContent != null
+                  : kind == CardKind.word && card.reviewWordContent != null
                   ? _WordBack(
                       card: card,
                       sectionIndex: sectionIndex,
@@ -644,7 +683,6 @@ class _WordBack extends StatelessWidget {
     required this.onScrollabilityChanged,
     required this.onPronounce,
   });
-
   final StudyCard card;
   final int sectionIndex;
   final ResolvedCardVisuals visuals;
@@ -655,146 +693,124 @@ class _WordBack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final content = card.wordContent!;
-    final sections = content.sections;
-    final safeIndex = sectionIndex.clamp(0, sections.length - 1);
-    final canGoPrevious = safeIndex > 0;
-    final canGoNext = safeIndex < sections.length - 1;
+    final content = card.reviewWordContent!;
+    final sections = content.reviewSections;
+    final index = sectionIndex.clamp(0, sections.length - 1);
+    final previous = index > 0 ? () => onSectionChanged?.call(index - 1) : null;
+    final next = index + 1 < sections.length
+        ? () => onSectionChanged?.call(index + 1)
+        : null;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(32, 24, 24, 16),
+      padding: const EdgeInsets.fromLTRB(24, 16, 20, 8),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
+          CardSectionTabs(
+            labels: [
+              for (final s in sections) context.l10n.sectionTitle(s.title),
+            ],
+            index: index,
+            onSelected: (i) => onSectionChanged?.call(i),
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: _HorizontalSectionPager(
+              key: const ValueKey('back-content'),
+              index: index,
+              onPrevious: previous,
+              onNext: next,
+              child: _AdaptiveBackSection(
+                key: ValueKey('word-back-section-$index'),
+                onScrollabilityChanged: onScrollabilityChanged,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      card.prompt,
-                      maxLines: 1,
-                      overflow: TextOverflow.fade,
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 34,
-                        height: 1.05,
-                        letterSpacing: -1.3,
-                        fontWeight: FontWeight.w800,
-                        color: tokens.foreground,
-                      ),
-                    ),
-                    const SizedBox(height: 9),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 5,
-                      crossAxisAlignment: WrapCrossAlignment.center,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (content.partOfSpeech.isNotEmpty)
-                          Text(
-                            content.partOfSpeech,
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 0.8,
-                              color: tokens.accent,
-                            ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                card.prompt,
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 22,
+                                  height: 1.25,
+                                  fontWeight: FontWeight.w600,
+                                  color: tokens.foreground,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Wrap(
+                                spacing: 10,
+                                runSpacing: 4,
+                                children: [
+                                  if (content.partOfSpeech.isNotEmpty)
+                                    Text(
+                                      content.partOfSpeech,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: tokens.accent,
+                                      ),
+                                    ),
+                                  for (final p in content.pronunciations)
+                                    Text(
+                                      [
+                                        if (p.region.isNotEmpty) p.region,
+                                        p.ipa,
+                                      ].join(' '),
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontFamilyFallback: const [
+                                          'NotoSansSC',
+                                        ],
+                                        fontSize: 13,
+                                        height: 1.4,
+                                        color: tokens.muted,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ],
                           ),
-                        for (final pronunciation in content.pronunciations)
-                          Text(
-                            [
-                              if (pronunciation.region.isNotEmpty)
-                                pronunciation.region,
-                              pronunciation.ipa,
-                            ].join(' '),
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontSize: 13,
-                              height: 1.35,
-                              color: tokens.muted,
+                        ),
+                        if (onPronounce != null)
+                          IconButton(
+                            key: const ValueKey('play-word-pronunciation'),
+                            tooltip: context.l10n.tr('playPronunciation'),
+                            constraints: const BoxConstraints.tightFor(
+                              width: 48,
+                              height: 48,
+                            ),
+                            onPressed: onPronounce,
+                            icon: FigmaIcon(
+                              'volume',
+                              size: 22,
+                              color: tokens.foreground,
                             ),
                           ),
                       ],
                     ),
+                    const SizedBox(height: 24),
+                    _WordBackPage(
+                      index: index,
+                      content: content,
+                      tokens: tokens,
+                      compact: visuals.density == CardDensity.compact,
+                    ),
                   ],
                 ),
               ),
-              Semantics(
-                button: true,
-                label: context.l10n.tr('playPronunciation'),
-                child: IconButton(
-                  key: const ValueKey('play-word-pronunciation'),
-                  tooltip: context.l10n.tr('playPronunciation'),
-                  constraints: const BoxConstraints.tightFor(
-                    width: 48,
-                    height: 48,
-                  ),
-                  onPressed: onPronounce,
-                  icon: FigmaIcon(
-                    'volume',
-                    size: 23,
-                    color: onPronounce == null
-                        ? tokens.muted.withValues(alpha: 0.42)
-                        : tokens.foreground,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          if (content.forms.isNotEmpty) ...[
-            const SizedBox(height: 11),
-            Text(
-              '${context.l10n.tr('wordForms')}  ${content.forms.join(' · ')}',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 11,
-                height: 1.4,
-                fontWeight: FontWeight.w600,
-                color: tokens.muted,
-              ),
-            ),
-          ],
-          const SizedBox(height: 17),
-          Container(height: 1, color: Colors.transparent),
-          const SizedBox(height: 18),
-          Expanded(
-            child: _HorizontalSectionPager(
-              key: const ValueKey('back-content'),
-              index: safeIndex,
-              onPrevious: canGoPrevious
-                  ? () => onSectionChanged?.call(safeIndex - 1)
-                  : null,
-              onNext: canGoNext
-                  ? () => onSectionChanged?.call(safeIndex + 1)
-                  : null,
-              child: _AdaptiveBackSection(
-                key: ValueKey('word-back-section-$safeIndex'),
-                onScrollabilityChanged: onScrollabilityChanged,
-                alignment: Alignment.topLeft,
-                child: _WordBackPage(
-                  index: safeIndex,
-                  content: content,
-                  tokens: tokens,
-                  compact: visuals.density == CardDensity.compact,
-                ),
-              ),
             ),
           ),
-          const SizedBox(height: 6),
           _BackFooter(
-            index: safeIndex,
+            index: index,
             count: sections.length,
             tokens: tokens,
-            onPrevious: canGoPrevious
-                ? () => onSectionChanged?.call(safeIndex - 1)
-                : null,
-            onNext: canGoNext
-                ? () => onSectionChanged?.call(safeIndex + 1)
-                : null,
+            onPrevious: previous,
+            onNext: next,
           ),
         ],
       ),
@@ -818,10 +834,10 @@ class _WordBackPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (index == 0) return _meaning(context);
-    if (index == 1) return _usage(context);
-    final notes = [content.confusion, content.extension].whereType<WordNote>();
-    final note = notes.elementAt(index - 2);
-    final isConfusion = content.confusion != null && index == 2;
+    final section = content.reviewSections[index];
+    if (section.title == 'Word usage') return _usage(context);
+    final note = WordNote(heading: section.heading, body: section.body);
+    final isConfusion = section.title == 'Common confusion';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -857,11 +873,6 @@ class _WordBackPage extends StatelessWidget {
   Widget _meaning(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      _WordSectionLabel(
-        text: context.l10n.tr('sectionMeaning'),
-        tokens: tokens,
-      ),
-      const SizedBox(height: 16),
       Text(
         content.definition,
         key: const ValueKey('answer-heading'),
@@ -880,12 +891,38 @@ class _WordBackPage extends StatelessWidget {
           content.englishDefinition,
           key: const ValueKey('answer-body'),
           style: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: compact ? 14 : 15,
+            fontFamily: _metadataFontFamily(content.englishDefinition),
+            fontFamilyFallback: const ['NotoSansSC'],
+            fontSize: 15,
             height: 1.5,
             color: tokens.muted,
           ),
         ),
+      ],
+      if (content.example.sentence.isNotEmpty) ...[
+        const SizedBox(height: 24),
+        _WordMetadataLabel(
+          text: context.l10n.tr('sectionExamples'),
+          tokens: tokens,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          content.example.sentence,
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontSize: 18,
+            height: 1.5,
+            fontWeight: FontWeight.w600,
+            color: tokens.foreground,
+          ),
+        ),
+        if (content.example.translation.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          Text(
+            content.example.translation,
+            style: TextStyle(fontSize: 15, height: 1.5, color: tokens.muted),
+          ),
+        ],
       ],
       if (content.usagePatterns.isNotEmpty) ...[
         const SizedBox(height: 26),
@@ -905,36 +942,30 @@ class _WordBackPage extends StatelessWidget {
   Widget _usage(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      _WordSectionLabel(
-        text: context.l10n.tr('sectionExamples'),
-        tokens: tokens,
-      ),
-      const SizedBox(height: 17),
-      Text(
-        content.example.sentence,
-        style: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: compact ? 20 : 23,
-          height: 1.35,
-          letterSpacing: -0.25,
-          fontWeight: FontWeight.w700,
-          color: tokens.foreground,
-        ),
-      ),
-      const SizedBox(height: 10),
-      Text(
-        content.example.translation,
-        style: TextStyle(fontSize: 14, height: 1.5, color: tokens.muted),
-      ),
       if (content.collocations.isNotEmpty) ...[
-        const SizedBox(height: 25),
         _WordMetadataLabel(
           text: context.l10n.tr('commonCollocations'),
           tokens: tokens,
         ),
-        const SizedBox(height: 10),
-        for (final collocation in content.collocations) ...[
-          _WordLine(text: collocation, tokens: tokens),
+        const SizedBox(height: 12),
+        for (final line in content.collocations) ...[
+          _WordLine(text: line, tokens: tokens),
+          const SizedBox(height: 12),
+        ],
+      ],
+      if (content.forms.isNotEmpty) ...[
+        const SizedBox(height: 20),
+        _WordMetadataLabel(text: context.l10n.tr('wordForms'), tokens: tokens),
+        const SizedBox(height: 12),
+        for (final form in content.forms) ...[
+          Text(
+            form,
+            style: TextStyle(
+              fontSize: 16,
+              height: 1.5,
+              color: tokens.foreground,
+            ),
+          ),
           const SizedBox(height: 8),
         ],
       ],
@@ -1039,110 +1070,72 @@ class _Back extends StatelessWidget {
   final CardThemeTokens tokens;
   final ValueChanged<int>? onSectionChanged;
   final ValueChanged<bool>? onScrollabilityChanged;
-
   @override
   Widget build(BuildContext context) {
-    final sections = card.learningSections;
-    final safeIndex = sectionIndex.clamp(0, sections.length - 1);
-    final core = sections.first;
-    final section = sections[safeIndex];
-    final canGoPrevious = safeIndex > 0;
-    final canGoNext = safeIndex < sections.length - 1;
+    final sections = card.reviewSections.isEmpty
+        ? const [CardBackSection(title: '', heading: '', body: '')]
+        : card.reviewSections;
+    final index = sectionIndex.clamp(0, sections.length - 1);
+    final section = sections[index];
+    final previous = index > 0 ? () => onSectionChanged?.call(index - 1) : null;
+    final next = index + 1 < sections.length
+        ? () => onSectionChanged?.call(index + 1)
+        : null;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(36, 28, 28, 18),
+      padding: const EdgeInsets.fromLTRB(24, 16, 20, 8),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _Eyebrow(
-            text: card.prompt.toUpperCase(),
-            tokens: tokens,
-            trailing: _BackFaceMarker(tokens: tokens),
+          CardSectionTabs(
+            labels: [
+              for (final s in sections) context.l10n.sectionTitle(s.title),
+            ],
+            index: index,
+            onSelected: (i) => onSectionChanged?.call(i),
           ),
-          const SizedBox(height: 24),
-          Text(
-            core.heading,
-            key: const ValueKey('answer-heading'),
-            style: TextStyle(
-              fontFamily: kind == CardKind.formula
-                  ? 'Inter'
-                  : _metadataFontFamily(core.heading),
-              fontFamilyFallback: const ['NotoSansSC'],
-              fontSize: kind == CardKind.formula ? 38 : 28,
-              height: 1.2,
-              letterSpacing: _metadataFontFamily(core.heading) == 'Inter'
-                  ? -0.5
-                  : 0,
-              fontWeight: FontWeight.w700,
-              color: tokens.foreground,
-            ),
-          ),
-          const SizedBox(height: 14),
-          Container(width: 42, height: 2, color: tokens.accent),
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
           Expanded(
             child: _HorizontalSectionPager(
               key: const ValueKey('back-content'),
-              index: safeIndex,
-              onPrevious: canGoPrevious
-                  ? () => onSectionChanged?.call(safeIndex - 1)
-                  : null,
-              onNext: canGoNext
-                  ? () => onSectionChanged?.call(safeIndex + 1)
-                  : null,
+              index: index,
+              onPrevious: previous,
+              onNext: next,
               child: _AdaptiveBackSection(
-                key: ValueKey('back-section-$safeIndex'),
+                key: ValueKey('back-section-$index'),
                 onScrollabilityChanged: onScrollabilityChanged,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Container(width: 18, height: 2, color: tokens.accent),
-                        const SizedBox(width: 9),
-                        Expanded(
-                          child: Text(
-                            context.l10n.sectionTitle(section.title),
-                            style: TextStyle(
-                              fontFamily: _metadataFontFamily(
-                                context.l10n.sectionTitle(section.title),
-                              ),
-                              fontFamilyFallback: const ['NotoSansSC'],
-                              fontSize: 12,
-                              letterSpacing:
-                                  _metadataFontFamily(
-                                        context.l10n.sectionTitle(
-                                          section.title,
-                                        ),
-                                      ) ==
-                                      'Inter'
-                                  ? 0.8
-                                  : 0,
-                              fontWeight: FontWeight.w700,
-                              color: tokens.foreground,
-                            ),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      card.prompt,
+                      style: TextStyle(
+                        fontSize: kind == CardKind.word ? 22 : 15,
+                        height: 1.5,
+                        color: tokens.muted,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                    if (safeIndex > 0 || section.heading != core.heading) ...[
-                      const SizedBox(height: 9),
+                    const SizedBox(height: 20),
+                    if (sections.length == 1 && section.title.isNotEmpty) ...[
+                      Text(
+                        context.l10n.sectionTitle(section.title),
+                        style: TextStyle(fontSize: 13, color: tokens.accent),
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                    if (section.heading.isNotEmpty) ...[
                       Text(
                         section.heading,
+                        key: const ValueKey('answer-heading'),
                         style: TextStyle(
-                          fontFamily: _metadataFontFamily(section.heading),
-                          fontFamilyFallback: const ['NotoSansSC'],
-                          fontSize: 20,
-                          height: 1.35,
-                          letterSpacing:
-                              _metadataFontFamily(section.heading) == 'Inter'
-                              ? -0.25
-                              : 0,
+                          fontSize: kind == CardKind.formula ? 30 : 26,
+                          height: 1.3,
                           fontWeight: FontWeight.w700,
                           color: tokens.foreground,
                         ),
                       ),
+                      const SizedBox(height: 16),
                     ],
-                    const SizedBox(height: 14),
                     _StructuredBody(
                       key: const ValueKey('answer-body'),
                       body: section.body,
@@ -1155,17 +1148,12 @@ class _Back extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 8),
           _BackFooter(
-            index: safeIndex,
+            index: index,
             count: sections.length,
             tokens: tokens,
-            onPrevious: canGoPrevious
-                ? () => onSectionChanged?.call(safeIndex - 1)
-                : null,
-            onNext: canGoNext
-                ? () => onSectionChanged?.call(safeIndex + 1)
-                : null,
+            onPrevious: previous,
+            onNext: next,
           ),
         ],
       ),
@@ -1173,66 +1161,19 @@ class _Back extends StatelessWidget {
   }
 }
 
-class _AdaptiveBackSection extends StatefulWidget {
+class _AdaptiveBackSection extends StatelessWidget {
   const _AdaptiveBackSection({
     super.key,
     required this.child,
     required this.onScrollabilityChanged,
-    this.alignment = const Alignment(0, -0.42),
   });
-
   final Widget child;
   final ValueChanged<bool>? onScrollabilityChanged;
-  final Alignment alignment;
-
   @override
-  State<_AdaptiveBackSection> createState() => _AdaptiveBackSectionState();
-}
-
-class _AdaptiveBackSectionState extends State<_AdaptiveBackSection> {
-  final ScrollController _controller = ScrollController();
-  bool? _lastReportedValue;
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _reportScrollability() {
-    if (!mounted || !_controller.hasClients) return;
-    final scrollable = _controller.position.maxScrollExtent > 0.5;
-    if (_lastReportedValue == scrollable) return;
-    _lastReportedValue = scrollable;
-    widget.onScrollabilityChanged?.call(scrollable);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        WidgetsBinding.instance.addPostFrameCallback(
-          (_) => _reportScrollability(),
-        );
-        return NotificationListener<ScrollMetricsNotification>(
-          onNotification: (_) {
-            WidgetsBinding.instance.addPostFrameCallback(
-              (_) => _reportScrollability(),
-            );
-            return false;
-          },
-          child: SingleChildScrollView(
-            controller: _controller,
-            physics: const ClampingScrollPhysics(),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Align(alignment: widget.alignment, child: widget.child),
-            ),
-          ),
-        );
-      },
-    );
-  }
+  Widget build(BuildContext context) => CardReadingScroll(
+    onScrollabilityChanged: onScrollabilityChanged,
+    child: child,
+  );
 }
 
 class _HorizontalSectionPager extends StatefulWidget {
@@ -1443,6 +1384,9 @@ class _BackFooter extends StatelessWidget {
             'current': index + 1,
             'count': count,
           });
+    if (count == 1) {
+      return Semantics(label: progress, child: const SizedBox.shrink());
+    }
     return Semantics(
       container: true,
       child: Row(
@@ -1453,7 +1397,7 @@ class _BackFooter extends StatelessWidget {
               liveRegion: true,
               child: ExcludeSemantics(
                 child: Text(
-                  progress,
+                  '${index + 1} / $count',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -1636,78 +1580,11 @@ class _AnswerText extends StatelessWidget {
   Widget build(BuildContext context) => Text(
     text,
     style: TextStyle(
-      fontSize: compact ? 15 : (strong ? 17 : 16),
+      fontSize: strong ? 17 : 16,
       height: 1.58,
       fontWeight: strong ? FontWeight.w600 : FontWeight.w400,
       color: strong ? tokens.foreground : tokens.muted,
     ),
-  );
-}
-
-class _BackFaceMarker extends StatelessWidget {
-  const _BackFaceMarker({required this.tokens});
-
-  final CardThemeTokens tokens;
-
-  @override
-  Widget build(BuildContext context) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      FigmaIcon('flip', size: 16, color: tokens.muted),
-      const SizedBox(width: 6),
-      Text(
-        context.l10n.tr('answerSide'),
-        style: TextStyle(
-          fontSize: 11,
-          height: 1.2,
-          fontWeight: FontWeight.w600,
-          color: tokens.muted,
-        ),
-      ),
-    ],
-  );
-}
-
-class _Eyebrow extends StatelessWidget {
-  const _Eyebrow({required this.text, required this.tokens, this.trailing});
-  final String text;
-  final CardThemeTokens tokens;
-  final Widget? trailing;
-
-  @override
-  Widget build(BuildContext context) => Row(
-    children: [
-      Container(
-        width: 7,
-        height: 7,
-        decoration: BoxDecoration(shape: BoxShape.circle, color: tokens.accent),
-      ),
-      const SizedBox(width: 10),
-      Expanded(
-        child: Text(
-          text,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontFamily: _metadataFontFamily(text),
-            fontFamilyFallback: const ['NotoSansSC'],
-            fontSize: 11,
-            letterSpacing: _metadataFontFamily(text) == 'Inter' ? 1.25 : 0,
-            fontWeight: FontWeight.w700,
-            color: tokens.muted,
-          ),
-        ),
-      ),
-      const SizedBox(width: 12),
-      trailing ??
-          ExcludeSemantics(
-            child: Container(
-              width: 22,
-              height: 1,
-              color: tokens.muted.withValues(alpha: 0.58),
-            ),
-          ),
-    ],
   );
 }
 

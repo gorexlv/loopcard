@@ -26,7 +26,7 @@ class CardPreset {
       'word',
       '简洁单词',
       '单词居中，音标与词性作为辅助信息',
-      '释义在上，例句在下',
+      '释义、双语例句与常用句型同页，搭配与词形按需查看',
       'centered',
     ),
     CardPreset(
@@ -49,8 +49,8 @@ class CardPreset {
       'poetry-overview',
       'poetry',
       '诗词全篇',
-      '题目和作者居中',
-      '原文、白话释义分区排列',
+      '题目、作者、朝代分行居中',
+      '原文与释义逐句对应，字词注释独立分节；双调词按上阕、下阕切换',
       'centered',
     ),
     CardPreset(
@@ -64,9 +64,9 @@ class CardPreset {
     CardPreset(
       'classical-translation',
       'classical',
-      '古文逐句',
-      '展示古文原句',
-      '白话翻译、重点字词、句式或句意依次排列',
+      '古文研读',
+      '题目、作者、朝代分行居中',
+      '原文、释义、字词注释各一页；有可靠背景时增加背景页',
       'stacked',
     ),
     CardPreset(

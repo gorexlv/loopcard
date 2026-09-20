@@ -160,22 +160,22 @@ void main() {
     await tester.pumpWidget(app(screen()));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
-      find.text('按当前规则生成卡片'),
+      find.text('生成卡片'),
       300,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('按当前规则生成卡片'));
+    await tester.tap(find.text('生成卡片'));
     await tester.pumpAndSettle();
     expect(agent.calls, 1);
     expect(saves, 0);
-    expect(find.text('确认保存'), findsOneWidget);
+    expect(find.text('保存'), findsOneWidget);
     final state = await store.load();
     await tester.pumpWidget(const SizedBox());
     await tester.pumpWidget(app(screen(restored: state)));
     await tester.pumpAndSettle();
-    expect(find.text('确认保存'), findsOneWidget);
-    await tester.tap(find.text('确认保存'));
+    expect(find.text('保存'), findsOneWidget);
+    await tester.tap(find.text('保存'));
     await tester.pumpAndSettle();
     expect(saves, 1);
     expect((await store.load())!['saved'], isTrue);
@@ -240,9 +240,9 @@ void main() {
         (await store.load())!['messages'][0]['cards'][0]['prompt'],
         'borrow something',
       );
-      await tester.ensureVisible(find.text('常用正反面排版'));
+      await tester.ensureVisible(find.text('排版'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('常用正反面排版'));
+      await tester.tap(find.text('排版'));
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.textContaining('知识问答').first);
       await tester.pumpAndSettle();
@@ -251,7 +251,7 @@ void main() {
       final stored = (await store.load())!;
       expect(stored['messages'][0]['cards'][0]['prompt'], 'borrow something');
       expect(stored['rules']['skill'], 'knowledge');
-      expect(find.text('确认保存'), findsNothing);
+      expect(find.text('保存'), findsNothing);
       expect(tester.takeException(), isNull);
     },
   );
@@ -279,8 +279,8 @@ void main() {
       final result = (await store.load())!['messages'].last;
       expect(result['preview'], isTrue);
       expect(result['cards'], hasLength(1));
-      expect(find.text('确认保存'), findsNothing);
-      expect(find.text('方案预览 · 根据素材生成，尚未批量生成'), findsOneWidget);
+      expect(find.text('保存'), findsNothing);
+      expect(find.text('预览'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );

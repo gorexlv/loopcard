@@ -70,13 +70,6 @@ class _CardAgentScreenState extends State<CardAgentScreen> {
         ? Map<String, dynamic>.from(restored!['pending'])
         : null;
     if (_retryRequest != null) _error = '上次请求未完成，可重试。';
-    if (_messages.isEmpty) {
-      _messages.add({
-        'role': 'assistant',
-        'content':
-            '已收到 ${_sources.length} 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。',
-      });
-    }
     _persist();
   }
 
@@ -127,10 +120,14 @@ class _CardAgentScreenState extends State<CardAgentScreen> {
       _revision++;
       _retryRequest = null;
       _error = null;
-      _messages.add({'role': 'user', 'content': '选用「${preset.name}」'});
+      _messages.add({
+        'role': 'user',
+        'content': '选用「${preset.name}」',
+        'ui_hidden': true,
+      });
       _messages.add({
         'role': 'assistant',
-        'content': '已应用「${preset.name}」。这是排版示例，点击生成后会使用你的素材。',
+        'content': '',
         'rules': Map.of(_rules),
         'revision': _revision,
         'example': true,
@@ -144,17 +141,17 @@ class _CardAgentScreenState extends State<CardAgentScreen> {
   WordCardDraft _example() {
     final literary = switch (_rules['preset']) {
       'poetry-overview' => (
-        '《静夜思》· 李白',
+        '静夜思',
         <CardBackSection>[
           const CardBackSection(
             title: '原文',
-            heading: '静夜思',
-            body: '床前明月光，疑是地上霜。\n举头望明月，低头思故乡。',
+            heading: '',
+            body: '床前明月光，\n疑是地上霜。\n举头望明月，\n低头思故乡。',
           ),
           const CardBackSection(
             title: '白话释义',
-            heading: '思念故乡',
-            body: '明月引起了对故乡的思念。',
+            heading: '',
+            body: '明亮的月光洒在床前，好像地上铺了一层霜。抬头望着明月，低头思念故乡。',
           ),
         ],
       ),
@@ -174,22 +171,29 @@ class _CardAgentScreenState extends State<CardAgentScreen> {
         ],
       ),
       'classical-translation' => (
-        '学而时习之，不亦说乎？',
+        '陋室铭',
         <CardBackSection>[
           const CardBackSection(
-            title: '白话翻译',
-            heading: '学习与温习',
-            body: '学习后按时温习，不也是令人愉快的吗？',
+            title: '原文',
+            heading: '',
+            body:
+                '山不在高，有仙则名。水不在深，有龙则灵。斯是陋室，惟吾德馨。\n苔痕上阶绿，草色入帘青。谈笑有鸿儒，往来无白丁。可以调素琴，阅金经。无丝竹之乱耳，无案牍之劳形。\n南阳诸葛庐，西蜀子云亭。孔子云：何陋之有？',
           ),
           const CardBackSection(
-            title: '重点字词',
-            heading: '说',
-            body: 'yuè，同“悦”，愉快。',
+            title: '释义',
+            heading: '',
+            body: '屋子虽然简陋，只要居住的人品德高尚，就不觉得简陋。作者描写清幽的环境、博学的朋友和雅致的生活，表达安贫乐道的志趣。',
           ),
           const CardBackSection(
-            title: '句意',
-            heading: '温习的乐趣',
-            body: '强调学习后反复温习带来的乐趣。',
+            title: '字词注释',
+            heading: '',
+            body:
+                '馨（xīn）：香气，这里指品德美好。\n鸿儒（hóng rú）：博学的人。\n白丁：这里指没有什么学问的人。\n案牍（dú）：官府公文。',
+          ),
+          const CardBackSection(
+            title: '背景',
+            heading: '',
+            body: '刘禹锡，唐代文学家。铭原是刻在器物上用来警戒自己或称述功德的文字，后来成为一种文体。',
           ),
         ],
       ),
@@ -215,30 +219,38 @@ class _CardAgentScreenState extends State<CardAgentScreen> {
       return WordCardDraft(
         prompt: literary.$1,
         sections: literary.$2,
-        presentation: {..._rules, 'skill_version': '1'},
+        presentation: {
+          ..._rules,
+          'skill_version': '1',
+          'literary': _rules['skill'] == 'poetry'
+              ? {'title': '静夜思', 'author': '李白', 'dynasty': '唐'}
+              : _rules['preset'] == 'classical-translation'
+              ? {'title': '陋室铭', 'author': '刘禹锡', 'dynasty': '唐'}
+              : {'title': '论语·学而', 'author': '孔子弟子及再传弟子', 'dynasty': '春秋战国'},
+        },
       );
     }
     final word = _rules['skill'] == 'word';
     return WordCardDraft(
-      prompt: word ? 'example' : '这里显示从素材提炼的问题',
-      hint: word ? '/ɪɡˈzɑːmpəl/ · n.' : '必要的背景或提示',
+      prompt: word ? 'example' : '平均速度如何计算？',
+      hint: word ? '/ɪɡˈzɑːmpəl/ · n.' : '',
       presentation: {..._rules, 'skill_version': '1'},
       sections: [
         CardBackSection(
           title: word ? '释义' : '答案',
-          heading: word ? '例子；示例' : '这里显示简短答案',
-          body: '排版示例 · 正式内容将在生成后显示',
+          heading: word ? '例子；示例' : '平均速度 = 总路程 ÷ 总时间',
+          body: word ? '用来说明某种情况的人、事物或情形。' : '先求总路程，再除以总时间。',
         ),
         CardBackSection(
           title: word ? '例句' : '解释',
-          heading: word ? 'This is an example.' : '推导步骤',
-          body: word ? '这是一个例子。' : '按顺序解释概念或解题过程。',
+          heading: word ? 'This is an example.' : '120 千米 ÷ 2 小时 = 60 千米/时',
+          body: word ? '这是一个例子。' : '两小时行驶 120 千米，平均速度是 60 千米/时。',
         ),
         if (_rules['preset'] == 'word-detail')
           const CardBackSection(
             title: '易混淆点',
-            heading: '对比说明',
-            body: '有可靠内容时展示，不确定时省略。',
+            heading: 'for example',
+            body: '表示“例如”，用于引出具体例子。',
           ),
       ],
     );
@@ -254,6 +266,7 @@ class _CardAgentScreenState extends State<CardAgentScreen> {
         _messages.add({
           'role': 'user',
           'content': action == 'chat' ? _input.text.trim() : '按当前规则生成卡片',
+          'ui_hidden': action == 'generate',
         });
         if (action == 'chat') _input.clear();
       }
@@ -267,7 +280,8 @@ class _CardAgentScreenState extends State<CardAgentScreen> {
           'locale': Localizations.localeOf(context).toLanguageTag(),
           'messages': [
             for (final m in _messages.takeLast(60))
-              {'role': m['role'], 'content': m['content']},
+              if ((m['content'] as String? ?? '').trim().isNotEmpty)
+                {'role': m['role'], 'content': m['content']},
           ],
         };
     _retryRequest = request;
@@ -362,7 +376,7 @@ class _CardAgentScreenState extends State<CardAgentScreen> {
 
   @override
   Widget build(BuildContext context) => AppPage(
-    title: 'Card Agent',
+    title: '制卡',
     actions: [
       IconButton(
         tooltip: '查看素材',
@@ -397,6 +411,10 @@ class _CardAgentScreenState extends State<CardAgentScreen> {
               final user = m['role'] == 'user';
               final rows = m['cards'] as List? ?? [];
               final current = i == _currentDraftMessage && !_saved;
+              final message = _visibleMessage(m);
+              if (message.isEmpty && rows.isEmpty) {
+                return const SizedBox.shrink();
+              }
               return Align(
                 alignment: user ? Alignment.centerRight : Alignment.centerLeft,
                 child: Container(
@@ -410,32 +428,31 @@ class _CardAgentScreenState extends State<CardAgentScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        user ? '你' : 'Card Agent',
-                        style: Theme.of(context).textTheme.labelSmall,
-                      ),
-                      const SizedBox(height: 8),
-                      SelectableText(m['content']),
-                      if (m['rules'] != null) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          '正面：${m['rules']['front']}\n背面：${m['rules']['back']}',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
+                      if (message.isNotEmpty) SelectableText(message),
                       if (rows.isNotEmpty) ...[
-                        const SizedBox(height: 12),
-                        Text(
-                          m['example'] == true
-                              ? '排版示例 · 非生成结果'
-                              : m['preview'] == true
-                              ? '方案预览 · 根据素材生成，尚未批量生成'
-                              : current
-                              ? '当前草稿 · 尚未保存'
-                              : _saved && m['revision'] == _revision
-                              ? '已保存'
-                              : '历史草稿 · 规则版本 ${m['revision']}',
-                        ),
+                        if (message.isNotEmpty) const SizedBox(height: 12),
+                        if (m['example'] == true || m['preview'] == true)
+                          Text(
+                            m['example'] == true ? '示例' : '预览',
+                            style: Theme.of(context).textTheme.labelSmall,
+                          ),
+                        if (!current &&
+                            m['example'] != true &&
+                            m['preview'] != true)
+                          Tooltip(
+                            message: _saved && m['revision'] == _revision
+                                ? '已保存'
+                                : '历史草稿',
+                            child: Icon(
+                              _saved && m['revision'] == _revision
+                                  ? Icons.check_circle_outline
+                                  : Icons.history,
+                              size: 18,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
                         AgentCardCarousel(
                           key: ValueKey('$i-${rows.length}'),
                           cards: [
@@ -509,7 +526,7 @@ class _CardAgentScreenState extends State<CardAgentScreen> {
                 const SizedBox(width: 12),
                 FilledButton(
                   onPressed: _busy || _title.text.trim().isEmpty ? null : _save,
-                  child: const Text('确认保存'),
+                  child: const Text('保存'),
                 ),
               ],
             ),
@@ -527,7 +544,7 @@ class _CardAgentScreenState extends State<CardAgentScreen> {
                   maxLines: 4,
                   maxLength: 3000,
                   decoration: const InputDecoration(
-                    hintText: '例如：背面先显示例句，再显示释义',
+                    hintText: '调整卡片…',
                     counterText: '',
                   ),
                   onSubmitted: (_) => _send('chat'),
@@ -544,41 +561,67 @@ class _CardAgentScreenState extends State<CardAgentScreen> {
       ],
     ),
   );
+  // Only suppress exact, obsolete UI narration. Substantive model replies,
+  // clarification questions and source/accuracy caveats remain visible.
+  String _visibleMessage(Map<String, dynamic> message) {
+    if (message['ui_hidden'] == true) return '';
+    final text = (message['content'] as String? ?? '').trim();
+    if (RegExp(r'^已按(?:「[^」]+」|[^，。]+)生成草稿[。！]?$').hasMatch(text)) return '';
+    if (text == '按当前规则生成卡片' || text == '草稿已生成' || text == '已按你的要求处理。') {
+      return '';
+    }
+    if (RegExp(
+          r'^已收到 \d+ 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。$',
+        ).hasMatch(text) ||
+        RegExp(r'^已应用「[^」]+」。这是排版示例，点击生成后会使用你的素材。$').hasMatch(text) ||
+        RegExp(r'^已按「[^」]+」生成草稿，可以翻面检查，也可以继续告诉我如何调整。$').hasMatch(text)) {
+      return '';
+    }
+    return text;
+  }
+
   Widget _choices() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       ExpansionTile(
         key: ValueKey('presets-$_revision'),
-        title: const Text('常用正反面排版'),
+        title: const Text('排版'),
         initiallyExpanded:
-            _messages.length == 1 && _messages.first['cards'] == null,
+            _messages.isEmpty ||
+            (_messages.length == 1 && _messages.first['cards'] == null),
         tilePadding: EdgeInsets.zero,
         children: [
-          for (final p in CardPreset.all)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: OutlinedButton(
-                onPressed: _busy || _saved ? null : () => _select(p),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      '${p.name}${_rules['preset'] == p.id ? ' · 已选' : ''}\n正面：${p.front}\n背面：${p.back}',
-                    ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final preset in CardPreset.all)
+                  ChoiceChip(
+                    label: Text(preset.name),
+                    selected: _rules['preset'] == preset.id,
+                    onSelected: _busy || _saved ? null : (_) => _select(preset),
                   ),
-                ),
-              ),
+              ],
             ),
+          ),
+          const SizedBox(height: 12),
         ],
       ),
-      Text('当前规则\n正面：${_rules['front']}\n背面：${_rules['back']}'),
-      const SizedBox(height: 12),
-      FilledButton.icon(
-        onPressed: _busy || _saved ? null : () => _send('generate'),
-        icon: const Icon(Icons.auto_awesome_outlined),
-        label: const Text('按当前规则生成卡片'),
-      ),
+      const SizedBox(height: 8),
+      if (_currentDraftMessage >= 0)
+        TextButton.icon(
+          onPressed: _busy || _saved ? null : () => _send('generate'),
+          icon: const Icon(Icons.refresh),
+          label: const Text('重新生成'),
+        )
+      else
+        FilledButton.icon(
+          onPressed: _busy || _saved ? null : () => _send('generate'),
+          icon: const Icon(Icons.auto_awesome_outlined),
+          label: const Text('生成卡片'),
+        ),
     ],
   );
 }
@@ -604,6 +647,42 @@ class AgentCardCarousel extends StatefulWidget {
 class _AgentCardCarouselState extends State<AgentCardCarousel> {
   int _index = 0;
   bool _back = false;
+
+  void _expand(WordCardDraft draft) {
+    var back = _back;
+    final card = StudyCard(
+      id: 'expanded-$_index',
+      prompt: draft.prompt,
+      hint: draft.hint,
+      sections: draft.sections,
+      wordContent: draft.wordContent,
+      presentation: draft.presentation,
+    );
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => StatefulBuilder(
+          builder: (context, setPreviewState) => AppPage(
+            title: '卡片预览',
+            maxWidth: 560,
+            actions: [
+              TextButton(
+                onPressed: () => setPreviewState(() => back = !back),
+                child: Text(back ? '查看正面' : '查看背面'),
+              ),
+            ],
+            child: EditorialCard(
+              card: card,
+              kind: cardKindForGenerationSkill(
+                draft.presentation['skill'] as String?,
+              ),
+              face: back ? CardFace.back : CardFace.front,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.cards.isEmpty) return const SizedBox.shrink();
@@ -612,8 +691,14 @@ class _AgentCardCarouselState extends State<AgentCardCarousel> {
       children: [
         Row(
           children: [
-            Text('${_index + 1} / ${widget.cards.length}'),
+            if (widget.cards.length > 1)
+              Text('${_index + 1} / ${widget.cards.length}'),
             const Spacer(),
+            IconButton(
+              tooltip: '展开阅读',
+              onPressed: () => _expand(d),
+              icon: const Icon(Icons.open_in_full, size: 20),
+            ),
             TextButton(
               onPressed: () => setState(() => _back = !_back),
               child: Text(_back ? '查看正面' : '查看背面'),
@@ -621,7 +706,10 @@ class _AgentCardCarouselState extends State<AgentCardCarousel> {
           ],
         ),
         SizedBox(
-          height: 340,
+          height: (MediaQuery.sizeOf(context).height * 0.42).clamp(
+            320.0,
+            440.0,
+          ),
           width: double.infinity,
           child: EditorialCard(
             card: StudyCard(
@@ -641,26 +729,28 @@ class _AgentCardCarouselState extends State<AgentCardCarousel> {
         Wrap(
           alignment: WrapAlignment.center,
           children: [
-            IconButton(
-              tooltip: '上一张',
-              onPressed: _index > 0
-                  ? () => setState(() {
-                      _index--;
-                      _back = false;
-                    })
-                  : null,
-              icon: const Icon(Icons.chevron_left),
-            ),
-            IconButton(
-              tooltip: '下一张',
-              onPressed: _index < widget.cards.length - 1
-                  ? () => setState(() {
-                      _index++;
-                      _back = false;
-                    })
-                  : null,
-              icon: const Icon(Icons.chevron_right),
-            ),
+            if (widget.cards.length > 1)
+              TextButton.icon(
+                label: const Text('上一张'),
+                onPressed: _index > 0
+                    ? () => setState(() {
+                        _index--;
+                        _back = false;
+                      })
+                    : null,
+                icon: const Icon(Icons.chevron_left),
+              ),
+            if (widget.cards.length > 1)
+              TextButton.icon(
+                label: const Text('下一张'),
+                onPressed: _index < widget.cards.length - 1
+                    ? () => setState(() {
+                        _index++;
+                        _back = false;
+                      })
+                    : null,
+                icon: const Icon(Icons.chevron_right),
+              ),
             if (widget.onEdit != null)
               TextButton(
                 onPressed: () => widget.onEdit!(_index),

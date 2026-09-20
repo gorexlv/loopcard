@@ -38,3 +38,23 @@ Deno.test("does not silently use another provider when its key is missing", () =
     null,
   );
 });
+
+Deno.test("OpenRouter is opt-in and never borrows another provider's key", () => {
+  const config = resolveAiProvider(env({
+    AI_PROVIDER: "openrouter",
+    OPENROUTER_API_KEY: "temporary-key",
+    AI_MODEL: "qwen/qwen3-vl-235b-a22b-instruct",
+  }));
+  assertEquals(config?.endpoint, "https://openrouter.ai/api/v1/responses");
+  assertEquals(config?.supportsStrictFormat, true);
+  assertEquals(
+    resolveAiProvider(env({ OPENROUTER_API_KEY: "ocr-only" })),
+    null,
+  );
+  assertEquals(
+    resolveAiProvider(
+      env({ AI_PROVIDER: "openrouter", OPENAI_API_KEY: "unused" }),
+    ),
+    null,
+  );
+});

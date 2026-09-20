@@ -1,0 +1,1243 @@
+{
+  "cases": [
+    {
+      "id": "W01",
+      "source": "borrow\nlend\napple",
+      "calls": [
+        {
+          "request": {
+            "action": "chat",
+            "sources": [
+              {
+                "id": "W01-photo-1",
+                "text": "borrow\nlend\napple"
+              }
+            ],
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "locale": "zh-Hans",
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+              },
+              {
+                "role": "user",
+                "content": "为这三个单词各做一张卡，补齐词性、音标、中文释义和例句。正面仅单词，不显示其他提示。背面先中文释义，再英文例句和中文翻译。"
+              }
+            ]
+          },
+          "status": "failed",
+          "error": "FunctionsHttpException(status: 502, details: {error: agent_failed}, reasonPhrase: Bad Gateway)",
+          "seconds": 38.669
+        }
+      ],
+      "screenshots": [
+        "W01-chat.png"
+      ],
+      "session": {
+        "id": "eb1b985c-6eb4-4f97-8861-c77ea97be987",
+        "sources": [
+          {
+            "id": "W01-photo-1",
+            "text": "borrow\nlend\napple"
+          }
+        ],
+        "rules": {
+          "preset": "word-simple",
+          "skill": "word",
+          "front": "单词居中，音标与词性作为辅助信息",
+          "back": "释义在上，例句在下",
+          "layout": "centered"
+        },
+        "revision": 1,
+        "messages": [
+          {
+            "role": "assistant",
+            "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+          },
+          {
+            "role": "user",
+            "content": "为这三个单词各做一张卡，补齐词性、音标、中文释义和例句。正面仅单词，不显示其他提示。背面先中文释义，再英文例句和中文翻译。"
+          }
+        ],
+        "title": "拍照卡片",
+        "saved": false,
+        "pending": {
+          "action": "chat",
+          "sources": [
+            {
+              "id": "W01-photo-1",
+              "text": "borrow\nlend\napple"
+            }
+          ],
+          "rules": {
+            "preset": "word-simple",
+            "skill": "word",
+            "front": "单词居中，音标与词性作为辅助信息",
+            "back": "释义在上，例句在下",
+            "layout": "centered"
+          },
+          "locale": "zh-Hans",
+          "messages": [
+            {
+              "role": "assistant",
+              "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+            },
+            {
+              "role": "user",
+              "content": "为这三个单词各做一张卡，补齐词性、音标、中文释义和例句。正面仅单词，不显示其他提示。背面先中文释义，再英文例句和中文翻译。"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "P01",
+      "source": "静夜思\n春晓",
+      "calls": [
+        {
+          "request": {
+            "action": "chat",
+            "sources": [
+              {
+                "id": "P01-photo-1",
+                "text": "静夜思\n春晓"
+              }
+            ],
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "locale": "zh-Hans",
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+              },
+              {
+                "role": "user",
+                "content": "请根据题目列表补齐作者、完整原诗和白话释义。每首一张卡，正面题目和作者，背面完整原文、逐句白话释义。"
+              }
+            ]
+          },
+          "response": {
+            "reply": "您提供的材料是诗题列表《静夜思》和《春晓》，但当前规则为英文单词卡（word-simple），与中文诗词内容不匹配。请切换至诗词技能并确认：是否使用「诗词全篇」预设？正面为题目+作者，背面为原文+白话释义。我可为您补全这两首诗的完整文本（由 Agent 根据题目补全），并生成两张卡片。确认后请回复“切换到诗词全篇”或调整规则。",
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "cards": []
+          },
+          "status": "success",
+          "seconds": 7.849
+        },
+        {
+          "request": {
+            "action": "generate",
+            "sources": [
+              {
+                "id": "P01-photo-1",
+                "text": "静夜思\n春晓"
+              }
+            ],
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "locale": "zh-Hans",
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+              },
+              {
+                "role": "user",
+                "content": "请根据题目列表补齐作者、完整原诗和白话释义。每首一张卡，正面题目和作者，背面完整原文、逐句白话释义。"
+              },
+              {
+                "role": "assistant",
+                "content": "您提供的材料是诗题列表《静夜思》和《春晓》，但当前规则为英文单词卡（word-simple），与中文诗词内容不匹配。请切换至诗词技能并确认：是否使用「诗词全篇」预设？正面为题目+作者，背面为原文+白话释义。我可为您补全这两首诗的完整文本（由 Agent 根据题目补全），并生成两张卡片。确认后请回复“切换到诗词全篇”或调整规则。"
+              },
+              {
+                "role": "user",
+                "content": "按当前规则生成卡片"
+              }
+            ]
+          },
+          "response": {
+            "reply": "当前规则为英文单词卡（word-simple），但您提供的材料是中文诗题《静夜思》和《春晓》，二者不匹配。请切换至诗词技能并确认使用「诗词全篇」预设，我才能为您补全作者、原文与白话释义并生成卡片。",
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "cards": []
+          },
+          "status": "success",
+          "seconds": 5.111
+        }
+      ],
+      "screenshots": [
+        "P01-chat.png",
+        "P01-empty-generation.png"
+      ],
+      "card_count": 0,
+      "session": {
+        "id": "6da9df83-3c97-4e42-8c1a-46d7a4459570",
+        "sources": [
+          {
+            "id": "P01-photo-1",
+            "text": "静夜思\n春晓"
+          }
+        ],
+        "rules": {
+          "preset": "word-simple",
+          "skill": "word",
+          "front": "单词居中，音标与词性作为辅助信息",
+          "back": "释义在上，例句在下",
+          "layout": "centered"
+        },
+        "revision": 3,
+        "messages": [
+          {
+            "role": "assistant",
+            "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+          },
+          {
+            "role": "user",
+            "content": "请根据题目列表补齐作者、完整原诗和白话释义。每首一张卡，正面题目和作者，背面完整原文、逐句白话释义。"
+          },
+          {
+            "role": "assistant",
+            "content": "您提供的材料是诗题列表《静夜思》和《春晓》，但当前规则为英文单词卡（word-simple），与中文诗词内容不匹配。请切换至诗词技能并确认：是否使用「诗词全篇」预设？正面为题目+作者，背面为原文+白话释义。我可为您补全这两首诗的完整文本（由 Agent 根据题目补全），并生成两张卡片。确认后请回复“切换到诗词全篇”或调整规则。",
+            "preview": true,
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "revision": 2,
+            "cards": []
+          },
+          {
+            "role": "user",
+            "content": "按当前规则生成卡片"
+          },
+          {
+            "role": "assistant",
+            "content": "当前规则为英文单词卡（word-simple），但您提供的材料是中文诗题《静夜思》和《春晓》，二者不匹配。请切换至诗词技能并确认使用「诗词全篇」预设，我才能为您补全作者、原文与白话释义并生成卡片。",
+            "preview": false,
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "revision": 3,
+            "cards": []
+          }
+        ],
+        "title": "拍照卡片",
+        "saved": false,
+        "pending": null
+      }
+    },
+    {
+      "id": "P02",
+      "source": "登鹳雀楼",
+      "calls": [
+        {
+          "request": {
+            "action": "chat",
+            "sources": [
+              {
+                "id": "P02-photo-1",
+                "text": "登鹳雀楼"
+              }
+            ],
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "locale": "zh-Hans",
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+              },
+              {
+                "role": "user",
+                "content": "根据题目补齐王之涣这首诗，做两张接句背诵卡。正面上一句不泄露答案，背面下一句原文和释义。"
+              }
+            ]
+          },
+          "response": {
+            "reply": "当前规则为英文单词卡（word-simple），但您请求的是王之涣《登鹳雀楼》的诗词接句卡。我将切换至 poetry-recall 预设，按您的要求制作两张接句背诵卡：正面上一句不泄露答案，背面下一句原文与释义。请确认是否继续？",
+            "rules": {
+              "preset": "poetry-recall",
+              "skill": "poetry",
+              "front": "展示上一句，不泄露下一句",
+              "back": "下一句原文在上，释义在下",
+              "layout": "centered"
+            },
+            "cards": []
+          },
+          "status": "success",
+          "seconds": 5.335
+        },
+        {
+          "request": {
+            "action": "generate",
+            "sources": [
+              {
+                "id": "P02-photo-1",
+                "text": "登鹳雀楼"
+              }
+            ],
+            "rules": {
+              "preset": "poetry-recall",
+              "skill": "poetry",
+              "front": "展示上一句，不泄露下一句",
+              "back": "下一句原文在上，释义在下",
+              "layout": "centered"
+            },
+            "locale": "zh-Hans",
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+              },
+              {
+                "role": "user",
+                "content": "根据题目补齐王之涣这首诗，做两张接句背诵卡。正面上一句不泄露答案，背面下一句原文和释义。"
+              },
+              {
+                "role": "assistant",
+                "content": "当前规则为英文单词卡（word-simple），但您请求的是王之涣《登鹳雀楼》的诗词接句卡。我将切换至 poetry-recall 预设，按您的要求制作两张接句背诵卡：正面上一句不泄露答案，背面下一句原文与释义。请确认是否继续？"
+              },
+              {
+                "role": "user",
+                "content": "按当前规则生成卡片"
+              }
+            ]
+          },
+          "response": {
+            "reply": "已根据题目《登鹳雀楼》补全王之涣原诗，生成两张诗词接句背诵卡。原文由 Agent 根据题目补全，未从照片中直接提取完整诗句。卡片按 poetry-recall 预设制作：正面展示上一句，背面依次为下一句原文与现代释义。如需调整顺序、增加赏析或切换为全篇概览，请告知。",
+            "rules": {
+              "preset": "poetry-recall",
+              "skill": "poetry",
+              "front": "展示上一句，不泄露下一句",
+              "back": "下一句原文在上，释义在下",
+              "layout": "centered"
+            },
+            "cards": [
+              {
+                "prompt": "白日依山尽",
+                "hint": "",
+                "sections": [
+                  {
+                    "title": "下一句",
+                    "heading": "",
+                    "body": "黄河入海流"
+                  },
+                  {
+                    "title": "释义",
+                    "heading": "",
+                    "body": "黄河奔腾着流入大海。"
+                  }
+                ],
+                "presentation": {
+                  "preset": "poetry-recall",
+                  "skill": "poetry",
+                  "front": "展示上一句，不泄露下一句",
+                  "back": "下一句原文在上，释义在下",
+                  "layout": "centered",
+                  "skill_version": "2",
+                  "source_ids": [
+                    "P02-photo-1"
+                  ],
+                  "sources": [
+                    {
+                      "id": "P02-photo-1",
+                      "text": "登鹳雀楼"
+                    }
+                  ]
+                }
+              },
+              {
+                "prompt": "黄河入海流",
+                "hint": "",
+                "sections": [
+                  {
+                    "title": "下一句",
+                    "heading": "",
+                    "body": "欲穷千里目"
+                  },
+                  {
+                    "title": "释义",
+                    "heading": "",
+                    "body": "想要看到更远的景色。"
+                  }
+                ],
+                "presentation": {
+                  "preset": "poetry-recall",
+                  "skill": "poetry",
+                  "front": "展示上一句，不泄露下一句",
+                  "back": "下一句原文在上，释义在下",
+                  "layout": "centered",
+                  "skill_version": "2",
+                  "source_ids": [
+                    "P02-photo-1"
+                  ],
+                  "sources": [
+                    {
+                      "id": "P02-photo-1",
+                      "text": "登鹳雀楼"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "status": "success",
+          "seconds": 9.68
+        }
+      ],
+      "screenshots": [
+        "P02-chat.png",
+        "P02-1-front.png",
+        "P02-1-back.png",
+        "P02-2-front.png",
+        "P02-2-back.png"
+      ],
+      "card_count": 2,
+      "session": {
+        "id": "c4227718-2238-4d66-8894-496f1f151594",
+        "sources": [
+          {
+            "id": "P02-photo-1",
+            "text": "登鹳雀楼"
+          }
+        ],
+        "rules": {
+          "preset": "poetry-recall",
+          "skill": "poetry",
+          "front": "展示上一句，不泄露下一句",
+          "back": "下一句原文在上，释义在下",
+          "layout": "centered"
+        },
+        "revision": 3,
+        "messages": [
+          {
+            "role": "assistant",
+            "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+          },
+          {
+            "role": "user",
+            "content": "根据题目补齐王之涣这首诗，做两张接句背诵卡。正面上一句不泄露答案，背面下一句原文和释义。"
+          },
+          {
+            "role": "assistant",
+            "content": "当前规则为英文单词卡（word-simple），但您请求的是王之涣《登鹳雀楼》的诗词接句卡。我将切换至 poetry-recall 预设，按您的要求制作两张接句背诵卡：正面上一句不泄露答案，背面下一句原文与释义。请确认是否继续？",
+            "preview": true,
+            "rules": {
+              "preset": "poetry-recall",
+              "skill": "poetry",
+              "front": "展示上一句，不泄露下一句",
+              "back": "下一句原文在上，释义在下",
+              "layout": "centered"
+            },
+            "revision": 2,
+            "cards": []
+          },
+          {
+            "role": "user",
+            "content": "按当前规则生成卡片"
+          },
+          {
+            "role": "assistant",
+            "content": "已根据题目《登鹳雀楼》补全王之涣原诗，生成两张诗词接句背诵卡。原文由 Agent 根据题目补全，未从照片中直接提取完整诗句。卡片按 poetry-recall 预设制作：正面展示上一句，背面依次为下一句原文与现代释义。如需调整顺序、增加赏析或切换为全篇概览，请告知。",
+            "preview": false,
+            "rules": {
+              "preset": "poetry-recall",
+              "skill": "poetry",
+              "front": "展示上一句，不泄露下一句",
+              "back": "下一句原文在上，释义在下",
+              "layout": "centered"
+            },
+            "revision": 3,
+            "cards": [
+              {
+                "prompt": "白日依山尽",
+                "hint": "",
+                "sections": [
+                  {
+                    "title": "下一句",
+                    "heading": "",
+                    "body": "黄河入海流"
+                  },
+                  {
+                    "title": "释义",
+                    "heading": "",
+                    "body": "黄河奔腾着流入大海。"
+                  }
+                ],
+                "presentation": {
+                  "preset": "poetry-recall",
+                  "skill": "poetry",
+                  "front": "展示上一句，不泄露下一句",
+                  "back": "下一句原文在上，释义在下",
+                  "layout": "centered",
+                  "skill_version": "2",
+                  "source_ids": [
+                    "P02-photo-1"
+                  ],
+                  "sources": [
+                    {
+                      "id": "P02-photo-1",
+                      "text": "登鹳雀楼"
+                    }
+                  ],
+                  "session_id": "c4227718-2238-4d66-8894-496f1f151594",
+                  "revision": 3
+                }
+              },
+              {
+                "prompt": "黄河入海流",
+                "hint": "",
+                "sections": [
+                  {
+                    "title": "下一句",
+                    "heading": "",
+                    "body": "欲穷千里目"
+                  },
+                  {
+                    "title": "释义",
+                    "heading": "",
+                    "body": "想要看到更远的景色。"
+                  }
+                ],
+                "presentation": {
+                  "preset": "poetry-recall",
+                  "skill": "poetry",
+                  "front": "展示上一句，不泄露下一句",
+                  "back": "下一句原文在上，释义在下",
+                  "layout": "centered",
+                  "skill_version": "2",
+                  "source_ids": [
+                    "P02-photo-1"
+                  ],
+                  "sources": [
+                    {
+                      "id": "P02-photo-1",
+                      "text": "登鹳雀楼"
+                    }
+                  ],
+                  "session_id": "c4227718-2238-4d66-8894-496f1f151594",
+                  "revision": 3
+                }
+              }
+            ]
+          }
+        ],
+        "title": "拍照卡片",
+        "saved": false,
+        "pending": null
+      }
+    },
+    {
+      "id": "C01",
+      "source": "陋室铭\n爱莲说",
+      "calls": [
+        {
+          "request": {
+            "action": "chat",
+            "sources": [
+              {
+                "id": "C01-photo-1",
+                "text": "陋室铭\n爱莲说"
+              }
+            ],
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "locale": "zh-Hans",
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+              },
+              {
+                "role": "user",
+                "content": "请根据篇目列表补齐作者、完整原文和翻译。每篇一张卡，正面题目和作者，背面完整原文、白话翻译、重点字词。不要截断原文。"
+              }
+            ]
+          },
+          "response": {
+            "reply": "您当前的规则是英文单词卡（word-simple），但素材为古文篇目《陋室铭》和《爱莲说》，应切换至“古文逐句”或“古文全篇”技能。请确认：是否将规则切换为  `classical-translation` 或  `classical-words`？若需每篇一张完整卡片，建议使用  `classical-translation` 并调整背面对应三栏内容。我可先为您生成一张预览卡说明格式。",
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "cards": []
+          },
+          "status": "success",
+          "seconds": 7.58
+        },
+        {
+          "request": {
+            "action": "generate",
+            "sources": [
+              {
+                "id": "C01-photo-1",
+                "text": "陋室铭\n爱莲说"
+              }
+            ],
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "locale": "zh-Hans",
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+              },
+              {
+                "role": "user",
+                "content": "请根据篇目列表补齐作者、完整原文和翻译。每篇一张卡，正面题目和作者，背面完整原文、白话翻译、重点字词。不要截断原文。"
+              },
+              {
+                "role": "assistant",
+                "content": "您当前的规则是英文单词卡（word-simple），但素材为古文篇目《陋室铭》和《爱莲说》，应切换至“古文逐句”或“古文全篇”技能。请确认：是否将规则切换为  `classical-translation` 或  `classical-words`？若需每篇一张完整卡片，建议使用  `classical-translation` 并调整背面对应三栏内容。我可先为您生成一张预览卡说明格式。"
+              },
+              {
+                "role": "user",
+                "content": "按当前规则生成卡片"
+              }
+            ]
+          },
+          "response": {
+            "reply": "当前规则为英文单词卡（word-simple），但您提供的素材是古文篇目《陋室铭》和《爱莲说》，无法按此规则生成。请切换至“古文逐句”或“古文全篇”技能（如  `classical-translation`），并确认是否需要我为您生成一张预览卡说明格式。",
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "cards": []
+          },
+          "status": "success",
+          "seconds": 6.851
+        }
+      ],
+      "screenshots": [
+        "C01-chat.png",
+        "C01-empty-generation.png"
+      ],
+      "card_count": 0,
+      "session": {
+        "id": "1b253810-2229-4bc4-9703-144686192905",
+        "sources": [
+          {
+            "id": "C01-photo-1",
+            "text": "陋室铭\n爱莲说"
+          }
+        ],
+        "rules": {
+          "preset": "word-simple",
+          "skill": "word",
+          "front": "单词居中，音标与词性作为辅助信息",
+          "back": "释义在上，例句在下",
+          "layout": "centered"
+        },
+        "revision": 3,
+        "messages": [
+          {
+            "role": "assistant",
+            "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+          },
+          {
+            "role": "user",
+            "content": "请根据篇目列表补齐作者、完整原文和翻译。每篇一张卡，正面题目和作者，背面完整原文、白话翻译、重点字词。不要截断原文。"
+          },
+          {
+            "role": "assistant",
+            "content": "您当前的规则是英文单词卡（word-simple），但素材为古文篇目《陋室铭》和《爱莲说》，应切换至“古文逐句”或“古文全篇”技能。请确认：是否将规则切换为  `classical-translation` 或  `classical-words`？若需每篇一张完整卡片，建议使用  `classical-translation` 并调整背面对应三栏内容。我可先为您生成一张预览卡说明格式。",
+            "preview": true,
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "revision": 2,
+            "cards": []
+          },
+          {
+            "role": "user",
+            "content": "按当前规则生成卡片"
+          },
+          {
+            "role": "assistant",
+            "content": "当前规则为英文单词卡（word-simple），但您提供的素材是古文篇目《陋室铭》和《爱莲说》，无法按此规则生成。请切换至“古文逐句”或“古文全篇”技能（如  `classical-translation`），并确认是否需要我为您生成一张预览卡说明格式。",
+            "preview": false,
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "revision": 3,
+            "cards": []
+          }
+        ],
+        "title": "拍照卡片",
+        "saved": false,
+        "pending": null
+      }
+    },
+    {
+      "id": "C02",
+      "source": "论语·学而第一则",
+      "calls": [
+        {
+          "request": {
+            "action": "chat",
+            "sources": [
+              {
+                "id": "C02-photo-1",
+                "text": "论语·学而第一则"
+              }
+            ],
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "locale": "zh-Hans",
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+              },
+              {
+                "role": "user",
+                "content": "补齐学而时习之这一则的完整原文，做三张逐句卡。正面原句，背面白话翻译、重点字词、句意。说的读音请给出。"
+              }
+            ]
+          },
+          "response": {
+            "reply": "当前规则为英文单词卡（word-simple），但您请求的是《论语·学而第一则》的古文逐句卡片，需切换技能。我将为您自动切换至「古文逐句」模式（classical-translation），并按您的要求生成三张卡片：正面为原句，背面包含白话翻译、重点字词、句意，同时标注“说”的读音。请确认是否继续？",
+            "rules": {
+              "preset": "classical-translation",
+              "skill": "classical",
+              "front": "展示古文原句",
+              "back": "白话翻译、重点字词、句意依次排列",
+              "layout": "stacked"
+            },
+            "cards": []
+          },
+          "status": "success",
+          "seconds": 7.873
+        },
+        {
+          "request": {
+            "action": "generate",
+            "sources": [
+              {
+                "id": "C02-photo-1",
+                "text": "论语·学而第一则"
+              }
+            ],
+            "rules": {
+              "preset": "classical-translation",
+              "skill": "classical",
+              "front": "展示古文原句",
+              "back": "白话翻译、重点字词、句意依次排列",
+              "layout": "stacked"
+            },
+            "locale": "zh-Hans",
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+              },
+              {
+                "role": "user",
+                "content": "补齐学而时习之这一则的完整原文，做三张逐句卡。正面原句，背面白话翻译、重点字词、句意。说的读音请给出。"
+              },
+              {
+                "role": "assistant",
+                "content": "当前规则为英文单词卡（word-simple），但您请求的是《论语·学而第一则》的古文逐句卡片，需切换技能。我将为您自动切换至「古文逐句」模式（classical-translation），并按您的要求生成三张卡片：正面为原句，背面包含白话翻译、重点字词、句意，同时标注“说”的读音。请确认是否继续？"
+              },
+              {
+                "role": "user",
+                "content": "按当前规则生成卡片"
+              }
+            ]
+          },
+          "response": {
+            "reply": "已按「古文逐句」模式生成三张卡片，完整呈现《论语·学而第一则》的原句、白话翻译、重点字词及句意。原文由 Agent 根据题目补全，符合常见教材版本。如需调整排版或增加注释，请随时告知。",
+            "rules": {
+              "preset": "classical-translation",
+              "skill": "classical",
+              "front": "展示古文原句",
+              "back": "白话翻译、重点字词、句意依次排列",
+              "layout": "stacked"
+            },
+            "cards": [
+              {
+                "prompt": "子曰：学而时习之，不亦说乎？",
+                "hint": "",
+                "sections": [
+                  {
+                    "title": "白话翻译",
+                    "heading": "",
+                    "body": "孔子说：“学习了然后按时温习，不也很愉快吗？”"
+                  },
+                  {
+                    "title": "重点字词",
+                    "heading": "",
+                    "body": "学：学习。时：按时。习：温习、练习。说（yuè）：同“悦”，愉快、高兴。"
+                  },
+                  {
+                    "title": "句意",
+                    "heading": "",
+                    "body": "此句强调学习后及时复习的重要性，并指出这一过程能带来内心的愉悦，体现孔子对学习乐趣的重视。"
+                  }
+                ],
+                "presentation": {
+                  "preset": "classical-translation",
+                  "skill": "classical",
+                  "front": "展示古文原句",
+                  "back": "白话翻译、重点字词、句意依次排列",
+                  "layout": "stacked",
+                  "skill_version": "2",
+                  "source_ids": [
+                    "C02-photo-1"
+                  ],
+                  "sources": [
+                    {
+                      "id": "C02-photo-1",
+                      "text": "论语·学而第一则"
+                    }
+                  ]
+                }
+              },
+              {
+                "prompt": "有朋自远方来，不亦乐乎？",
+                "hint": "",
+                "sections": [
+                  {
+                    "title": "白话翻译",
+                    "heading": "",
+                    "body": "有志同道合的朋友从远方来，不也很快乐吗？"
+                  },
+                  {
+                    "title": "重点字词",
+                    "heading": "",
+                    "body": "朋：志同道合的人。自：从。乐（lè）：快乐。"
+                  },
+                  {
+                    "title": "句意",
+                    "heading": "",
+                    "body": "此句表达与志趣相投者相聚的喜悦，反映儒家重视人际交往与精神共鸣的价值观。"
+                  }
+                ],
+                "presentation": {
+                  "preset": "classical-translation",
+                  "skill": "classical",
+                  "front": "展示古文原句",
+                  "back": "白话翻译、重点字词、句意依次排列",
+                  "layout": "stacked",
+                  "skill_version": "2",
+                  "source_ids": [
+                    "C02-photo-1"
+                  ],
+                  "sources": [
+                    {
+                      "id": "C02-photo-1",
+                      "text": "论语·学而第一则"
+                    }
+                  ]
+                }
+              },
+              {
+                "prompt": "人不知而不愠，不亦君子乎？",
+                "hint": "",
+                "sections": [
+                  {
+                    "title": "白话翻译",
+                    "heading": "",
+                    "body": "别人不了解自己却不生气，不也是君子的表现吗？"
+                  },
+                  {
+                    "title": "重点字词",
+                    "heading": "",
+                    "body": "知：了解。愠（yùn）：生气、恼怒。君子：有德行的人。"
+                  },
+                  {
+                    "title": "句意",
+                    "heading": "",
+                    "body": "此句强调君子应具备的修养——即使未被理解也不怨恨，体现内在道德的坚定与从容。"
+                  }
+                ],
+                "presentation": {
+                  "preset": "classical-translation",
+                  "skill": "classical",
+                  "front": "展示古文原句",
+                  "back": "白话翻译、重点字词、句意依次排列",
+                  "layout": "stacked",
+                  "skill_version": "2",
+                  "source_ids": [
+                    "C02-photo-1"
+                  ],
+                  "sources": [
+                    {
+                      "id": "C02-photo-1",
+                      "text": "论语·学而第一则"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "status": "success",
+          "seconds": 16.866
+        }
+      ],
+      "screenshots": [
+        "C02-chat.png",
+        "C02-1-front.png",
+        "C02-1-back.png",
+        "C02-1-back-bottom.png",
+        "C02-2-front.png",
+        "C02-2-back.png",
+        "C02-2-back-bottom.png",
+        "C02-3-front.png",
+        "C02-3-back.png",
+        "C02-3-back-bottom.png"
+      ],
+      "card_count": 3,
+      "session": {
+        "id": "84fd2c9c-848d-4b92-9710-6b34f9da4eef",
+        "sources": [
+          {
+            "id": "C02-photo-1",
+            "text": "论语·学而第一则"
+          }
+        ],
+        "rules": {
+          "preset": "classical-translation",
+          "skill": "classical",
+          "front": "展示古文原句",
+          "back": "白话翻译、重点字词、句意依次排列",
+          "layout": "stacked"
+        },
+        "revision": 3,
+        "messages": [
+          {
+            "role": "assistant",
+            "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+          },
+          {
+            "role": "user",
+            "content": "补齐学而时习之这一则的完整原文，做三张逐句卡。正面原句，背面白话翻译、重点字词、句意。说的读音请给出。"
+          },
+          {
+            "role": "assistant",
+            "content": "当前规则为英文单词卡（word-simple），但您请求的是《论语·学而第一则》的古文逐句卡片，需切换技能。我将为您自动切换至「古文逐句」模式（classical-translation），并按您的要求生成三张卡片：正面为原句，背面包含白话翻译、重点字词、句意，同时标注“说”的读音。请确认是否继续？",
+            "preview": true,
+            "rules": {
+              "preset": "classical-translation",
+              "skill": "classical",
+              "front": "展示古文原句",
+              "back": "白话翻译、重点字词、句意依次排列",
+              "layout": "stacked"
+            },
+            "revision": 2,
+            "cards": []
+          },
+          {
+            "role": "user",
+            "content": "按当前规则生成卡片"
+          },
+          {
+            "role": "assistant",
+            "content": "已按「古文逐句」模式生成三张卡片，完整呈现《论语·学而第一则》的原句、白话翻译、重点字词及句意。原文由 Agent 根据题目补全，符合常见教材版本。如需调整排版或增加注释，请随时告知。",
+            "preview": false,
+            "rules": {
+              "preset": "classical-translation",
+              "skill": "classical",
+              "front": "展示古文原句",
+              "back": "白话翻译、重点字词、句意依次排列",
+              "layout": "stacked"
+            },
+            "revision": 3,
+            "cards": [
+              {
+                "prompt": "子曰：学而时习之，不亦说乎？",
+                "hint": "",
+                "sections": [
+                  {
+                    "title": "白话翻译",
+                    "heading": "",
+                    "body": "孔子说：“学习了然后按时温习，不也很愉快吗？”"
+                  },
+                  {
+                    "title": "重点字词",
+                    "heading": "",
+                    "body": "学：学习。时：按时。习：温习、练习。说（yuè）：同“悦”，愉快、高兴。"
+                  },
+                  {
+                    "title": "句意",
+                    "heading": "",
+                    "body": "此句强调学习后及时复习的重要性，并指出这一过程能带来内心的愉悦，体现孔子对学习乐趣的重视。"
+                  }
+                ],
+                "presentation": {
+                  "preset": "classical-translation",
+                  "skill": "classical",
+                  "front": "展示古文原句",
+                  "back": "白话翻译、重点字词、句意依次排列",
+                  "layout": "stacked",
+                  "skill_version": "2",
+                  "source_ids": [
+                    "C02-photo-1"
+                  ],
+                  "sources": [
+                    {
+                      "id": "C02-photo-1",
+                      "text": "论语·学而第一则"
+                    }
+                  ],
+                  "session_id": "84fd2c9c-848d-4b92-9710-6b34f9da4eef",
+                  "revision": 3
+                }
+              },
+              {
+                "prompt": "有朋自远方来，不亦乐乎？",
+                "hint": "",
+                "sections": [
+                  {
+                    "title": "白话翻译",
+                    "heading": "",
+                    "body": "有志同道合的朋友从远方来，不也很快乐吗？"
+                  },
+                  {
+                    "title": "重点字词",
+                    "heading": "",
+                    "body": "朋：志同道合的人。自：从。乐（lè）：快乐。"
+                  },
+                  {
+                    "title": "句意",
+                    "heading": "",
+                    "body": "此句表达与志趣相投者相聚的喜悦，反映儒家重视人际交往与精神共鸣的价值观。"
+                  }
+                ],
+                "presentation": {
+                  "preset": "classical-translation",
+                  "skill": "classical",
+                  "front": "展示古文原句",
+                  "back": "白话翻译、重点字词、句意依次排列",
+                  "layout": "stacked",
+                  "skill_version": "2",
+                  "source_ids": [
+                    "C02-photo-1"
+                  ],
+                  "sources": [
+                    {
+                      "id": "C02-photo-1",
+                      "text": "论语·学而第一则"
+                    }
+                  ],
+                  "session_id": "84fd2c9c-848d-4b92-9710-6b34f9da4eef",
+                  "revision": 3
+                }
+              },
+              {
+                "prompt": "人不知而不愠，不亦君子乎？",
+                "hint": "",
+                "sections": [
+                  {
+                    "title": "白话翻译",
+                    "heading": "",
+                    "body": "别人不了解自己却不生气，不也是君子的表现吗？"
+                  },
+                  {
+                    "title": "重点字词",
+                    "heading": "",
+                    "body": "知：了解。愠（yùn）：生气、恼怒。君子：有德行的人。"
+                  },
+                  {
+                    "title": "句意",
+                    "heading": "",
+                    "body": "此句强调君子应具备的修养——即使未被理解也不怨恨，体现内在道德的坚定与从容。"
+                  }
+                ],
+                "presentation": {
+                  "preset": "classical-translation",
+                  "skill": "classical",
+                  "front": "展示古文原句",
+                  "back": "白话翻译、重点字词、句意依次排列",
+                  "layout": "stacked",
+                  "skill_version": "2",
+                  "source_ids": [
+                    "C02-photo-1"
+                  ],
+                  "sources": [
+                    {
+                      "id": "C02-photo-1",
+                      "text": "论语·学而第一则"
+                    }
+                  ],
+                  "session_id": "84fd2c9c-848d-4b92-9710-6b34f9da4eef",
+                  "revision": 3
+                }
+              }
+            ]
+          }
+        ],
+        "title": "拍照卡片",
+        "saved": false,
+        "pending": null
+      }
+    },
+    {
+      "id": "A01",
+      "source": "送别",
+      "calls": [
+        {
+          "request": {
+            "action": "chat",
+            "sources": [
+              {
+                "id": "A01-photo-1",
+                "text": "送别"
+              }
+            ],
+            "rules": {
+              "preset": "word-simple",
+              "skill": "word",
+              "front": "单词居中，音标与词性作为辅助信息",
+              "back": "释义在上，例句在下",
+              "layout": "centered"
+            },
+            "locale": "zh-Hans",
+            "messages": [
+              {
+                "role": "assistant",
+                "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+              },
+              {
+                "role": "user",
+                "content": "根据这个题目补齐整首原文并制作诗词卡。"
+              }
+            ]
+          },
+          "response": {
+            "reply": "您提供的素材是诗题《送别》，但当前规则为英文单词卡（word-simple），与诗词内容不匹配。我将自动切换至诗词技能（poetry），并采用“诗词全篇”预设（poetry-overview）为您生成卡片。是否同意？如需调整排版或内容，请告知。",
+            "rules": {
+              "preset": "poetry-overview",
+              "skill": "poetry",
+              "front": "题目和作者居中",
+              "back": "原文在上，白话释义在下",
+              "layout": "centered"
+            },
+            "cards": []
+          },
+          "status": "success",
+          "seconds": 5.379
+        }
+      ],
+      "screenshots": [
+        "A01-chat.png"
+      ],
+      "session": {
+        "id": "29a64974-6f2a-4d7d-88e5-a8e0416695b1",
+        "sources": [
+          {
+            "id": "A01-photo-1",
+            "text": "送别"
+          }
+        ],
+        "rules": {
+          "preset": "poetry-overview",
+          "skill": "poetry",
+          "front": "题目和作者居中",
+          "back": "原文在上，白话释义在下",
+          "layout": "centered"
+        },
+        "revision": 2,
+        "messages": [
+          {
+            "role": "assistant",
+            "content": "已收到 1 张照片的素材。选一种排版查看正反面示例，或告诉我你希望怎样制作卡片。确认规则后点击生成。"
+          },
+          {
+            "role": "user",
+            "content": "根据这个题目补齐整首原文并制作诗词卡。"
+          },
+          {
+            "role": "assistant",
+            "content": "您提供的素材是诗题《送别》，但当前规则为英文单词卡（word-simple），与诗词内容不匹配。我将自动切换至诗词技能（poetry），并采用“诗词全篇”预设（poetry-overview）为您生成卡片。是否同意？如需调整排版或内容，请告知。",
+            "preview": true,
+            "rules": {
+              "preset": "poetry-overview",
+              "skill": "poetry",
+              "front": "题目和作者居中",
+              "back": "原文在上，白话释义在下",
+              "layout": "centered"
+            },
+            "revision": 2,
+            "cards": []
+          }
+        ],
+        "title": "拍照卡片",
+        "saved": false,
+        "pending": null
+      }
+    }
+  ],
+  "mocked": false,
+  "starts_after_ocr": true
+}

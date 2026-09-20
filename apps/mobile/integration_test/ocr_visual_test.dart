@@ -164,13 +164,13 @@ void main() {
             );
             for (
               var n = 0;
-              n < 10 && find.text('常用正反面排版').evaluate().isEmpty;
+              n < 10 && find.text('排版').evaluate().isEmpty;
               n++
             ) {
               chat.position.jumpTo(chat.position.maxScrollExtent);
               await tester.pumpAndSettle();
             }
-            await tapVisible(find.text('常用正反面排版'));
+            await tapVisible(find.text('排版'));
             await tester.pumpAndSettle();
           }
           await tapVisible(find.textContaining(name).first);

@@ -113,8 +113,17 @@ void main() {
         expect(find.text(f.prompt), findsOneWidget);
         await tester.tap(find.text('查看背面'));
         await tester.pumpAndSettle();
-        expect(find.text(f.expected), findsOneWidget);
-        expect(find.text('当前草稿 · 尚未保存'), findsOneWidget);
+        if (f.type == '古文卡') {
+          await tester.drag(
+            find.byKey(const ValueKey('literary-back-pages')),
+            const Offset(-300, 0),
+          );
+          await tester.pumpAndSettle();
+        }
+        for (final line in f.expected.split('\n')) {
+          expect(find.text(line), findsOneWidget);
+        }
+        expect(find.text('当前草稿 · 尚未保存'), findsNothing);
         expect(tester.takeException(), isNull);
       },
     );

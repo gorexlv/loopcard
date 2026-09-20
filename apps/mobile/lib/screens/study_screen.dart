@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import '../ai/word_card_generator.dart';
 import '../audio/word_pronunciation_service.dart';
 import '../cards/editorial_card.dart';
+import '../cards/literary_layout.dart';
 import '../l10n/app_localizations.dart';
 import '../models/card_models.dart';
 import '../theme/loop_theme.dart';
@@ -153,7 +154,10 @@ class _StudyScreenState extends State<StudyScreen>
       View.of(context),
       context.l10n.tr('backSectionAnnouncement', {
         'current': 1,
-        'count': _card.learningSections.length,
+        'count':
+            const ['poetry', 'classical'].contains(_card.presentation['skill'])
+            ? literaryPages(_card).length
+            : _card.reviewSections.length,
       }),
       TextDirection.ltr,
     );
@@ -208,7 +212,10 @@ class _StudyScreenState extends State<StudyScreen>
       View.of(context),
       context.l10n.tr('backSectionAnnouncement', {
         'current': index + 1,
-        'count': _card.learningSections.length,
+        'count':
+            const ['poetry', 'classical'].contains(_card.presentation['skill'])
+            ? literaryPages(_card).length
+            : _card.reviewSections.length,
       }),
       TextDirection.ltr,
     );

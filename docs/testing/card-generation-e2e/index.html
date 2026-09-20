@@ -1,0 +1,848 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CardAgent 真实生成截图</title><style>body{margin:0;padding:32px;font:16px/1.65 system-ui;background:#f5f3f8;color:#24212c}main{max-width:1180px;margin:auto}h1{font-size:28px}h2{margin-top:48px}pre{white-space:pre-wrap;background:white;padding:16px;border-radius:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}figure{margin:0}img{width:100%;border-radius:18px}figcaption{font-size:13px;color:#625a70}a{color:#176b60}.note{max-width:78ch}.bad{color:#9e3030}.good{color:#176b60}</style><main><h1>CardAgent 内容补全与生成测试</h1><p class="note">2026-09-19 · iPhone 16 Pro / iOS 18.5 · 本地 Supabase CardAgent → 真实 OpenRouter qwen/qwen3-vl-235b-a22b-instruct。输入只有 OCR 后的名称列表，没有提供原文，也没有模拟模型响应。本轮先在界面选择对应排版，再发送内容要求和点击生成；截图为原始模拟器截图。</p><p class="note">自动切换规则的独立测试发现不稳定，详见 auto-routing-results.json；不能将本轮已选排版的结果视为自动路由验收通过。长卡背面可在卡内滚动，另附底部截图。本测试到生成草稿为止，不包含保存入库。</p>
+<section><h2>W01 · 单词列表 → 释义与例句</h2>
+<pre>OCR 输入：borrow
+lend
+apple</pre>
+<p class="good">检查：通过 · 网络耗时 61.5s</p>
+<p><strong>人工内容评审：部分通过</strong> · 3 张卡均生成，borrow/lend 方向、音标及例句基本正确。但 lend 中文释义为‘借出； lending’，混入无意义英文；部分搭配偏离本卡借出义项。生成完成的回复仍称预览并要求再次点击生成。</p>
+<details><summary>chat · 实际回复</summary><pre>已根据你的要求为三个单词分别制作卡片。正面仅显示单词，背面先列中文释义，再附英文例句及其中文翻译。以下是预览卡，确认无误后可点击生成完整批次。</pre></details>
+<details><summary>完整模型输出卡片内容</summary><pre>[
+  {
+    &quot;prompt&quot;: &quot;borrow&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;释义&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;借入，借用&quot;
+      },
+      {
+        &quot;title&quot;: &quot;例句&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;I borrowed a book from the library. 我从图书馆借了一本书。&quot;
+      }
+    ],
+    &quot;word_data&quot;: {
+      &quot;part_of_speech&quot;: &quot;v.&quot;,
+      &quot;pronunciations&quot;: [
+        {
+          &quot;region&quot;: &quot;UK&quot;,
+          &quot;ipa&quot;: &quot;/ˈbɒrəʊ/&quot;
+        },
+        {
+          &quot;region&quot;: &quot;US&quot;,
+          &quot;ipa&quot;: &quot;/ˈbɔːroʊ/&quot;
+        }
+      ],
+      &quot;forms&quot;: [],
+      &quot;definition&quot;: &quot;to take and use something that belongs to someone else for a period of time, promising to return it&quot;,
+      &quot;english_definition&quot;: &quot;to take and use something that belongs to someone else for a period of time, promising to return it&quot;,
+      &quot;usage_patterns&quot;: [
+        &quot;borrow sth from sb&quot;
+      ],
+      &quot;example&quot;: {
+        &quot;sentence&quot;: &quot;I borrowed a book from the library.&quot;,
+        &quot;translation&quot;: &quot;我从图书馆借了一本书。&quot;
+      },
+      &quot;collocations&quot;: [
+        &quot;borrow money&quot;,
+        &quot;borrow time&quot;,
+        &quot;borrow a car&quot;
+      ],
+      &quot;confusion&quot;: {
+        &quot;heading&quot;: &quot;易混淆点&quot;,
+        &quot;body&quot;: &quot;borrow 是借入，lend 是借出。&quot;
+      },
+      &quot;extension&quot;: {
+        &quot;heading&quot;: &quot;拓展&quot;,
+        &quot;body&quot;: &quot;反义词：lend&quot;
+      }
+    },
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;word-simple&quot;,
+      &quot;skill&quot;: &quot;word&quot;,
+      &quot;front&quot;: &quot;单词居中，音标与词性作为辅助信息&quot;,
+      &quot;back&quot;: &quot;释义在上，例句在下&quot;,
+      &quot;layout&quot;: &quot;centered&quot;,
+      &quot;skill_version&quot;: &quot;1&quot;,
+      &quot;source_ids&quot;: [
+        &quot;W01-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;W01-photo-1&quot;,
+          &quot;text&quot;: &quot;borrow\nlend\napple&quot;
+        }
+      ]
+    }
+  }
+]</pre></details>
+<details><summary>generate · 实际回复</summary><pre>已根据「简洁单词」规则为三个单词生成预览卡片。正面仅显示单词，背面先列中文释义，再附英文例句及其中文翻译。确认无误后可点击生成完整批次。</pre></details>
+<details><summary>完整模型输出卡片内容</summary><pre>[
+  {
+    &quot;prompt&quot;: &quot;borrow&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;释义&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;借入；借用&quot;
+      },
+      {
+        &quot;title&quot;: &quot;例句&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;I borrowed a book from the library. 我从图书馆借了一本书。&quot;
+      }
+    ],
+    &quot;word_data&quot;: {
+      &quot;part_of_speech&quot;: &quot;v.&quot;,
+      &quot;pronunciations&quot;: [
+        {
+          &quot;region&quot;: &quot;UK&quot;,
+          &quot;ipa&quot;: &quot;/ˈbɒrəʊ/&quot;
+        },
+        {
+          &quot;region&quot;: &quot;US&quot;,
+          &quot;ipa&quot;: &quot;/ˈbɑːroʊ/&quot;
+        }
+      ],
+      &quot;forms&quot;: [
+        &quot;borrowed&quot;,
+        &quot;borrowing&quot;
+      ],
+      &quot;definition&quot;: &quot;借入；借用&quot;,
+      &quot;english_definition&quot;: &quot;to take and use something that belongs to someone else for a period of time, with the intention of returning it&quot;,
+      &quot;usage_patterns&quot;: [
+        &quot;borrow + 名词 + from + 人/地方&quot;
+      ],
+      &quot;example&quot;: {
+        &quot;sentence&quot;: &quot;I borrowed a book from the library.&quot;,
+        &quot;translation&quot;: &quot;我从图书馆借了一本书。&quot;
+      },
+      &quot;collocations&quot;: [
+        &quot;borrow money&quot;,
+        &quot;borrow time&quot;
+      ],
+      &quot;confusion&quot;: {
+        &quot;heading&quot;: &quot;易混淆点&quot;,
+        &quot;body&quot;: &quot;lend 是借出，borrow 是借入。两者方向相反。&quot;
+      },
+      &quot;extension&quot;: {
+        &quot;heading&quot;: &quot;用法扩展&quot;,
+        &quot;body&quot;: &quot;常用于 borrow sth. from sb. 或 borrow sth. for sth.&quot;
+      }
+    },
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;word-simple&quot;,
+      &quot;skill&quot;: &quot;word&quot;,
+      &quot;front&quot;: &quot;单词居中，音标与词性作为辅助信息&quot;,
+      &quot;back&quot;: &quot;释义在上，例句在下&quot;,
+      &quot;layout&quot;: &quot;centered&quot;,
+      &quot;skill_version&quot;: &quot;1&quot;,
+      &quot;source_ids&quot;: [
+        &quot;W01-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;W01-photo-1&quot;,
+          &quot;text&quot;: &quot;borrow\nlend\napple&quot;
+        }
+      ]
+    }
+  },
+  {
+    &quot;prompt&quot;: &quot;lend&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;释义&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;借出； lending&quot;
+      },
+      {
+        &quot;title&quot;: &quot;例句&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;She lent me her umbrella. 她把伞借给了我。&quot;
+      }
+    ],
+    &quot;word_data&quot;: {
+      &quot;part_of_speech&quot;: &quot;v.&quot;,
+      &quot;pronunciations&quot;: [
+        {
+          &quot;region&quot;: &quot;&quot;,
+          &quot;ipa&quot;: &quot;/lend/&quot;
+        }
+      ],
+      &quot;forms&quot;: [
+        &quot;lent&quot;,
+        &quot;lending&quot;
+      ],
+      &quot;definition&quot;: &quot;借出； lending&quot;,
+      &quot;english_definition&quot;: &quot;to give someone something for a period of time, expecting it to be returned&quot;,
+      &quot;usage_patterns&quot;: [
+        &quot;lend + 人 + 物&quot;,
+        &quot;lend + 物 + to + 人&quot;
+      ],
+      &quot;example&quot;: {
+        &quot;sentence&quot;: &quot;She lent me her umbrella.&quot;,
+        &quot;translation&quot;: &quot;她把伞借给了我。&quot;
+      },
+      &quot;collocations&quot;: [
+        &quot;lend a hand&quot;,
+        &quot;lend support&quot;
+      ],
+      &quot;confusion&quot;: {
+        &quot;heading&quot;: &quot;易混淆点&quot;,
+        &quot;body&quot;: &quot;borrow 是借入，lend 是借出。两者方向相反。&quot;
+      },
+      &quot;extension&quot;: {
+        &quot;heading&quot;: &quot;用法扩展&quot;,
+        &quot;body&quot;: &quot;常用结构：lend sb. sth. = lend sth. to sb.&quot;
+      }
+    },
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;word-simple&quot;,
+      &quot;skill&quot;: &quot;word&quot;,
+      &quot;front&quot;: &quot;单词居中，音标与词性作为辅助信息&quot;,
+      &quot;back&quot;: &quot;释义在上，例句在下&quot;,
+      &quot;layout&quot;: &quot;centered&quot;,
+      &quot;skill_version&quot;: &quot;1&quot;,
+      &quot;source_ids&quot;: [
+        &quot;W01-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;W01-photo-1&quot;,
+          &quot;text&quot;: &quot;borrow\nlend\napple&quot;
+        }
+      ]
+    }
+  },
+  {
+    &quot;prompt&quot;: &quot;apple&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;释义&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;苹果&quot;
+      },
+      {
+        &quot;title&quot;: &quot;例句&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;I ate an apple for breakfast. 我早餐吃了一个苹果。&quot;
+      }
+    ],
+    &quot;word_data&quot;: {
+      &quot;part_of_speech&quot;: &quot;n.&quot;,
+      &quot;pronunciations&quot;: [
+        {
+          &quot;region&quot;: &quot;&quot;,
+          &quot;ipa&quot;: &quot;/ˈæpl/&quot;
+        }
+      ],
+      &quot;forms&quot;: [
+        &quot;apples&quot;
+      ],
+      &quot;definition&quot;: &quot;苹果&quot;,
+      &quot;english_definition&quot;: &quot;a round fruit with red, green, or yellow skin and crisp white flesh&quot;,
+      &quot;usage_patterns&quot;: [
+        &quot;an apple&quot;,
+        &quot;the apple&quot;
+      ],
+      &quot;example&quot;: {
+        &quot;sentence&quot;: &quot;I ate an apple for breakfast.&quot;,
+        &quot;translation&quot;: &quot;我早餐吃了一个苹果。&quot;
+      },
+      &quot;collocations&quot;: [
+        &quot;apple pie&quot;,
+        &quot;apple juice&quot;
+      ],
+      &quot;confusion&quot;: {
+        &quot;heading&quot;: &quot;易混淆点&quot;,
+        &quot;body&quot;: &quot;apple 是水果，不是设备品牌（如 Apple Inc.）。&quot;
+      },
+      &quot;extension&quot;: {
+        &quot;heading&quot;: &quot;用法扩展&quot;,
+        &quot;body&quot;: &quot;可指代苹果公司，但作为名词时通常指水果。&quot;
+      }
+    },
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;word-simple&quot;,
+      &quot;skill&quot;: &quot;word&quot;,
+      &quot;front&quot;: &quot;单词居中，音标与词性作为辅助信息&quot;,
+      &quot;back&quot;: &quot;释义在上，例句在下&quot;,
+      &quot;layout&quot;: &quot;centered&quot;,
+      &quot;skill_version&quot;: &quot;1&quot;,
+      &quot;source_ids&quot;: [
+        &quot;W01-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;W01-photo-1&quot;,
+          &quot;text&quot;: &quot;borrow\nlend\napple&quot;
+        }
+      ]
+    }
+  }
+]</pre></details>
+<div class="grid">
+<figure><a href="W01-1-front.png"><img loading="lazy" src="W01-1-front.png" alt="W01-1-front.png"></a><figcaption>W01-1-front.png</figcaption></figure>
+<figure><a href="W01-1-back.png"><img loading="lazy" src="W01-1-back.png" alt="W01-1-back.png"></a><figcaption>W01-1-back.png</figcaption></figure>
+<figure><a href="W01-2-front.png"><img loading="lazy" src="W01-2-front.png" alt="W01-2-front.png"></a><figcaption>W01-2-front.png</figcaption></figure>
+<figure><a href="W01-2-back.png"><img loading="lazy" src="W01-2-back.png" alt="W01-2-back.png"></a><figcaption>W01-2-back.png</figcaption></figure>
+<figure><a href="W01-3-front.png"><img loading="lazy" src="W01-3-front.png" alt="W01-3-front.png"></a><figcaption>W01-3-front.png</figcaption></figure>
+<figure><a href="W01-3-back.png"><img loading="lazy" src="W01-3-back.png" alt="W01-3-back.png"></a><figcaption>W01-3-back.png</figcaption></figure>
+</div></section>
+<section><h2>P01 · 诗词题目列表 → 全篇卡</h2>
+<pre>OCR 输入：静夜思
+春晓</pre>
+<p class="good">检查：通过 · 网络耗时 21.2s</p>
+<p><strong>人工内容评审：通过</strong> · 《静夜思》《春晓》作者和原文逐字核对通过，白话释义基本准确，明确说明原文由 Agent 补全。原诗未按诗行分行，展示仍可改进。</p>
+<details><summary>chat · 实际回复</summary><pre>已根据题目《静夜思》补全作者李白及完整原诗与白话释义。下一张卡为《春晓》，请确认是否继续生成或调整规则。原文由 Agent 根据题目补全。</pre></details>
+<details><summary>完整模型输出卡片内容</summary><pre>[
+  {
+    &quot;prompt&quot;: &quot;静夜思 — 李白&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;原文&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;床前明月光，疑是地上霜。举头望明月，低头思故乡。&quot;
+      },
+      {
+        &quot;title&quot;: &quot;白话释义&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;床前洒满明亮的月光，仿佛地上铺了一层清霜。抬头仰望天上的明月，低头思念远方的故乡。&quot;
+      }
+    ],
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;poetry-overview&quot;,
+      &quot;skill&quot;: &quot;poetry&quot;,
+      &quot;front&quot;: &quot;题目和作者居中&quot;,
+      &quot;back&quot;: &quot;原文、白话释义分区排列&quot;,
+      &quot;layout&quot;: &quot;centered&quot;,
+      &quot;skill_version&quot;: &quot;2&quot;,
+      &quot;source_ids&quot;: [
+        &quot;P01-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;P01-photo-1&quot;,
+          &quot;text&quot;: &quot;静夜思\n春晓&quot;
+        }
+      ]
+    }
+  }
+]</pre></details>
+<details><summary>generate · 实际回复</summary><pre>已根据题目《静夜思》与《春晓》补全作者、完整原诗及白话释义，按「诗词全篇」规则生成两张卡片。原文由 Agent 根据题目补全。如需调整排版或添加赏析，请随时告知。</pre></details>
+<details><summary>完整模型输出卡片内容</summary><pre>[
+  {
+    &quot;prompt&quot;: &quot;静夜思 · 李白&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;原文&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;床前明月光，疑是地上霜。举头望明月，低头思故乡。&quot;
+      },
+      {
+        &quot;title&quot;: &quot;白话释义&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;床前洒满明亮的月光，仿佛地上铺了一层清霜。抬头仰望天空中的明月，低头思念起远方的故乡。&quot;
+      }
+    ],
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;poetry-overview&quot;,
+      &quot;skill&quot;: &quot;poetry&quot;,
+      &quot;front&quot;: &quot;题目和作者居中&quot;,
+      &quot;back&quot;: &quot;原文、白话释义分区排列&quot;,
+      &quot;layout&quot;: &quot;centered&quot;,
+      &quot;skill_version&quot;: &quot;2&quot;,
+      &quot;source_ids&quot;: [
+        &quot;P01-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;P01-photo-1&quot;,
+          &quot;text&quot;: &quot;静夜思\n春晓&quot;
+        }
+      ]
+    }
+  },
+  {
+    &quot;prompt&quot;: &quot;春晓 · 孟浩然&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;原文&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;春眠不觉晓，处处闻啼鸟。夜来风雨声，花落知多少。&quot;
+      },
+      {
+        &quot;title&quot;: &quot;白话释义&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;春天酣睡，不知不觉天已破晓；醒来只听得处处鸟儿啼叫。昨夜传来阵阵风雨声，不知吹落了多少娇艳的春花。&quot;
+      }
+    ],
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;poetry-overview&quot;,
+      &quot;skill&quot;: &quot;poetry&quot;,
+      &quot;front&quot;: &quot;题目和作者居中&quot;,
+      &quot;back&quot;: &quot;原文、白话释义分区排列&quot;,
+      &quot;layout&quot;: &quot;centered&quot;,
+      &quot;skill_version&quot;: &quot;2&quot;,
+      &quot;source_ids&quot;: [
+        &quot;P01-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;P01-photo-1&quot;,
+          &quot;text&quot;: &quot;静夜思\n春晓&quot;
+        }
+      ]
+    }
+  }
+]</pre></details>
+<div class="grid">
+<figure><a href="P01-1-front.png"><img loading="lazy" src="P01-1-front.png" alt="P01-1-front.png"></a><figcaption>P01-1-front.png</figcaption></figure>
+<figure><a href="P01-1-back.png"><img loading="lazy" src="P01-1-back.png" alt="P01-1-back.png"></a><figcaption>P01-1-back.png</figcaption></figure>
+<figure><a href="P01-2-front.png"><img loading="lazy" src="P01-2-front.png" alt="P01-2-front.png"></a><figcaption>P01-2-front.png</figcaption></figure>
+<figure><a href="P01-2-back.png"><img loading="lazy" src="P01-2-back.png" alt="P01-2-back.png"></a><figcaption>P01-2-back.png</figcaption></figure>
+</div></section>
+<section><h2>P02 · 诗词题目 → 接句卡</h2>
+<pre>OCR 输入：登鹳雀楼</pre>
+<p class="good">检查：通过 · 网络耗时 53.9s</p>
+<p><strong>人工内容评审：通过</strong> · 两联接句完整、答案正确，正面不泄露答案，背面含释义。但生成完成的回复仍提示点击生成，状态文案不准确。</p>
+<details><summary>chat · 实际回复</summary><pre>已根据题目《登鹳雀楼》补全王之涣原诗，生成两张接句背诵卡。原文由 Agent 根据题目补全，非 OCR 提取。点击生成后将输出完整卡片。</pre></details>
+<details><summary>完整模型输出卡片内容</summary><pre>[
+  {
+    &quot;prompt&quot;: &quot;白日依山尽&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;下一句&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;黄河入海流&quot;
+      },
+      {
+        &quot;title&quot;: &quot;释义&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;黄河滚滚流向大海。&quot;
+      }
+    ],
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;poetry-recall&quot;,
+      &quot;skill&quot;: &quot;poetry&quot;,
+      &quot;front&quot;: &quot;展示上一句，不泄露下一句&quot;,
+      &quot;back&quot;: &quot;下一句原文在上，释义在下&quot;,
+      &quot;layout&quot;: &quot;centered&quot;,
+      &quot;skill_version&quot;: &quot;2&quot;,
+      &quot;source_ids&quot;: [
+        &quot;P02-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;P02-photo-1&quot;,
+          &quot;text&quot;: &quot;登鹳雀楼&quot;
+        }
+      ]
+    }
+  }
+]</pre></details>
+<details><summary>generate · 实际回复</summary><pre>已根据《登鹳雀楼》补全原诗，按「诗词接句」规则生成两张背诵卡。原文由 Agent 根据题目补全，非 OCR 提取。点击生成后将输出完整卡片。</pre></details>
+<details><summary>完整模型输出卡片内容</summary><pre>[
+  {
+    &quot;prompt&quot;: &quot;白日依山尽&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;下一句&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;黄河入海流&quot;
+      },
+      {
+        &quot;title&quot;: &quot;释义&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;黄河浩浩荡荡奔向大海。&quot;
+      }
+    ],
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;poetry-recall&quot;,
+      &quot;skill&quot;: &quot;poetry&quot;,
+      &quot;front&quot;: &quot;展示上一句，不泄露下一句&quot;,
+      &quot;back&quot;: &quot;下一句原文在上，释义在下&quot;,
+      &quot;layout&quot;: &quot;centered&quot;,
+      &quot;skill_version&quot;: &quot;2&quot;,
+      &quot;source_ids&quot;: [
+        &quot;P02-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;P02-photo-1&quot;,
+          &quot;text&quot;: &quot;登鹳雀楼&quot;
+        }
+      ]
+    }
+  },
+  {
+    &quot;prompt&quot;: &quot;欲穷千里目&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;下一句&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;更上一层楼&quot;
+      },
+      {
+        &quot;title&quot;: &quot;释义&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;要想看到更远的风景，就要再登上一层高楼。&quot;
+      }
+    ],
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;poetry-recall&quot;,
+      &quot;skill&quot;: &quot;poetry&quot;,
+      &quot;front&quot;: &quot;展示上一句，不泄露下一句&quot;,
+      &quot;back&quot;: &quot;下一句原文在上，释义在下&quot;,
+      &quot;layout&quot;: &quot;centered&quot;,
+      &quot;skill_version&quot;: &quot;2&quot;,
+      &quot;source_ids&quot;: [
+        &quot;P02-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;P02-photo-1&quot;,
+          &quot;text&quot;: &quot;登鹳雀楼&quot;
+        }
+      ]
+    }
+  }
+]</pre></details>
+<div class="grid">
+<figure><a href="P02-1-front.png"><img loading="lazy" src="P02-1-front.png" alt="P02-1-front.png"></a><figcaption>P02-1-front.png</figcaption></figure>
+<figure><a href="P02-1-back.png"><img loading="lazy" src="P02-1-back.png" alt="P02-1-back.png"></a><figcaption>P02-1-back.png</figcaption></figure>
+<figure><a href="P02-2-front.png"><img loading="lazy" src="P02-2-front.png" alt="P02-2-front.png"></a><figcaption>P02-2-front.png</figcaption></figure>
+<figure><a href="P02-2-back.png"><img loading="lazy" src="P02-2-back.png" alt="P02-2-back.png"></a><figcaption>P02-2-back.png</figcaption></figure>
+</div></section>
+<section><h2>C01 · 古文篇目列表 → 全篇卡</h2>
+<pre>OCR 输入：陋室铭
+爱莲说</pre>
+<p class="bad">检查：存在未通过项 · 网络耗时 51.4s</p>
+<p><strong>人工内容评审：未通过</strong> · 输入两篇，仅生成《陋室铭》1 张，漏掉《爱莲说》，并要求不必要的分批确认。《陋室铭》原文完整；译文把白丁直译为平民，与注释中的语境义不一致。</p>
+<p>expected_card_count、爱莲说_complete_original、爱莲说_section_labels、爱莲说_author</p>
+<details><summary>chat · 实际回复</summary><pre>已根据篇目列表补全《陋室铭》作者与全文，原文由 Agent 根据题目补全。当前仅展示一篇示例卡。如需生成《爱莲说》或其他篇目，请确认或指定下一张卡片内容。若要完整生成多篇，建议分批处理以控制卡片数量（单次最多30张）。</pre></details>
+<details><summary>完整模型输出卡片内容</summary><pre>[
+  {
+    &quot;prompt&quot;: &quot;《陋室铭》刘禹锡&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;原文&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;山不在高，有仙则名。水不在深，有龙则灵。斯是陋室，惟吾德馨。苔痕上阶绿，草色入帘青。谈笑有鸿儒，往来无白丁。可以调素琴，阅金经。无丝竹之乱耳，无案牍之劳形。南阳诸葛庐，西蜀子云亭。孔子云：何陋之有？&quot;
+      },
+      {
+        &quot;title&quot;: &quot;白话翻译&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;山不在于高，有了仙人就出名了；水不在于深，有了龙就显得灵异了。这是简陋的屋子，只是我的品德好（就不感到简陋了）。苔痕碧绿，长到台阶上；草色青葱，映入帘子里。说说笑笑的是博学的人，来来往往的没有平民。可以弹奏朴素的古琴，阅读佛经。没有嘈杂的音乐扰乱耳朵，没有官府公文劳累身心。南阳有诸葛亮的草庐，西蜀有扬子云的亭子。孔子说：有什么简陋的呢？&quot;
+      },
+      {
+        &quot;title&quot;: &quot;重点字词&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;【重点字词】名：出名，著名。灵：灵异。惟：只。馨：散布很远的香气，这里指品德高尚。鸿儒：大儒，这里指博学的人。白丁：平民，这里指没有什么学问的人。调：调弄，这里指弹（琴）。素琴：不加装饰的琴。金经：指佛经。丝竹：琴瑟箫笛等管弦乐器，这里指奏乐的声音。案牍：官府的公文、文书。劳形：使身体劳累。&quot;
+      }
+    ],
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;classical-translation&quot;,
+      &quot;skill&quot;: &quot;classical&quot;,
+      &quot;front&quot;: &quot;展示古文原句&quot;,
+      &quot;back&quot;: &quot;白话翻译、重点字词、句式或句意依次排列&quot;,
+      &quot;layout&quot;: &quot;stacked&quot;,
+      &quot;skill_version&quot;: &quot;2&quot;,
+      &quot;source_ids&quot;: [
+        &quot;C01-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;C01-photo-1&quot;,
+          &quot;text&quot;: &quot;陋室铭\n爱莲说&quot;
+        }
+      ]
+    }
+  }
+]</pre></details>
+<details><summary>generate · 实际回复</summary><pre>已根据《陋室铭》篇目生成一张完整卡片，原文由 Agent 根据题目补全。如需继续生成《爱莲说》或其他篇目，请指定下一张卡片内容或确认分批处理。单次最多支持30张卡片，建议按篇目分批生成以保证质量。</pre></details>
+<details><summary>完整模型输出卡片内容</summary><pre>[
+  {
+    &quot;prompt&quot;: &quot;《陋室铭》刘禹锡&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;原文&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;山不在高，有仙则名。水不在深，有龙则灵。斯是陋室，惟吾德馨。苔痕上阶绿，草色入帘青。谈笑有鸿儒，往来无白丁。可以调素琴，阅金经。无丝竹之乱耳，无案牍之劳形。南阳诸葛庐，西蜀子云亭。孔子云：何陋之有？&quot;
+      },
+      {
+        &quot;title&quot;: &quot;白话翻译&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;山不在于高，有了仙人就出名了；水不在于深，有了龙就显得灵异了。这是简陋的屋子，只是我的品德好（就不感到简陋了）。苔痕碧绿，长到台阶上；草色青葱，映入帘子里。说说笑笑的是博学的人，来来往往的没有平民。可以弹奏朴素的古琴，阅读佛经。没有嘈杂的音乐扰乱耳朵，没有官府公文劳累身心。南阳有诸葛亮的草庐，西蜀有扬子云的亭子。孔子说：有什么简陋的呢？&quot;
+      },
+      {
+        &quot;title&quot;: &quot;重点字词&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;【德馨】品德高尚。馨，散布很远的香气，这里指品德美好。【鸿儒】大儒，博学的人。鸿，同“洪”，大。【白丁】平民，这里指没什么学问的人。【调素琴】弹奏不加装饰的琴。调，调弄，这里指弹奏。素，不加装饰。【金经】佛经。【丝竹】琴瑟箫笛等乐器的总称，这里指奏乐的声音。【案牍】官府的公文、文书。&quot;
+      },
+      {
+        &quot;title&quot;: &quot;句式或句意&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;本文采用托物言志手法，通过描写陋室环境清幽、交往人物高雅、生活情趣脱俗，表达作者安贫乐道、不慕荣利的高尚情操。句式多用骈偶，节奏明快，语言精炼，结尾引用孔子语，增强说服力。&quot;
+      }
+    ],
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;classical-translation&quot;,
+      &quot;skill&quot;: &quot;classical&quot;,
+      &quot;front&quot;: &quot;展示古文原句&quot;,
+      &quot;back&quot;: &quot;白话翻译、重点字词、句式或句意依次排列&quot;,
+      &quot;layout&quot;: &quot;stacked&quot;,
+      &quot;skill_version&quot;: &quot;2&quot;,
+      &quot;source_ids&quot;: [
+        &quot;C01-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;C01-photo-1&quot;,
+          &quot;text&quot;: &quot;陋室铭\n爱莲说&quot;
+        }
+      ]
+    }
+  }
+]</pre></details>
+<div class="grid">
+<figure><a href="C01-1-front.png"><img loading="lazy" src="C01-1-front.png" alt="C01-1-front.png"></a><figcaption>C01-1-front.png</figcaption></figure>
+<figure><a href="C01-1-back.png"><img loading="lazy" src="C01-1-back.png" alt="C01-1-back.png"></a><figcaption>C01-1-back.png</figcaption></figure>
+<figure><a href="C01-1-back-bottom.png"><img loading="lazy" src="C01-1-back-bottom.png" alt="C01-1-back-bottom.png"></a><figcaption>C01-1-back-bottom.png</figcaption></figure>
+</div></section>
+<section><h2>C02 · 古文篇目 → 逐句卡</h2>
+<pre>OCR 输入：论语·学而第一则</pre>
+<p class="good">检查：通过 · 网络耗时 40.6s</p>
+<p><strong>人工内容评审：部分通过</strong> · 三句原文和白话翻译基本正确，说读 yuè 正确。但首句句意写‘本句为陈述句，以反问语气…’，句式分类自相矛盾，应该是反问句。</p>
+<details><summary>chat · 实际回复</summary><pre>已根据题目《论语·学而第一则》补全原文，并按「古文逐句」排版生成三张卡片预览。原文由 Agent 根据题目补全，非直接从照片提取。如需调整段落或补充注释，请告知。</pre></details>
+<details><summary>完整模型输出卡片内容</summary><pre>[
+  {
+    &quot;prompt&quot;: &quot;学而时习之&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;原文&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;学而时习之&quot;
+      },
+      {
+        &quot;title&quot;: &quot;白话翻译&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;学习之后要按时温习。&quot;
+      },
+      {
+        &quot;title&quot;: &quot;重点字词&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;学：学习。时：按时。习：温习、练习。之：代词，指所学的内容。&quot;
+      },
+      {
+        &quot;title&quot;: &quot;句意&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;强调学习后需按时复习，巩固所学。&quot;
+      }
+    ],
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;classical-translation&quot;,
+      &quot;skill&quot;: &quot;classical&quot;,
+      &quot;front&quot;: &quot;展示古文原句&quot;,
+      &quot;back&quot;: &quot;白话翻译、重点字词、句式或句意依次排列&quot;,
+      &quot;layout&quot;: &quot;stacked&quot;,
+      &quot;skill_version&quot;: &quot;2&quot;,
+      &quot;source_ids&quot;: [
+        &quot;C02-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;C02-photo-1&quot;,
+          &quot;text&quot;: &quot;论语·学而第一则&quot;
+        }
+      ]
+    }
+  }
+]</pre></details>
+<details><summary>generate · 实际回复</summary><pre>已按「古文逐句」规则生成三张卡片，每张正面为原句，背面依次为白话翻译、重点字词和句意。原文由 Agent 根据《论语·学而第一则》题目补全，非直接来自照片。如需调整或补充，请随时告知。</pre></details>
+<details><summary>完整模型输出卡片内容</summary><pre>[
+  {
+    &quot;prompt&quot;: &quot;子曰：学而时习之，不亦说乎？&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;白话翻译&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;孔子说：学习了然后按时温习，不也很愉快吗？&quot;
+      },
+      {
+        &quot;title&quot;: &quot;重点字词&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;说：同“悦”，读 yuè，高兴、愉快的意思。&quot;
+      },
+      {
+        &quot;title&quot;: &quot;句意&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;本句为陈述句，以反问语气表达肯定意思，强调学习与复习带来的愉悦感。&quot;
+      }
+    ],
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;classical-translation&quot;,
+      &quot;skill&quot;: &quot;classical&quot;,
+      &quot;front&quot;: &quot;展示古文原句&quot;,
+      &quot;back&quot;: &quot;白话翻译、重点字词、句式或句意依次排列&quot;,
+      &quot;layout&quot;: &quot;stacked&quot;,
+      &quot;skill_version&quot;: &quot;2&quot;,
+      &quot;source_ids&quot;: [
+        &quot;C02-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;C02-photo-1&quot;,
+          &quot;text&quot;: &quot;论语·学而第一则&quot;
+        }
+      ]
+    }
+  },
+  {
+    &quot;prompt&quot;: &quot;有朋自远方来，不亦乐乎？&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;白话翻译&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;有志同道合的朋友从远方来，不也很快乐吗？&quot;
+      },
+      {
+        &quot;title&quot;: &quot;重点字词&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;朋：指志同道合的人。乐：快乐。&quot;
+      },
+      {
+        &quot;title&quot;: &quot;句意&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;本句为反问句，表达因朋友来访而产生的喜悦之情，体现儒家重视人际和谐的思想。&quot;
+      }
+    ],
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;classical-translation&quot;,
+      &quot;skill&quot;: &quot;classical&quot;,
+      &quot;front&quot;: &quot;展示古文原句&quot;,
+      &quot;back&quot;: &quot;白话翻译、重点字词、句式或句意依次排列&quot;,
+      &quot;layout&quot;: &quot;stacked&quot;,
+      &quot;skill_version&quot;: &quot;2&quot;,
+      &quot;source_ids&quot;: [
+        &quot;C02-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;C02-photo-1&quot;,
+          &quot;text&quot;: &quot;论语·学而第一则&quot;
+        }
+      ]
+    }
+  },
+  {
+    &quot;prompt&quot;: &quot;人不知而不愠，不亦君子乎？&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;白话翻译&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;别人不了解自己却不生气，不也是君子吗？&quot;
+      },
+      {
+        &quot;title&quot;: &quot;重点字词&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;愠：yùn，生气、恼怒。君子：有道德修养的人。&quot;
+      },
+      {
+        &quot;title&quot;: &quot;句意&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;本句为反问句，强调君子应具备的修养——即使不被理解也不怨恨，体现内在德行的坚定。&quot;
+      }
+    ],
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;classical-translation&quot;,
+      &quot;skill&quot;: &quot;classical&quot;,
+      &quot;front&quot;: &quot;展示古文原句&quot;,
+      &quot;back&quot;: &quot;白话翻译、重点字词、句式或句意依次排列&quot;,
+      &quot;layout&quot;: &quot;stacked&quot;,
+      &quot;skill_version&quot;: &quot;2&quot;,
+      &quot;source_ids&quot;: [
+        &quot;C02-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;C02-photo-1&quot;,
+          &quot;text&quot;: &quot;论语·学而第一则&quot;
+        }
+      ]
+    }
+  }
+]</pre></details>
+<div class="grid">
+<figure><a href="C02-1-front.png"><img loading="lazy" src="C02-1-front.png" alt="C02-1-front.png"></a><figcaption>C02-1-front.png</figcaption></figure>
+<figure><a href="C02-1-back.png"><img loading="lazy" src="C02-1-back.png" alt="C02-1-back.png"></a><figcaption>C02-1-back.png</figcaption></figure>
+<figure><a href="C02-1-back-bottom.png"><img loading="lazy" src="C02-1-back-bottom.png" alt="C02-1-back-bottom.png"></a><figcaption>C02-1-back-bottom.png</figcaption></figure>
+<figure><a href="C02-2-front.png"><img loading="lazy" src="C02-2-front.png" alt="C02-2-front.png"></a><figcaption>C02-2-front.png</figcaption></figure>
+<figure><a href="C02-2-back.png"><img loading="lazy" src="C02-2-back.png" alt="C02-2-back.png"></a><figcaption>C02-2-back.png</figcaption></figure>
+<figure><a href="C02-2-back-bottom.png"><img loading="lazy" src="C02-2-back-bottom.png" alt="C02-2-back-bottom.png"></a><figcaption>C02-2-back-bottom.png</figcaption></figure>
+<figure><a href="C02-3-front.png"><img loading="lazy" src="C02-3-front.png" alt="C02-3-front.png"></a><figcaption>C02-3-front.png</figcaption></figure>
+<figure><a href="C02-3-back.png"><img loading="lazy" src="C02-3-back.png" alt="C02-3-back.png"></a><figcaption>C02-3-back.png</figcaption></figure>
+<figure><a href="C02-3-back-bottom.png"><img loading="lazy" src="C02-3-back-bottom.png" alt="C02-3-back-bottom.png"></a><figcaption>C02-3-back-bottom.png</figcaption></figure>
+</div></section>
+<section><h2>A01 · 同名题目 → 澄清</h2>
+<pre>OCR 输入：送别</pre>
+<p class="bad">检查：存在未通过项 · 网络耗时 5.9s</p>
+<p><strong>人工内容评审：未通过</strong> · 只输入《送别》，未询问作者或首句，直接给出李叔同版本的片段预览，没有作者信息，也不是完整作品。</p>
+<p>expected_card_count、asks_for_disambiguation</p>
+<details><summary>chat · 实际回复</summary><pre>原文由 Agent 根据题目补全。这是「诗词全篇」排版的预览卡片，点击生成后将按此样式制作完整卡片。</pre></details>
+<details><summary>完整模型输出卡片内容</summary><pre>[
+  {
+    &quot;prompt&quot;: &quot;《送别》&quot;,
+    &quot;hint&quot;: &quot;&quot;,
+    &quot;sections&quot;: [
+      {
+        &quot;title&quot;: &quot;原文&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;长亭外，古道边，芳草碧连天。晚风拂柳笛声残，夕阳山外山。&quot;
+      },
+      {
+        &quot;title&quot;: &quot;白话释义&quot;,
+        &quot;heading&quot;: &quot;&quot;,
+        &quot;body&quot;: &quot;长亭之外，古道旁边，青草茂盛连着天际。晚风吹动柳枝，笛声渐弱，夕阳落在远山之后。&quot;
+      }
+    ],
+    &quot;presentation&quot;: {
+      &quot;preset&quot;: &quot;poetry-overview&quot;,
+      &quot;skill&quot;: &quot;poetry&quot;,
+      &quot;front&quot;: &quot;题目和作者居中&quot;,
+      &quot;back&quot;: &quot;原文、白话释义分区排列&quot;,
+      &quot;layout&quot;: &quot;centered&quot;,
+      &quot;skill_version&quot;: &quot;2&quot;,
+      &quot;source_ids&quot;: [
+        &quot;A01-photo-1&quot;
+      ],
+      &quot;sources&quot;: [
+        {
+          &quot;id&quot;: &quot;A01-photo-1&quot;,
+          &quot;text&quot;: &quot;送别&quot;
+        }
+      ]
+    }
+  }
+]</pre></details>
+<div class="grid">
+<figure><a href="A01-chat.png"><img loading="lazy" src="A01-chat.png" alt="A01-chat.png"></a><figcaption>A01-chat.png</figcaption></figure>
+</div></section>
+</main></html>

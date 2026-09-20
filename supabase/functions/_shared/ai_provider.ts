@@ -1,4 +1,4 @@
-export type AiProvider = "deepseek" | "openai";
+export type AiProvider = "deepseek" | "openai" | "openrouter";
 
 export type AiProviderConfig = {
   provider: AiProvider;
@@ -12,6 +12,17 @@ export function resolveAiProvider(
   read: (name: string) => string | undefined,
 ): AiProviderConfig | null {
   const requested = read("AI_PROVIDER")?.trim().toLowerCase();
+  if (requested === "openrouter") {
+    const apiKey = read("OPENROUTER_API_KEY")?.trim();
+    if (!apiKey) return null;
+    return {
+      provider: "openrouter",
+      apiKey,
+      endpoint: "https://openrouter.ai/api/v1/responses",
+      model: read("AI_MODEL")?.trim() || "qwen/qwen3-vl-235b-a22b-instruct",
+      supportsStrictFormat: true,
+    };
+  }
   if (requested === "deepseek" || (!requested && read("DEEPSEEK_API_KEY"))) {
     const apiKey = read("DEEPSEEK_API_KEY")?.trim();
     if (!apiKey) return null;

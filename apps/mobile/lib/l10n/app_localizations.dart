@@ -66,6 +66,8 @@ class AppLocalizations {
   String sectionTitle(String title) => switch (title) {
     '核心释义' => tr('sectionMeaning'),
     'Meaning' => tr('sectionMeaning'),
+    'Word overview' => tr('wordOverview'),
+    'Word usage' => tr('wordUsage'),
     '例句搭配' => tr('sectionExamples'),
     'Example & collocation' => tr('sectionExamples'),
     '易错辨析' => tr('sectionDistinction'),
@@ -119,6 +121,8 @@ class AppLocalizations {
 }
 
 const _memoryLoopBase = <String, String>{
+  'wordOverview': 'Meaning & example',
+  'wordUsage': 'Usage',
   'reviewDrafts': 'Review AI drafts',
   'reviewDraftsSubtitle':
       'AI prepared the backs. Check each card before it joins your loop.',
@@ -235,6 +239,8 @@ const _memoryLoopTranslations = <String, Map<String, String>>{
     'backInteractionHelp': '点按返回正面 · 左右滑动切换解释',
     'backTapHelp': '点按返回卡片正面',
     'backScrollableHelp': '上下滚动查看全文 · 请点按下方完成评价',
+    'wordOverview': '释义与例句',
+    'wordUsage': '搭配与词形',
     'explanationProgress': '解释 {current} / {count}',
     'answerDetail': '答案详情',
     'playPronunciation': '播放发音',
@@ -305,6 +311,8 @@ const _memoryLoopTranslations = <String, Map<String, String>>{
     'backInteractionHelp': '點按返回正面 · 左右滑動切換解釋',
     'backTapHelp': '點按返回卡片正面',
     'backScrollableHelp': '上下捲動查看全文 · 請點按下方完成評價',
+    'wordOverview': '釋義與例句',
+    'wordUsage': '搭配與詞形',
     'explanationProgress': '解釋 {current} / {count}',
     'answerDetail': '答案詳情',
     'playPronunciation': '播放發音',

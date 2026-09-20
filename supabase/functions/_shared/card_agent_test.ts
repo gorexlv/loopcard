@@ -139,6 +139,7 @@ for (
     const sample = {
       ...card(),
       prompt: "原文",
+      literary_data: { title: "作品", author: "", dynasty: "" },
       sections: [{ title: "原文", heading: "", body: original }],
     };
     const result = validateAgentResponse({
@@ -148,6 +149,8 @@ for (
     }, r);
     assertEquals(result.cards[0].sections[0].body, original);
     assertEquals(result.cards[0].presentation.skill, preset.skill);
+    // Existing save RPC accepts version 1; prompt improvements keep this wire contract.
+    assertEquals(result.cards[0].presentation.skill_version, "1");
     assertEquals(result.cards[0].presentation.source_ids, ["p1", "p2"]);
     const generation = validateRequest({
       ...r,
@@ -186,3 +189,31 @@ for (
     );
   });
 }
+
+Deno.test("literary metadata survives validation separately from the prompt", () => {
+  const preset = presets.find((p) => p.id === "poetry-overview")!;
+  const r = validateRequest({ ...request(), action: "chat" });
+  const result = validateAgentResponse({
+    reply: "预览",
+    rules: { ...preset, preset: preset.id },
+    cards: [{
+      ...card(),
+      prompt: "静夜思",
+      literary_data: { title: "静夜思", author: "李白", dynasty: "唐" },
+    }],
+  }, r);
+  assertEquals(result.cards[0].presentation.literary, {
+    title: "静夜思",
+    author: "李白",
+    dynasty: "唐",
+  });
+  assertEquals(result.cards[0].prompt, "静夜思");
+});
+
+
+Deno.test("successful cards need no narration; empty failures still need an explanation", () => {
+  const r = request();
+  assertEquals(validateAgentResponse({ reply: "", rules: r.rules, cards: [card()] }, r).reply, "");
+  assertThrows(() => validateAgentResponse({ reply: "", rules: r.rules, cards: [] }, r));
+  assertEquals(validateAgentResponse({ reply: "请确认作品作者。", rules: r.rules, cards: [] }, r).reply, "请确认作品作者。");
+});

@@ -199,6 +199,38 @@ class WordCardContent {
       ),
   ];
 
+  /// Reading pages are separate from the persisted/exported sections contract.
+  List<CardBackSection> get reviewSections => [
+    CardBackSection(
+      title: 'Word overview',
+      heading: definition,
+      body: [
+        englishDefinition,
+        example.sentence,
+        example.translation,
+        ...usagePatterns,
+      ].where((s) => s.isNotEmpty).join('\n'),
+    ),
+    if (collocations.isNotEmpty || forms.isNotEmpty)
+      CardBackSection(
+        title: 'Word usage',
+        heading: '',
+        body: [...collocations, ...forms].join('\n'),
+      ),
+    if (confusion case final value?)
+      CardBackSection(
+        title: 'Common confusion',
+        heading: value.heading,
+        body: value.body,
+      ),
+    if (extension case final value?)
+      CardBackSection(
+        title: 'Extension',
+        heading: value.heading,
+        body: value.body,
+      ),
+  ];
+
   WordCardContent copyWith({
     String? partOfSpeech,
     List<WordPronunciation>? pronunciations,
@@ -277,8 +309,63 @@ class StudyCard {
     return MemoryStability.building;
   }
 
+  /// Older generated vocabulary stores only sections. Adapt recognized fields
+  /// without inventing content or dropping unfamiliar/custom sections.
+  WordCardContent? get reviewWordContent {
+    // Custom back instructions are represented by the generated sections;
+    // lexical metadata can contain facts the user explicitly excluded.
+    final backRule = presentation['back'];
+    if (presentation['skill'] == 'word' &&
+        backRule is String &&
+        !const {
+          '释义在上，例句在下',
+          '释义、双语例句与常用句型同页，搭配与词形按需查看',
+          '释义、例句与搭配、易混淆点分区排列',
+        }.contains(backRule.trim())) {
+      return null;
+    }
+    if (wordContent != null) return wordContent;
+    if (presentation['skill'] != 'word') return null;
+    CardBackSection? meaning;
+    CardBackSection? example;
+    for (final section in sections) {
+      if (const ['Meaning', '核心释义', '释义'].contains(section.title)) {
+        if (meaning != null) return null;
+        meaning = section;
+      } else if (const [
+        'Example & collocation',
+        '例句',
+        '例句搭配',
+      ].contains(section.title)) {
+        if (example != null) return null;
+        example = section;
+      } else {
+        return null;
+      }
+    }
+    if (meaning == null || example == null) return null;
+    var sentence = example.heading;
+    var translation = example.body;
+    if (sentence.isEmpty) {
+      final chinese = RegExp(r'[\u3400-\u9fff]').firstMatch(example.body);
+      final boundary = chinese?.start ?? example.body.length;
+      sentence = example.body.substring(0, boundary).trim();
+      translation = example.body.substring(boundary).trim();
+    }
+    return WordCardContent(
+      partOfSpeech: '',
+      definition: meaning.heading.isEmpty ? meaning.body : meaning.heading,
+      englishDefinition: meaning.heading.isEmpty ? '' : meaning.body,
+      example: WordExample(sentence: sentence, translation: translation),
+    );
+  }
+
   List<CardBackSection> get learningSections =>
       presentation.isNotEmpty ? sections : wordContent?.sections ?? sections;
+
+  /// UI grouping does not change the persisted/exported section structure.
+  List<CardBackSection> get reviewSections =>
+      reviewWordContent?.reviewSections ?? sections;
 
   StudyCard copyWith({
     DateTime? dueAt,
