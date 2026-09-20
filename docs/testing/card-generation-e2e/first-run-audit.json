@@ -1,0 +1,89 @@
+[
+  {
+    "id": "W01",
+    "passed": false,
+    "checks": {
+      "all_network_calls_succeeded": false,
+      "expected_card_count": false,
+      "real_generate_action": false,
+      "source_ids_preserved": false,
+      "all_requested_words": false,
+      "word_only_front": false,
+      "lexical_data_present": false
+    },
+    "seconds": 31.19
+  },
+  {
+    "id": "P01",
+    "passed": false,
+    "checks": {
+      "all_network_calls_succeeded": true,
+      "expected_card_count": true,
+      "real_generate_action": true,
+      "source_ids_preserved": true,
+      "静夜思_complete_original": true,
+      "静夜思_section_labels": false,
+      "静夜思_author": true,
+      "春晓_complete_original": true,
+      "春晓_section_labels": false,
+      "春晓_author": true,
+      "agent_completion_disclosed": true
+    },
+    "seconds": 28.625
+  },
+  {
+    "id": "P02",
+    "passed": false,
+    "checks": {
+      "all_network_calls_succeeded": true,
+      "expected_card_count": true,
+      "real_generate_action": true,
+      "source_ids_preserved": true,
+      "白日依山尽_correct_recall": true,
+      "欲穷千里目_correct_recall": true,
+      "explanation_included": false
+    },
+    "seconds": 14.561
+  },
+  {
+    "id": "C01",
+    "passed": false,
+    "checks": {
+      "all_network_calls_succeeded": true,
+      "expected_card_count": true,
+      "real_generate_action": true,
+      "source_ids_preserved": true,
+      "陋室铭_complete_original": true,
+      "陋室铭_section_labels": false,
+      "陋室铭_author": true,
+      "爱莲说_complete_original": true,
+      "爱莲说_section_labels": false,
+      "爱莲说_author": true,
+      "agent_completion_disclosed": false
+    },
+    "seconds": 50.214999999999996
+  },
+  {
+    "id": "C02",
+    "passed": false,
+    "checks": {
+      "all_network_calls_succeeded": false,
+      "expected_card_count": false,
+      "real_generate_action": false,
+      "source_ids_preserved": false,
+      "three_sentences_complete": false,
+      "correct_yue_reading": false
+    },
+    "seconds": 8.186
+  },
+  {
+    "id": "A01",
+    "passed": true,
+    "checks": {
+      "all_network_calls_succeeded": true,
+      "expected_card_count": true,
+      "asks_for_disambiguation": true
+    },
+    "seconds": 8.299
+  }
+]

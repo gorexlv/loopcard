@@ -230,7 +230,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('借入；借用'), findsOneWidget);
+    expect(find.text('借入；借用'), findsNothing);
+    expect(find.text('borrow'), findsOneWidget);
     expect(find.text('borrow a book'), findsOneWidget);
     expect(find.byKey(const ValueKey('show-study-results')), findsNothing);
   });

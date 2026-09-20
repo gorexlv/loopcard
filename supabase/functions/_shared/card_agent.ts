@@ -16,7 +16,7 @@ export const presets = [
     skill: "word",
     name: "简洁单词",
     front: "单词居中，音标与词性作为辅助信息",
-    back: "释义在上，例句在下",
+    back: "释义、双语例句与常用句型同页，搭配与词形按需查看",
     layout: "centered",
   },
   {
@@ -39,8 +39,8 @@ export const presets = [
     "id": "poetry-overview",
     "skill": "poetry",
     "name": "诗词全篇",
-    "front": "题目和作者居中",
-    "back": "原文、白话释义分区排列",
+    "front": "题目、作者、朝代分行居中",
+    "back": "原文与释义逐句对应，字词注释独立分节；双调词按上阕、下阕切换",
     "layout": "centered",
   },
   {
@@ -54,9 +54,9 @@ export const presets = [
   {
     "id": "classical-translation",
     "skill": "classical",
-    "name": "古文逐句",
-    "front": "展示古文原句",
-    "back": "白话翻译、重点字词、句式或句意依次排列",
+    "name": "古文研读",
+    "front": "题目、作者、朝代分行居中",
+    "back": "原文、释义、字词注释各一页；有可靠背景时增加背景页",
     "layout": "stacked",
   },
   {
@@ -161,7 +161,14 @@ export const agentSchema = {
       items: {
         type: "object",
         additionalProperties: false,
-        required: ["prompt", "hint", "sections", "word_data", "source_ids"],
+        required: [
+          "prompt",
+          "hint",
+          "sections",
+          "word_data",
+          "literary_data",
+          "source_ids",
+        ],
         properties: {
           prompt: text(100),
           hint: text(160),
@@ -174,11 +181,46 @@ export const agentSchema = {
               additionalProperties: false,
               required: ["title", "heading", "body"],
               properties: {
-                title: text(80),
-                heading: text(1000),
-                body: text(3000),
+                title: {
+                  ...text(80),
+                  description:
+                    "Section label matching its body, e.g. 原文, 白话翻译, 释义. Not the work title.",
+                },
+                heading: {
+                  ...text(1000),
+                  description:
+                    "Optional emphasized content; empty string unless needed. Not a section label.",
+                },
+                body: {
+                  ...text(3000),
+                  minLength: 1,
+                  description:
+                    "Actual content of this section. Nonempty; include explanation separately from the quoted original.",
+                },
               },
             },
+          },
+          literary_data: {
+            anyOf: [{
+              type: "object",
+              additionalProperties: false,
+              required: ["title", "author", "dynasty"],
+              properties: {
+                title: {
+                  ...text(100),
+                  description: "Work title only, without author or dynasty.",
+                },
+                author: {
+                  ...text(80),
+                  description: "Author separately; empty if uncertain.",
+                },
+                dynasty: {
+                  ...text(40),
+                  description:
+                    "Dynasty separately, e.g. 唐 or 北宋; empty if uncertain.",
+                },
+              },
+            }, { type: "null" }],
           },
           word_data: {
             anyOf: [
@@ -208,7 +250,7 @@ export function validateAgentResponse(
     request.action === "generate" &&
     JSON.stringify(rules) !== JSON.stringify(request.rules)
   ) throw Error("generation_changed_rules");
-  const reply = string(r.reply, 3000);
+  const reply = string(r.reply, 3000, true);
   if (
     !Array.isArray(r.cards) || r.cards.length > 30 ||
     (request.action === "chat" && r.cards.length > 1)
@@ -228,6 +270,20 @@ export function validateAgentResponse(
     if (rules.skill !== "word" && c.word_data !== null) {
       throw Error("non_word_card_contains_lexical_data");
     }
+    const isLiterary = ["poetry", "classical"].includes(rules.skill);
+    if (isLiterary && c.literary_data == null) {
+      throw Error("missing_literary_data");
+    }
+    let literary;
+    if (c.literary_data != null) {
+      if (!isLiterary) throw Error("non_literary_card_contains_literary_data");
+      const data = object(c.literary_data);
+      literary = {
+        title: string(data.title, 100),
+        author: string(data.author, 80, true),
+        dynasty: string(data.dynasty, 40, true),
+      };
+    }
     return {
       prompt: string(c.prompt, 100),
       hint: string(c.hint, 160, true),
@@ -244,6 +300,7 @@ export function validateAgentResponse(
         : {}),
       presentation: {
         ...rules,
+        ...(literary ? { literary } : {}),
         skill_version:
           skillDefinitions[rules.skill as keyof typeof skillDefinitions]
             .version,
@@ -257,5 +314,6 @@ export function validateAgentResponse(
   if (new Set(cards.map((c) => c.prompt.toLowerCase())).size !== cards.length) {
     throw Error("duplicate_cards");
   }
+  if (!reply && cards.length === 0) throw Error("empty_agent_response");
   return { reply, rules, cards };
 }

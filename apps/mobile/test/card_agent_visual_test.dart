@@ -91,6 +91,9 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    expect(find.textContaining('已按「简洁单词」'), findsNothing);
+    expect(find.textContaining('当前草稿'), findsNothing);
+    expect(find.textContaining('正面：'), findsNothing);
     await expectLater(
       find.byKey(const ValueKey('agent-screen')),
       matchesGoldenFile('goldens/20-agent-chat-front.png'),
